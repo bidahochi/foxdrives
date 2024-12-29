@@ -34,4 +34,8 @@ public class Vec3d extends Vec3 {
         xCoord+=x;yCoord+=y;zCoord+=z;
         return this;
     }
+    public Vec3d subtractVector(double x, double y, double z){
+        xCoord-=x;yCoord-=y;zCoord-=z;
+        return this;
+    }
 }

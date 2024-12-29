@@ -1,6 +1,8 @@
 package fexcraft.tmt_slim;
 
 import net.minecraft.util.Vec3;
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.io.Serializable;
 
@@ -12,6 +14,7 @@ import java.io.Serializable;
 
 public class Vec3f implements Serializable {
 
+    public static final float radianF = (float) Math.PI / 180.0f;
     public float xCoord;
     public float yCoord;
     public float zCoord;
@@ -176,5 +179,56 @@ public class Vec3f implements Serializable {
     @Override
     public String toString(){
         return String.format("Vec3f[ %s, %s, %s ]", xCoord, yCoord, zCoord);
+    }
+
+    public Vec3f rotatePoint(float pitch, float yaw, float roll) {
+        float cos,sin,x= this.xCoord,y= this.yCoord,z= this.zCoord;
+        //rotate pitch
+        if (pitch != 0.0F) {
+            cos = (float)Math.cos(pitch*radianF);
+            sin = (float)Math.sin(pitch*radianF);
+
+            this.xCoord = (y * sin) + (x * cos);
+            this.yCoord = (y * cos) - (x * sin);
+        }
+        //rotate yaw
+        if (yaw != 0.0F) {
+            cos = (float)Math.cos(yaw*radianF);
+            sin = (float)Math.sin(yaw*radianF);
+
+            this.xCoord = (x * cos) - (z * sin);
+            this.zCoord = (x * sin) + (z * cos);
+        }
+        //rotate roll
+        if (roll != 0.0F) {
+            cos = (float)Math.cos(roll*radianF);
+            sin = (float)Math.sin(roll*radianF);
+
+            this.yCoord = (z * cos) - (y * sin);
+            this.zCoord = (z * sin) + (y * cos);
+        }
+        return this;
+    }
+
+    public Vec3f rotateOnYaw(float yaw) {
+        float cos,sin,x= this.xCoord,z= this.zCoord;
+        //rotate yaw
+        if (yaw != 0.0F) {
+            cos = (float)Math.cos(yaw*radianF);
+            sin = (float)Math.sin(yaw*radianF);
+
+            this.xCoord = (x * cos) - (z * sin);
+            this.zCoord = (x * sin) + (z * cos);
+        }
+        return this;
+    }
+
+    public Vec3f getRelativeVector(Vec3f vec){
+        Matrix4f mat = new Matrix4f();
+        mat.m00 = vec.xCoord; mat.m10 = vec.yCoord; mat.m20 = vec.zCoord;
+        Matrix4f.rotate(zCoord * 3.14159265F / 180, new Vector3f(1F, 0F, 0F), mat, mat);
+        Matrix4f.rotate(yCoord * 3.14159265F / 180, new Vector3f(0F, 0F, 1F), mat, mat);
+        Matrix4f.rotate(xCoord * 3.14159265F / 180, new Vector3f(0F, 1F, 0F), mat, mat);
+        return new Vec3f(mat.m00, mat.m10, mat.m20);
     }
 }

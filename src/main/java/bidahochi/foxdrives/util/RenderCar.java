@@ -4,6 +4,7 @@ import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.EntityCar;
 import com.google.gson.JsonObject;
 import fexcraft.tmt_slim.ModelRendererTurbo;
+import fexcraft.tmt_slim.Tessellator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
@@ -202,13 +203,33 @@ public class RenderCar extends Render {
         GL11.glShadeModel(GL_SMOOTH);
         GL11.glEnable(GL_NORMALIZE);
         //apply texture
-        Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(FoxDrives.MODID,
+        Tessellator.bindTexture(new ResourceLocation(FoxDrives.MODID,
                 car.getSkins()[car.getDataWatcher().getWatchableObjectInt(20)]+".png"));
+        //Minecraft.getMinecraft().getTextureManager().bindTexture();
         //reposition and rotation
-        GL11.glTranslated(x,y+0.625f,z);
+        GL11.glTranslated(x,y+(0.625f*car.getModelScale().yCoord),z);
+
+        if (car.getModelOffset() != null) {
+            if (car.rotationYaw != 0.0F) {
+                float cos = MathHelper.cos((car.rotationYaw) * ((float) Math.PI / 180.0f));
+                float sin = MathHelper.sin((car.rotationYaw) * ((float) Math.PI / 180.0f));
+
+                GL11.glTranslatef(car.getModelOffset().xCoord * cos - car.getModelOffset().zCoord * sin,
+                        car.getModelOffset().yCoord,
+                        car.getModelOffset().xCoord * sin - car.getModelOffset().zCoord * cos);
+            } else {
+                GL11.glTranslatef(car.getModelOffset().xCoord, car.getModelOffset().yCoord, car.getModelOffset().zCoord);
+            }
+        }
+        if (car.getModelRotation() != null) {
+            GL11.glRotatef(car.getModelRotation().xCoord, 1, 0, 0);
+            GL11.glRotatef(car.getModelRotation().yCoord, 0, 1, 0);
+            GL11.glRotatef(car.getModelRotation().zCoord, 0, 0, 1);
+        }
         GL11.glRotatef(-(car.rotationYaw + (car.rotationYaw - car.prevRotationYaw) * ticks) + 90, 0, 1, 0);
         GL11.glRotatef(180,1,0,0);
         GL11.glRotatef(car.getRollingDirection(),0,0,1);
+        GL11.glScalef(car.getModelScale().xCoord,car.getModelScale().yCoord,car.getModelScale().zCoord);
 
         int skyLight = car.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(car.posX), MathHelper.floor_double(car.posY), MathHelper.floor_double(car.posZ), 0);
         if (!renderModeGUI) {

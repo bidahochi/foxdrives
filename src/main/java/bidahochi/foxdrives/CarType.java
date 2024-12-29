@@ -47,6 +47,7 @@ public class CarType {
 	public static CarType MKDS_Standard;
 	public static CarType WagonKart;
 	public static CarType TurboToilet;
+	public static CarType F1_CAR;
 
 	public CarType(String id, Class<? extends EntityCar> carclass){
 		regname = id;
@@ -111,6 +112,11 @@ public class CarType {
 			if(type.clazz == carclass) return type.item;
 		}
 		return null;
+	}
+
+	public CarType riderScale(float scale) {
+		rider_scale = scale;
+		return this;
 	}
 
 }

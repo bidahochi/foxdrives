@@ -111,7 +111,7 @@ public class RollingStockModel extends ModelBase {
                         }
                         GL11.glNewList(disp, GL11.GL_COMPILE);
                         for (TexturedPolygon poly : list.animatedList.get(i).faces) {
-                            Tessellator.drawTexturedVertsWithNormal(poly, 0.0625F);
+                            Tessellator.getInstance().drawTexturedVertsWithNormal(poly, 0.0625F);
                         }
                         GL11.glEndList();
                     }

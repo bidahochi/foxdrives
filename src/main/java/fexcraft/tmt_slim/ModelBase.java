@@ -45,23 +45,27 @@ public class ModelBase extends ArrayList<ModelRendererTurbo> {
 	public List<Integer> displayList=new ArrayList<>();
 
 	public static Map<String,Integer> staticPartMap = new HashMap<>();
+	public Integer localGLID = null;
 
 	public void render(){
 		if(init){
 		    initAllParts();
 		}
 
-		if(disableCache || true) {
+		if(disableCache) {
 			render(boxList);
+		} else if(localGLID!=null && GL11.glIsList(localGLID)) {
+			GL11.glCallList(localGLID);
 		} else if(staticPartMap.get(this.getClass().getName())==null) {
-			int disp=GLAllocation.generateDisplayLists(1);
-			staticPartMap.put(this.getClass().getName(), disp);
-			GL11.glNewList(disp, GL11.GL_COMPILE);
+			localGLID=GLAllocation.generateDisplayLists(1);
+			staticPartMap.put(this.getClass().getName(), localGLID);
+			GL11.glNewList(localGLID, GL11.GL_COMPILE);
 			render(boxList);
 			GL11.glEndList();
 			boxList=null;
 		} else {
-			GL11.glCallList(staticPartMap.get(this.getClass().getName()));
+			localGLID=staticPartMap.get(this.getClass().getName());
+			GL11.glCallList(localGLID);
 		}
 
 		if(animatedList==null){return;}
@@ -86,7 +90,17 @@ public class ModelBase extends ArrayList<ModelRendererTurbo> {
 				GL11.glRotatef(part.rotateAngleZ, 0.0F, 0.0F, 1.0F);
 				GL11.glRotatef(part.rotateAngleX, 1.0F, 0.0F, 0.0F);
 
-				GL11.glCallList(displayList.get(i));
+				if(GL11.glIsList(displayList.get(i))) {
+					GL11.glCallList(displayList.get(i));
+				} else {
+					int disp = GLAllocation.generateDisplayLists(1);
+					displayList.set(i,disp);
+					GL11.glNewList(disp, GL11.GL_COMPILE);
+					for (TexturedPolygon poly : animatedList.get(i).faces) {
+						Tessellator.getInstance().drawTexturedVertsWithNormal(poly, 0.0625F);
+					}
+					GL11.glEndList();
+				}
 
 				GL11.glTranslatef(-part.rotationPointX * 0.0625F, -part.rotationPointY * 0.0625F, -part.rotationPointZ * 0.0625F);
 				if (part.ignoresLighting){
@@ -100,9 +114,8 @@ public class ModelBase extends ArrayList<ModelRendererTurbo> {
 					GL11.glDeleteLists(displayList.get(i),1);
 					displayList.set(i, null);
 				}
-
 			}
-			if(animatedList.get(i)!=null &&(displayList.size()<=i ||disableCache)) {
+			if(animatedList.get(i)!=null &&(displayList.size()<=i || disableCache)) {
 				int disp = GLAllocation.generateDisplayLists(1);
 				if(displayList.size()>i){
 					displayList.set(i, disp);
@@ -111,7 +124,7 @@ public class ModelBase extends ArrayList<ModelRendererTurbo> {
 				}
 				GL11.glNewList(disp, GL11.GL_COMPILE);
 				for (TexturedPolygon poly : animatedList.get(i).faces) {
-					Tessellator.drawTexturedVertsWithNormal(poly, 0.0625F);
+					Tessellator.getInstance().drawTexturedVertsWithNormal(poly, 0.0625F);
 				}
 				GL11.glEndList();
 			}

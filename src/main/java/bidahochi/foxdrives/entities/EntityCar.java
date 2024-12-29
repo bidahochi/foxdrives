@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fexcraft.tmt_slim.ModelBase;
+import fexcraft.tmt_slim.Vec3f;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -672,5 +673,17 @@ public abstract class EntityCar extends EntityAnimal {
 
     public void setGuiRenderScale(float guiRenderScale) {
         this.guiRenderScale = guiRenderScale;
+    }
+
+    public Vec3f getModelRotation() {
+        return new Vec3f(0,0,0);
+    }
+
+    public Vec3f getModelOffset() {
+        return new Vec3f(0,0,0);
+    }
+
+    public Vec3f getModelScale() {
+        return new Vec3f(1,1,1);
     }
 }
