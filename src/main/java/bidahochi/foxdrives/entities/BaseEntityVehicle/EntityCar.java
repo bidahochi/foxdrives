@@ -543,14 +543,7 @@ public abstract class EntityCar extends Entity {
             else if(velocity <= 0f){
                 velocity *= 0.35f;
             }
-            //clamp top speed
-            if(velocity > type().max_forward_speed){
-                velocity = type().max_forward_speed;
-            }
-            else if(velocity < -type().max_backward_speed){
-                velocity = -type().max_backward_speed;
-            }
-
+            clampTopSpeed(velocity);
             float diff = rider == null ? 0f : rotationYaw - rider.rotationYaw;
             if(running != 0){
                 rotationYaw -= (diff * turnStrength(velocity <= 0.0F));
@@ -584,6 +577,15 @@ public abstract class EntityCar extends Entity {
         }
     }
 
+    public void clampTopSpeed(double velocity) {
+        //clamp top speed
+        if(velocity > type().max_forward_speed){
+            this.velocity = type().max_forward_speed;
+        }
+        else if(velocity < -type().max_backward_speed){
+            this.velocity = -type().max_backward_speed;
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double p_70056_1_, double p_70056_3_, double p_70056_5_, float p_70056_7_, float p_70056_8_, int p_70056_9_) {

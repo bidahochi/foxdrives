@@ -47,6 +47,10 @@ entity.foxdrives.foxdrives.wagonkart.entity.name=Radio-Dominator Kart
 item.foxdrives.turbotoilet.name=Turbo-Toilet Kart
 entity.foxdrives.foxdrives.turbotoilet.entity.name=Turbo-Toilet Kart
 
+
+item.foxdrives.formula.name=Formula Race Car
+entity.foxdrives.foxdrives.formula.entity.name=Formula Race Car
+
 wrapmenu.Close Menu.name=Close Menu
 wrapmenu.Previous Page.name=Previous Page
 wrapmenu.Next Page.name=Next Page

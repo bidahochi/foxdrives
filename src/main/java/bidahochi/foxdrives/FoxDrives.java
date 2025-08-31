@@ -357,7 +357,15 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.0f, 0.1f, 0.0f })//LR, UD, FB
                 .acceleration(0.6f)
                 .maxspeed(4, 2);
-
+        CarType.FORMULA_CAR = CarType.register("formula", EntityFormulaCar.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0, -0.25f, 0f })
+                .acceleration(1)
+                .maxspeed(26, 3);
         //CarType Registry Entry registration
         for(CarType type : CarType.REGISTRY.values()){
             registerModEntity(type.clazz, MODID + "." + type.regname + ".entity", registryPosition, FoxDrives.instance, 1600, 3, true);
