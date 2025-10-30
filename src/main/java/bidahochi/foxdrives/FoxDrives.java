@@ -43,7 +43,7 @@ import static cpw.mods.fml.common.registry.EntityRegistry.registerModEntity;
 @Mod(modid = FoxDrives.MODID, version = FoxDrives.MOD_VERSION, name = "FoxDrives")
 public class FoxDrives {
     public static final String MODID = "foxdrives";
-    public static final String MOD_VERSION = "0.5.0";
+    public static final String MOD_VERSION = "0.5.1";
 
     //used for TMT render caching. false improves performance dramatically, true can fix rare bugs.
     public static boolean disableCache=false;
