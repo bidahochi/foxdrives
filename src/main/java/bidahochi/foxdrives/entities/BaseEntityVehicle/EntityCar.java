@@ -466,8 +466,6 @@ public abstract class EntityCar extends Entity {
     {
         if (!worldObj.isRemote)
         {
-            System.out.println(key);
-
             switch(key)
             {
                 case 1:
@@ -501,7 +499,6 @@ public abstract class EntityCar extends Entity {
                     dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
                 break;
             }
-            System.out.println(key + " " + player);
         }
     }
 
