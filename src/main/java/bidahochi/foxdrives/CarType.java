@@ -45,6 +45,7 @@ public class CarType {
 	public static CarType CAMPWAGON_1981_V8;
 	public static CarType CRUISEGOER;
 	public static CarType GILLIG_PHANTOM;
+	public static CarType O405N;
 	public static CarType HYSTER_H80FT;
 	public static CarType MKDS_Standard;
 	public static CarType WagonKart;
