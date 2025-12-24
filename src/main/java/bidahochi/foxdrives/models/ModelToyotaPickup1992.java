@@ -203,8 +203,8 @@ public class ModelToyotaPickup1992 extends ModelConverter //Same as Filename
         bodyModel[177] = new ModelRendererTurbo(this, 66, 38, textureX, textureY, BoxName.leftTurnLight); // Box 198 turnlight L
         bodyModel[178] = new ModelRendererTurbo(this, 66, 38, textureX, textureY, BoxName.rightTurnLight); // Box 199 turnlight R
         bodyModel[179] = new ModelRendererTurbo(this, 66, 38, textureX, textureY, BoxName.rightTurnLight); // Box 200 turnlight R
-        bodyModel[180] = new ModelRendererTurbo(this, 66, 27, textureX, textureY); // Box 201 turnlight L
-        bodyModel[181] = new ModelRendererTurbo(this, 66, 27, textureX, textureY); // Box 201 turnlight R
+        bodyModel[180] = new ModelRendererTurbo(this, 66, 27, textureX, textureY, BoxName.leftTurnLight); // Box 201 turnlight L
+        bodyModel[181] = new ModelRendererTurbo(this, 66, 27, textureX, textureY, BoxName.rightTurnLight); // Box 201 turnlight R
         bodyModel[182] = new ModelRendererTurbo(this, 130, 37, textureX, textureY); // Box 203
         bodyModel[183] = new ModelRendererTurbo(this, 130, 33, textureX, textureY); // Box 204
         bodyModel[184] = new ModelRendererTurbo(this, 130, 22, textureX, textureY); // Box 205

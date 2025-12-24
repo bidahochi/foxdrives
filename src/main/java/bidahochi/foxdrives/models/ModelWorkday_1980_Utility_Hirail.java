@@ -621,7 +621,7 @@ public class ModelWorkday_1980_Utility_Hirail extends ModelConverter//Same as Fi
 		bodyModel[128].setRotationPoint(1.5F, -2F, -5F);
 
 		bodyModel[129].addBox(0F, 0F, 0F, 2, 1, 18, 0F); // Box 157 cull
-		bodyModel[129].setRotationPoint(22.51F, 5F, -9F);
+		bodyModel[129].setRotationPoint(22.52F, 5F, -9F);
 
 		bodyModel[130].addShapeBox(0F, 0F, 0F, 2, 2, 3, 0F,0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, -2F, 0F, 0F, -2F, 0F, 0F, 0F, 0F); // Box 158
 		bodyModel[130].setRotationPoint(8.5F, 3F, -9F);
