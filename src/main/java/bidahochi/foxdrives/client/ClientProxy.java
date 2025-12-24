@@ -38,12 +38,22 @@ public class ClientProxy extends CommonProxy
     public boolean isClient(){return true;}
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        System.out.println("Open client");
-        Entity entity = world.getEntityByID(x);
-        if (ID == 101) {
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    {
+        Entity entity = null;
+        if (y == -1) {
+            for (Object ent : world.loadedEntityList) {
+                if (((Entity) ent).getEntityId() == x)
+                    entity = (Entity) ent;
+            }
+        }
+
+        if (ID == 101)
+        {
             return entity != null ? new GuiWrap(player, (EntityCar) entity) : null;
-        } else if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest){
+        }
+        else if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest)
+        {
             System.out.println("Open client");
             return new GuiCarInventory(player.inventory, (EntityCarChest) player.worldObj.getEntityByID(ID));
         }
