@@ -324,27 +324,39 @@ public abstract class EntityCar extends Entity {
      */
     public boolean attackEntityFrom(DamageSource source, float p_70097_2_) {
         if(worldObj.isRemote || isDead) return false;
-        setRollingDirection(-this.getRollingDirection());
-        setRollingDirection(10);
-        setDamage(this.getDamage() + p_70097_2_ * 10.0F);
+        if (source.getEntity() instanceof EntityPlayer && source.isProjectile() == false)
+        {
+            setRollingDirection(-this.getRollingDirection());
+            setRollingDirection(10);
+            setDamage(this.getDamage() + p_70097_2_ * 10.0F);
 
-        EntityPlayer player = source.getEntity() instanceof EntityPlayer ? player = (EntityPlayer)source.getEntity() : null;
-        if((player != null && player.capabilities.isCreativeMode) || getDamage() > 40){
-            if(riddenByEntity != null) riddenByEntity.mountEntity(null);
-            if(getDamage() > 40){
-                setDead();
-                if(player != null && !player.capabilities.isCreativeMode){
-                    Item item = CarType.getItemByClass(this.getClass());
-                    if(item != null){
-                        EntityItem ent = new EntityItem(worldObj);
-                        ent.setEntityItemStack(new ItemStack(item, 1));
-                        ent.setPosition(posX, posY + 0.5, posZ);
-                        worldObj.spawnEntityInWorld(ent);
+            EntityPlayer player = source.getEntity() instanceof EntityPlayer ? player = (EntityPlayer)source.getEntity() : null;
+            if((player != null && player.capabilities.isCreativeMode) || getDamage() > 40)
+            {
+                if(riddenByEntity != null) riddenByEntity.mountEntity(null);
+                if(getDamage() > 40)
+                {
+                    onEntityDestruction(source);
+                    setDead();
+                    if(player != null && !player.capabilities.isCreativeMode)
+                    {
+                        Item item = CarType.getItemByClass(this.getClass());
+                        if(item != null){
+                            EntityItem ent = new EntityItem(worldObj);
+                            ent.setEntityItemStack(new ItemStack(item, 1));
+                            ent.setPosition(posX, posY + 0.5, posZ);
+                            worldObj.spawnEntityInWorld(ent);
+                        }
                     }
                 }
             }
         }
         return true;
+    }
+
+    public void onEntityDestruction(DamageSource damagesource)
+    {
+        // Mostly used for child classes
     }
 
     public float getDamage(){

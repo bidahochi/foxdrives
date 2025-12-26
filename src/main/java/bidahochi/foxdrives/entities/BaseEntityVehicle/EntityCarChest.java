@@ -66,26 +66,19 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
      */
     public void onInventoryChanged(InventoryBasic p_76316_1_) {}
 
-    /**
-     * Called when the entity is attacked.
-     */
     @Override
-    public boolean attackEntityFrom(DamageSource damageSource, float p_70097_2_)
+    public void onEntityDestruction(DamageSource damagesource)
     {
-        super.attackEntityFrom(damageSource, p_70097_2_);
-        if (!this.worldObj.isRemote) {
-            if (inv != null) {
-                for (int i = 0; i < inv.getSizeInventory(); ++i) {
-                    ItemStack itemstack = inv.getStackInSlot(i);
+        if (inv != null)
+        {
+            for (int i = 0; i < inv.getSizeInventory(); ++i) {
+                ItemStack itemstack = inv.getStackInSlot(i);
 
-                    if (itemstack != null) {
-                        this.entityDropItem(itemstack, 0.0F);
-                    }
+                if (itemstack != null) {
+                    this.entityDropItem(itemstack, 0.0F);
                 }
             }
         }
-
-        return true;
     }
 
 
