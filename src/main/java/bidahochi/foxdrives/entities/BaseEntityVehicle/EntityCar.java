@@ -287,7 +287,7 @@ public abstract class EntityCar extends Entity {
     @Override
     public boolean interactFirst(EntityPlayer player){
         //if it's the skinning item, iterate to the next skin
-        if(!this.worldObj.isRemote && player.getHeldItem()!=null &&
+        if(player.getHeldItem()!=null &&
                 player.getHeldItem().getItem()== FoxDrives.wrap) {
                 if (!player.isSneaking()) {
                     //gets current skin value and loops around to 0 if it's past the entity's skin count.
