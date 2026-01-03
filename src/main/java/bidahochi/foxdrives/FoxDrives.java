@@ -13,6 +13,7 @@ import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_estate;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
 import bidahochi.foxdrives.util.*;
+import com.google.gson.JsonParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -74,6 +75,8 @@ public class FoxDrives {
 
     public static Logger fdLog = LogManager.getLogger(MODID);
     public static File configDirectory;
+
+    public static final JsonParser JSON_PARSER = new JsonParser();
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)

@@ -10,9 +10,6 @@ import net.minecraft.world.World;
 public class EntityO405N extends EntityCar
 {
 
-    public EntityO405N(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityO405N(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "VGF Frankfurt");

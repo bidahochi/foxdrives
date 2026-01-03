@@ -10,9 +10,6 @@ import net.minecraft.world.World;
 public class EntityTurboToilet extends EntityCar
 {
 
-    public EntityTurboToilet(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityTurboToilet(World p_i1685_1_) {
         super(p_i1685_1_);
     }

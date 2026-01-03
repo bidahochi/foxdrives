@@ -11,9 +11,6 @@ import net.minecraft.world.World;
 public class EntityAwooga extends EntityCar
 {
 
-    public EntityAwooga(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityAwooga(World p_i1685_1_) {
         super(p_i1685_1_);
     }

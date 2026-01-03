@@ -85,9 +85,14 @@ public class EventManager {
         else{
             car =player.ridingEntity instanceof EntityCar ? (EntityCar)player.ridingEntity : player.ridingEntity instanceof EntitySeat ? ((EntitySeat)player.ridingEntity).car : null;
         }
-        if(car == null) return;
+        if(car == null)
+        {
+            return;
+        }
+
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Yaw: " + car.rotationYaw, 5, 5, 0xffff00);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Vel: " + car.velocity, 5, 15, 0xffff00);
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Owner: " + car.getTransportOwner(), 5, 35, 0xffff00);
         car.setRollingVel(car.velocity);
         if(!car.worldObj.isRemote) Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Local Server", 5, 25, 0xffff00);
     }

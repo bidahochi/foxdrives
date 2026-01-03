@@ -3,9 +3,11 @@ package bidahochi.foxdrives.entities.BaseEntityVehicle;
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.EntitySeat;
+import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
+import bidahochi.foxdrives.util.ItemCar;
+import bidahochi.foxdrives.util.wrapgui.GuiWrap;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fdfexcraft.tmt_slim.ModelBase;
@@ -17,13 +19,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,46 +51,79 @@ public abstract class EntityCar extends Entity {
     public boolean braking;
     private float guiRenderScale = 25f;
 
+    /**
+     * Whether this vehicle is locked and can only be used by the Owner
+     */
+    private boolean locked = false;
+
+    /**
+     * Lock packet
+     */
+    public boolean getTransportLockedFromPacket() {
+        return locked;
+    }
+
+    /**
+     * Lock packet
+     */
+    public void setTransportLockedFromPacket(boolean set) {
+        // System.out.println(worldObj.isRemote + " " + set);
+        locked = set;
+    }
+
+    /**
+     * The owner of the vehicle: The user who spawned it
+     */
+    private String transportOwner = "";
+
+    public String getTransportOwner() {
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.vehicleOwner.AsString()).getAsString();
+    }
+
+    public void setTransportOwner(String transportOwner)
+    {
+        this.transportOwner = transportOwner;
+        if (!worldObj.isRemote)
+        {
+            dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
+        }
+    }
+
+
+    /**
+     * The creator of the train
+     */
+    public String vehicleCreator = "";
+
+
     public ArrayList<EntitySeat> passengers = new ArrayList<>();
+
+    /**
+     * <p>List of players trusted to use the train</p>
+     */
+    private List<TrustedPlayer> trustedList = new ArrayList<>();
+
     /**
      * <p>Stores texture descriptions. Integer represents the number of the skin as registered in DataWatcher, and the String is the description itself.</p>
      */
     public final Map<Integer, String> textureDescriptionMap = new HashMap<>();
 
      /**
-     * client side entity spawn
+     * entity spawn
      */
     public EntityCar(World world) {
         super(world);
         //this can be called on server from the inventory car class, so, dont do client stuff there
-        if(world.isRemote) {
-            this.preventEntitySpawning = true;
-            this.setSize(getHitboxSize(), 1.6F);
+        if(world.isRemote)
+        {
             this.yOffset = 0;
-            ignoreFrustumCheck = true;
-            this.isImmuneToFire = true;
         }
-    }
 
-
-    /**
-     * server side entity spawn
-     */
-    public EntityCar(World world, double xPos, double yPos, double zPos) {
-        super(world);
-        this.setPosition(xPos, yPos, zPos);
-        this.motionX = 0.0D;
-        this.motionY = 0.0D;
-        this.motionZ = 0.0D;
-        this.prevPosX = xPos;
-        this.prevPosY = yPos;
-        this.prevPosZ = zPos;
+        this.preventEntitySpawning = true;
         this.setSize(getHitboxSize(), 1.6F);
         ignoreFrustumCheck = true;
         this.isImmuneToFire = true;
-        this.preventEntitySpawning = true;
     }
-
 
     /**
      * Literally just exists to properly init the datawatcher stuff.
@@ -96,7 +131,7 @@ public abstract class EntityCar extends Entity {
     @Override
     protected void entityInit(){
         this.dataWatcher.addObject(DW_VEL, velocity);
-        this.dataWatcher.addObject(DW_LIGHTSJSON, lightingDetailsJSON());//tracks vehicle lighting
+        this.dataWatcher.addObject(DW_VEHICLEDATAJSON, vehicleDataJSON());//tracks vehicle lighting
         this.dataWatcher.addObject(DW_RUNNING, running);//tracks if the entity is on or not
         this.dataWatcher.addObject(DW_ROLL, roll);//tracks the entity roll from being hit
         this.dataWatcher.addObject(DW_HEALTH, health);//tracks entity health
@@ -106,16 +141,21 @@ public abstract class EntityCar extends Entity {
         //this.dataWatcher.addObject(DW_BRAKING, 0);//throttle
     }
 
-    public JsonObject lightingDetailsAsJsonObjectDW()
+    public JsonObject vehicleDataAsJsonObjectDW()
     {
         try
         {
-            return AsJsonObject(dataWatcher.getWatchableObjectString(DW_LIGHTSJSON));
+            return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON));
         }
         catch (Exception e)
         {
-            return lightingDetailsAsJSON();
+            return vehicleDataAsJSON();
         }
+    }
+
+    public int getSkin()
+    {
+        return dataWatcher.getWatchableObjectInt(DW_SKIN);
     }
 
     private boolean isHeadlightsEnabled = false;
@@ -126,61 +166,55 @@ public abstract class EntityCar extends Entity {
     private byte turnSignalTick = 0;
     private boolean areBrakeLightsOn = false;
 
-    public String lightingDetailsJSON()
+    public String vehicleDataJSON()
     {
-        JsonObject lightingDetailsJSON = new JsonObject();
-        lightingDetailsJSON.addProperty("isHeadlightsEnabled", isHeadlightsEnabled);
-        lightingDetailsJSON.addProperty("isBeaconEnabled", isBeaconEnabled);
-        lightingDetailsJSON.addProperty("beaconCycleIndex", beaconCycleIndex);
-        lightingDetailsJSON.addProperty("ditchLightMode", ditchLightMode);
-        lightingDetailsJSON.addProperty("turnSignal", turnSignal);
-        lightingDetailsJSON.addProperty("turnSignalTick", turnSignalTick);
-        lightingDetailsJSON.addProperty("areBrakeLightsOn", areBrakeLightsOn);
-
-        return lightingDetailsJSON.toString();
+        return vehicleDataAsJSON().toString();
     }
 
-    public JsonObject lightingDetailsAsJSON()
+    public JsonObject vehicleDataAsJSON()
     {
-        JsonObject lightingDetailsJSON = new JsonObject();
-        lightingDetailsJSON.addProperty("isHeadlightsEnabled", isHeadlightsEnabled);
-        lightingDetailsJSON.addProperty("isBeaconEnabled", isBeaconEnabled);
-        lightingDetailsJSON.addProperty("beaconCycleIndex", beaconCycleIndex);
-        lightingDetailsJSON.addProperty("ditchLightMode", ditchLightMode);
-        lightingDetailsJSON.addProperty("turnSignal", turnSignal);
-        lightingDetailsJSON.addProperty("turnSignalTick", turnSignalTick);
-        lightingDetailsJSON.addProperty("areBrakeLightsOn", areBrakeLightsOn);
-        return lightingDetailsJSON;
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(DataMemberName.vehicleOwner.AsString(), transportOwner);
+        jsonObject.addProperty("locked", locked);
+        jsonObject.addProperty("vehicleCreator", vehicleCreator);
+        jsonObject.addProperty("isHeadlightsEnabled", isHeadlightsEnabled);
+        jsonObject.addProperty("isBeaconEnabled", isBeaconEnabled);
+        jsonObject.addProperty("beaconCycleIndex", beaconCycleIndex);
+        jsonObject.addProperty("ditchLightMode", ditchLightMode);
+        jsonObject.addProperty("turnSignal", turnSignal);
+        jsonObject.addProperty("turnSignalTick", turnSignalTick);
+        jsonObject.addProperty("areBrakeLightsOn", areBrakeLightsOn);
+        return jsonObject;
     }
 
     private JsonObject AsJsonObject(String string)
     {
-        return new JsonParser().parse(string).getAsJsonObject();
+        return FoxDrives.JSON_PARSER.parse(string).getAsJsonObject();
     }
 
     public boolean isLightsEnabled()
     {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_LIGHTSJSON)).get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
     }
 
     public boolean areBrakeLightsOn()
     {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_LIGHTSJSON)).get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
     }
 
     public boolean isBeaconEnabled()
     {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_LIGHTSJSON)).get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean();
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean();
     }
 
     public byte getBeaconCycleIndex()
     {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_LIGHTSJSON)).get(DataMemberName.beaconCycleIndex.AsString()).getAsByte();
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.beaconCycleIndex.AsString()).getAsByte();
     }
 
     public boolean isDitchLightsEnabled()
     {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_LIGHTSJSON)).get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0;
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0;
     }
 
     public float getVelocity()
@@ -285,27 +319,59 @@ public abstract class EntityCar extends Entity {
 
     /**add entity mount functionality, and remove item interactions*/
     @Override
-    public boolean interactFirst(EntityPlayer player){
+    public boolean interactFirst(EntityPlayer player)
+    {
         //if it's the skinning item, iterate to the next skin
-        if(player.getHeldItem()!=null &&
-                player.getHeldItem().getItem()== FoxDrives.wrap) {
-                if (!player.isSneaking()) {
+        if (this.getTransportLockedFromPacket())
+        {
+            boolean isTrustedPlayer = isPlayerTrusted(player.getDisplayName());
+            if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && isTrustedPlayer == false)
+            {
+                if (!worldObj.isRemote) player.addChatMessage(new ChatComponentText("Vehicle is locked by " + this.getTransportOwner() + "."));
+                return true;
+            }
+            else if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() == FoxDrives.wrap  && !isTrustedPlayer == false)
+            {
+                if (!worldObj.isRemote) player.addChatMessage(new ChatComponentText("Vehicle is locked by " + this.getTransportOwner() + "."));
+                return true;
+            }
+        }
+
+        // Owner Only Operations / Trusted to Break
+        if ((player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null)
+        {
+            if(player.getHeldItem().getItem() == FoxDrives.wrap)
+            {
+                if (!player.isSneaking())
+                {
                     //gets current skin value and loops around to 0 if it's past the entity's skin count.
                     int skin = dataWatcher.getWatchableObjectInt(DW_SKIN) + 1;
-                    if (skin >= getSkins().length) {
+                    if (skin >= getSkins().length)
+                    {
                         skin = 0;
                     }
                     dataWatcher.updateObject(DW_SKIN, skin);
-                } else if (getSkins().length > 1) {
-                    player.openGui(FoxDrives.instance, 101, player.getEntityWorld(), this.getEntityId(), -1, (int) this.posZ);
+                    return true;
                 }
-        //otherwise, try to mount the entity
-        } else if (!this.worldObj.isRemote) {
-            if(riddenByEntity == null){
+                else if (getSkins().length > 1)
+                {
+                    player.openGui(FoxDrives.instance, 101, player.getEntityWorld(), this.getEntityId(), -1, (int) this.posZ);
+                    return true;
+                }
+                //otherwise, try to mount the entity
+            }
+        }
+
+        if (!this.worldObj.isRemote)
+        {
+            if(riddenByEntity == null)
+            {
                 player.mountEntity(this);
             }
-            else if(player.ridingEntity == null){
-                if(passengers.size() + 1 < type().passenger_pos.size()){
+            else if(player.ridingEntity == null)
+            {
+                if(passengers.size() + 1 < type().passenger_pos.size())
+                {
                     EntitySeat seat = new EntitySeat(this);
                     seat.setPosition(posX, posY, posZ);
                     seat.getDataWatcher().updateObject(17, getEntityId());
@@ -341,9 +407,12 @@ public abstract class EntityCar extends Entity {
                     if(player != null && !player.capabilities.isCreativeMode)
                     {
                         Item item = CarType.getItemByClass(this.getClass());
-                        if(item != null){
+                        if(item != null)
+                        {
+                            ItemStack stack = ItemCar.setPersistentData(new ItemStack(item, 1), this);
+                            exportTrustedListToNBT(stack != null ? stack.getTagCompound() : null);
                             EntityItem ent = new EntityItem(worldObj);
-                            ent.setEntityItemStack(new ItemStack(item, 1));
+                            ent.setEntityItemStack(stack);
                             ent.setPosition(posX, posY + 0.5, posZ);
                             worldObj.spawnEntityInWorld(ent);
                         }
@@ -428,7 +497,7 @@ public abstract class EntityCar extends Entity {
 
         if (!worldObj.isRemote)
         {
-            dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+            dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
 
         }
     }
@@ -443,24 +512,26 @@ public abstract class EntityCar extends Entity {
         dataWatcher.updateObject(DW_YAW, rotationYaw);
         dataWatcher.updateObject(DW_SKIN, compound.getInteger("skin"));
 
-        JsonObject lightDetailsJson;
+        JsonObject vehicleDetailsJson;
         try
         {
-            lightDetailsJson = AsJsonObject(compound.getString(DataMemberName.lightingDetailsJSON.AsString()));
+            vehicleDetailsJson = AsJsonObject(compound.getString(DataMemberName.vehicleDetailsJSON.AsString()));
         }
         catch (Exception e)
         {
-            lightDetailsJson = lightingDetailsAsJSON();
+            vehicleDetailsJson = vehicleDataAsJSON();
         }
 
-        isHeadlightsEnabled = lightDetailsJson.get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
-        isBeaconEnabled = lightDetailsJson.get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean();
-        beaconCycleIndex = lightDetailsJson.get(DataMemberName.beaconCycleIndex.AsString()).getAsByte();
-        ditchLightMode = lightDetailsJson.get(DataMemberName.ditchLightMode.AsString()).getAsByte();
-        turnSignal = lightDetailsJson.get(DataMemberName.turnSignal.AsString()).getAsByte();
-        turnSignalTick = lightDetailsJson.get(DataMemberName.turnSignalTick.AsString()).getAsByte();
-        areBrakeLightsOn = lightDetailsJson.get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
-        dataWatcher.updateObject(DW_LIGHTSJSON, lightingDetailsJSON());
+        transportOwner = vehicleDetailsJson.get(DataMemberName.vehicleOwner.AsString()).getAsString();
+        vehicleCreator = vehicleDetailsJson.get(DataMemberName.vehicleCreator.AsString()).getAsString();
+        isHeadlightsEnabled = vehicleDetailsJson.get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
+        isBeaconEnabled = vehicleDetailsJson.get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean();
+        beaconCycleIndex = vehicleDetailsJson.get(DataMemberName.beaconCycleIndex.AsString()).getAsByte();
+        ditchLightMode = vehicleDetailsJson.get(DataMemberName.ditchLightMode.AsString()).getAsByte();
+        turnSignal = vehicleDetailsJson.get(DataMemberName.turnSignal.AsString()).getAsByte();
+        turnSignalTick = vehicleDetailsJson.get(DataMemberName.turnSignalTick.AsString()).getAsByte();
+        areBrakeLightsOn = vehicleDetailsJson.get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
+        dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
     @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
@@ -468,7 +539,7 @@ public abstract class EntityCar extends Entity {
         compound.setFloat("vel", velocity);
         compound.setFloat("yaw", rotationYaw);
         compound.setInteger("skin", dataWatcher.getWatchableObjectInt(DW_SKIN));
-        compound.setString("lightingDetailsJSON", dataWatcher.getWatchableObjectString(DW_LIGHTSJSON));
+        compound.setString(DataMemberName.vehicleDetailsJSON.MemberName, dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON));
     }
 
     /**
@@ -488,27 +559,27 @@ public abstract class EntityCar extends Entity {
                     //dataWatcher.updateObject(DW_BRAKING, 1);
                     areBrakeLightsOn = !areBrakeLightsOn;
                     braking = true;
-                    dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                 break;
                 case 4:
                     setPacketTurnIndicator(turnSignal != -1 ? (byte)-1 : 0);
-                    dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                     break;
                 case 5:
                     setPacketTurnIndicator(turnSignal != 1 ? (byte)1 : 0);
-                    dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                     break;
                 case 10:
                     setPacketLights(isLightsEnabled() ? false : true);
-                    dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                 break;
                 case 11:
                     setPacketBeacon(isBeaconEnabled() ? false : true);
-                    dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                 break;
                 case 12:
                     setPacketDitchLightsMode(isDitchLightsEnabled() ? (byte) 0 : (byte) 1);
-                    dataWatcher.updateObject(DW_LIGHTSJSON ,lightingDetailsJSON());
+                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                 break;
             }
         }
@@ -784,5 +855,83 @@ public abstract class EntityCar extends Entity {
 
         //this.limbSwingAmount += (f6 - this.limbSwingAmount) * 0.4F;
         //this.limbSwing += this.limbSwingAmount;
+
+
+
+    }
+    // Implements Locked & Trusted List
+
+    /**
+     * @return Returns String ArrayList of trusted players' usernames.
+     */
+    public List<TrustedPlayer> getTrustedList() {
+        return trustedList;
+    }
+    public void setTrustedList(List<TrustedPlayer> trustedList) { this.trustedList = trustedList; }
+
+    /**
+     * <p>Returns whether or not a player is trusted to a piece of rolling stock.</p>
+     * @param displayName Case-insensitive display name of player.
+     * @return True if the player is trusted, false if the player is not trusted.
+     */
+    public boolean isPlayerTrusted(String displayName) {
+        for (TrustedPlayer trustedPlayer : this.getTrustedList()) {
+            if (trustedPlayer.getDisplayName().equalsIgnoreCase(displayName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p>Returns whether or not a player is trusted to break a piece of rolling stock.</p>
+     * @param displayName Case-insensitive display name of player.
+     * @return True if player has break access, false if player does not have break access.
+     */
+    public boolean isPlayerTrustedToBreak(String displayName) {
+        for (TrustedPlayer trustedPlayer : this.getTrustedList()) {
+            if (trustedPlayer.getDisplayName().equalsIgnoreCase(displayName)) {
+                return trustedPlayer.hasBreakAccess();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p>Export trusted players to NBT tag for data saving.</p>
+     * @param nbttagcompound NBT tag into which to write trusted list.
+     */
+    public void exportTrustedListToNBT(NBTTagCompound nbttagcompound) {
+        if (!trustedList.isEmpty()) {
+            NBTTagList trustedList = new NBTTagList();
+            for (TrustedPlayer trustedPlayer : this.trustedList) {
+                NBTTagCompound trustedPlayerTag = new NBTTagCompound();
+                trustedPlayerTag.setString("playerName", trustedPlayer.getDisplayName());
+                trustedPlayerTag.setBoolean("breakAccess", trustedPlayer.hasBreakAccess());
+                trustedList.appendTag(trustedPlayerTag);
+            }
+            nbttagcompound.setTag("trustedList", trustedList);
+            nbttagcompound.setString("trustedListPreviousOwner", getTransportOwner());
+        }
+    }
+
+    /**
+     * <p>Import a trusted player list from a given NBT tag.</p>
+     * @param nbttagcompound NBT tag from which to import trusted list.
+     */
+    public void importTrustedListFromNBT(NBTTagCompound nbttagcompound) {
+        if (nbttagcompound.hasKey("trustedList")) {
+            NBTTagList trustedList = nbttagcompound.getTagList("trustedList", Constants.NBT.TAG_COMPOUND);
+            this.trustedList.clear();
+            for (int i = 0; i < trustedList.tagCount(); i++) {
+                if (!trustedList.getCompoundTagAt(i).getString("playerName").equalsIgnoreCase(getTransportOwner())) // Check to ensure we're not adding the current owner to the trusted list...
+                    this.trustedList.add(new TrustedPlayer(trustedList.getCompoundTagAt(i).getString("playerName"), trustedList.getCompoundTagAt(i).getBoolean("breakAccess")));
+            }
+            if (nbttagcompound.hasKey("trustedListPreviousOwner")) { // If the previous owner is not the one who placed down the piece of rolling stock...
+                if (!nbttagcompound.getString("trustedListPreviousOwner").equalsIgnoreCase(getTransportOwner())) {
+                    getTrustedList().add(new TrustedPlayer(nbttagcompound.getString("trustedListPreviousOwner"), true));
+                }
+            }
+        }
     }
 }

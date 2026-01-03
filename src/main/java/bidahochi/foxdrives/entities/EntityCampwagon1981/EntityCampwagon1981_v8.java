@@ -8,10 +8,6 @@ import net.minecraft.world.World;
 
 public class EntityCampwagon1981_v8 extends EntityCarChest
 {
-
-    public EntityCampwagon1981_v8(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityCampwagon1981_v8(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "Base Trim");

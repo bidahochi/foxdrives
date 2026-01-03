@@ -13,9 +13,6 @@ import net.minecraft.world.World;
 public class EntityFormulaCar extends EntityCarChest
 {
 
-    public EntityFormulaCar(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityFormulaCar(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "Racing Point");

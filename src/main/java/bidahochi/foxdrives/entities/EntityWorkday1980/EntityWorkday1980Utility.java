@@ -9,10 +9,6 @@ import net.minecraft.world.World;
 
 public class EntityWorkday1980Utility extends EntityCarChest
 {
-
-    public EntityWorkday1980Utility(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityWorkday1980Utility(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "Factory Blank");

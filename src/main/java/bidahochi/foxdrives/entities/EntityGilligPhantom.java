@@ -9,9 +9,6 @@ import net.minecraft.world.World;
 public class EntityGilligPhantom extends EntityCar
 {
 
-    public EntityGilligPhantom(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityGilligPhantom(World p_i1685_1_) {
         super(p_i1685_1_);
     }

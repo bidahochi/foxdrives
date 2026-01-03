@@ -23,13 +23,9 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
      *
      * @param world
      */
-    public EntityCarChest(World world) {
+    public EntityCarChest(World world)
+    {
         super(world);
-        this.func_110226_cD();
-    }
-
-    public EntityCarChest(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
         this.func_110226_cD();
     }
 

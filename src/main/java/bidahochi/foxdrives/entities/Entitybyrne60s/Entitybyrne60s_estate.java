@@ -10,9 +10,6 @@ import net.minecraft.world.World;
 public class Entitybyrne60s_estate extends EntityCarChest
 {
 
-    public Entitybyrne60s_estate(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public Entitybyrne60s_estate(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "Baby Blue");

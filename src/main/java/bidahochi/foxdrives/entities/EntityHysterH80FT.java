@@ -10,9 +10,6 @@ import net.minecraft.world.World;
 public class EntityHysterH80FT extends EntityCar
 {
 
-    public EntityHysterH80FT(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public EntityHysterH80FT(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "Yellow");

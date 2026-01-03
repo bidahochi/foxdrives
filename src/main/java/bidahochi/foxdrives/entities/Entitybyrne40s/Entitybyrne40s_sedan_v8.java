@@ -9,9 +9,6 @@ import net.minecraft.world.World;
 
 public class Entitybyrne40s_sedan_v8 extends EntityCarChest
 {
-
-    public Entitybyrne40s_sedan_v8(World world, double xPos, double yPos, double zPos) { super(world, xPos, yPos, zPos);
-    }
     public Entitybyrne40s_sedan_v8(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "Bayview Blue");

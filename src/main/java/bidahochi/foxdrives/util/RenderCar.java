@@ -85,7 +85,7 @@ public class RenderCar extends Render {
         }
 
         // render objects that change lighting:
-        JsonObject lightDetails = car.lightingDetailsAsJsonObjectDW();
+        JsonObject lightDetails = car.vehicleDataAsJsonObjectDW();
         for (ModelRendererTurbo lighting : car.modelInstance.ignoreLightObjects)
         {
             switch (lighting.boxName)

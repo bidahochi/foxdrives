@@ -2,7 +2,7 @@ package bidahochi.foxdrives.util;
 
 public class FoxDrivesConstants
 {
-    public static int DW_LIGHTSJSON = 16;
+    public static int DW_VEHICLEDATAJSON = 16;
     public static int DW_RUNNING = 17;
     public static int DW_ROLL = 18;
     public static int DW_HEALTH = 19;

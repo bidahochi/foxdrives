@@ -5,6 +5,8 @@ package bidahochi.foxdrives.util;
  */
 public enum DataMemberName
 {
+    vehicleOwner("vehicleOwner"),
+    vehicleCreator("vehicleCreator"),
     isHeadlightsEnabled("isHeadlightsEnabled"),
     areBrakeLightsOn("areBrakeLightsOn"),
     turnSignal("turnSignal"),
@@ -12,8 +14,8 @@ public enum DataMemberName
     isBeaconEnabled("isBeaconEnabled"),
     beaconCycleIndex("beaconCycleIndex"),
     ditchLightMode("ditchLightMode"),
-    lightingDetailsJSONString("lightingDetailsJSONString"),
-    lightingDetailsJSON("lightingDetailsJSON");
+    vehicleDetailsJSONString("vehicleDetailsJSONString"),
+    vehicleDetailsJSON("vehicleDetailsJSON");
 
     public final String MemberName;
 

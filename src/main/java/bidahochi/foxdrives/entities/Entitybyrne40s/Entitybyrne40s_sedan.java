@@ -9,10 +9,6 @@ import net.minecraft.world.World;
 
 public class Entitybyrne40s_sedan extends EntityCarChest
 {
-
-    public Entitybyrne40s_sedan(World world, double xPos, double yPos, double zPos) {
-        super(world, xPos, yPos, zPos);
-    }
     public Entitybyrne40s_sedan(World p_i1685_1_) {
         super(p_i1685_1_);
         textureDescriptionMap.put(0, "1948 Base Trim");
