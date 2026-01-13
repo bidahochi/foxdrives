@@ -7,17 +7,21 @@ import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
 import bidahochi.foxdrives.util.ItemCar;
 import bidahochi.foxdrives.util.wrapgui.GuiWrap;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
@@ -34,7 +38,7 @@ import java.util.Map;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
-public abstract class EntityCar extends Entity {
+public abstract class EntityCar extends Entity implements IEntityAdditionalSpawnData {
 
     @SideOnly(Side.CLIENT)
     public ModelBase modelInstance;
@@ -69,6 +73,10 @@ public abstract class EntityCar extends Entity {
     public void setTransportLockedFromPacket(boolean set) {
         // System.out.println(worldObj.isRemote + " " + set);
         locked = set;
+        if (!worldObj.isRemote)
+        {
+            dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
+        }
     }
 
     /**
@@ -175,7 +183,7 @@ public abstract class EntityCar extends Entity {
     {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(DataMemberName.vehicleOwner.AsString(), transportOwner);
-        jsonObject.addProperty("locked", locked);
+        jsonObject.addProperty(DataMemberName.isTransportLocked.AsString(), locked);
         jsonObject.addProperty("vehicleCreator", vehicleCreator);
         jsonObject.addProperty("isHeadlightsEnabled", isHeadlightsEnabled);
         jsonObject.addProperty("isBeaconEnabled", isBeaconEnabled);
@@ -321,7 +329,14 @@ public abstract class EntityCar extends Entity {
     @Override
     public boolean interactFirst(EntityPlayer player)
     {
-        //if it's the skinning item, iterate to the next skin
+        if (!worldObj.isRemote && player.getHeldItem() != null && player.getHeldItem().getItem().getUnlocalizedName().toLowerCase().contains("tc:adminbook") && player.canCommandSenderUseCommand(2, ""))
+        {
+            setTransportLockedFromPacket(!locked);
+            player.addChatMessage(new ChatComponentText(locked ? "Locked" : "Unlocked"));
+
+            return true;
+        }
+
         if (this.getTransportLockedFromPacket())
         {
             boolean isTrustedPlayer = isPlayerTrusted(player.getDisplayName());
@@ -338,7 +353,7 @@ public abstract class EntityCar extends Entity {
         }
 
         // Owner Only Operations / Trusted to Break
-        if ((player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null)
+        if ((this.getTransportLockedFromPacket() == false || player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null)
         {
             if(player.getHeldItem().getItem() == FoxDrives.wrap)
             {
@@ -388,21 +403,27 @@ public abstract class EntityCar extends Entity {
     /**
      * Called when the entity is attacked.
      */
-    public boolean attackEntityFrom(DamageSource source, float p_70097_2_) {
+    public boolean attackEntityFrom(DamageSource damagesource, float p_70097_2_) {
         if(worldObj.isRemote || isDead) return false;
-        if (source.getEntity() instanceof EntityPlayer && source.isProjectile() == false)
+        if (damagesource.getEntity() instanceof EntityPlayer && damagesource.isProjectile() == false)
         {
+            if (canBeDestroyedByPlayer(damagesource))
+            {
+                ((EntityPlayer) damagesource.getEntity()).addChatComponentMessage(new ChatComponentText("Cannot remove " + " owned by " + getTransportOwner() + "."));
+                return false;
+            }
+
             setRollingDirection(-this.getRollingDirection());
             setRollingDirection(10);
             setDamage(this.getDamage() + p_70097_2_ * 10.0F);
 
-            EntityPlayer player = source.getEntity() instanceof EntityPlayer ? player = (EntityPlayer)source.getEntity() : null;
+            EntityPlayer player = damagesource.getEntity() instanceof EntityPlayer ? player = (EntityPlayer)damagesource.getEntity() : null;
             if((player != null && player.capabilities.isCreativeMode) || getDamage() > 40)
             {
                 if(riddenByEntity != null) riddenByEntity.mountEntity(null);
                 if(getDamage() > 40)
                 {
-                    onEntityDestruction(source);
+                    onEntityDestruction(damagesource);
                     setDead();
                     if(player != null && !player.capabilities.isCreativeMode)
                     {
@@ -421,6 +442,25 @@ public abstract class EntityCar extends Entity {
             }
         }
         return true;
+    }
+
+    protected boolean canBeDestroyedByPlayer(DamageSource damagesource) {
+        if (this.getTransportLockedFromPacket())
+        {
+            if (damagesource.getEntity() instanceof EntityPlayer)
+            {
+                if (!((EntityPlayer) damagesource.getEntity()).getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && !(this.isPlayerTrustedToBreak(((EntityPlayerMP) damagesource.getEntity()).getDisplayName())))
+                {
+                    ((EntityPlayer) damagesource.getEntity()).addChatMessage(new ChatComponentText("You are not the owner!"));
+                    return true;
+                }
+            }
+            else if (!damagesource.isProjectile())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void onEntityDestruction(DamageSource damagesource)
@@ -516,12 +556,20 @@ public abstract class EntityCar extends Entity {
         try
         {
             vehicleDetailsJson = AsJsonObject(compound.getString(DataMemberName.vehicleDetailsJSON.AsString()));
+            ReverseMapJson(vehicleDetailsJson);
         }
         catch (Exception e)
         {
             vehicleDetailsJson = vehicleDataAsJSON();
+            ReverseMapJson(vehicleDetailsJson);
+            FoxDrives.fdLog.info(e.getMessage());
         }
 
+        dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
+    }
+
+    private void ReverseMapJson(JsonObject vehicleDetailsJson)
+    {
         transportOwner = vehicleDetailsJson.get(DataMemberName.vehicleOwner.AsString()).getAsString();
         vehicleCreator = vehicleDetailsJson.get(DataMemberName.vehicleCreator.AsString()).getAsString();
         isHeadlightsEnabled = vehicleDetailsJson.get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
@@ -531,8 +579,9 @@ public abstract class EntityCar extends Entity {
         turnSignal = vehicleDetailsJson.get(DataMemberName.turnSignal.AsString()).getAsByte();
         turnSignalTick = vehicleDetailsJson.get(DataMemberName.turnSignalTick.AsString()).getAsByte();
         areBrakeLightsOn = vehicleDetailsJson.get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
-        dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
+        locked = vehicleDetailsJson.get(DataMemberName.isTransportLocked.AsString()).getAsBoolean();
     }
+
     @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         compound.setByte("run", running);
@@ -933,5 +982,27 @@ public abstract class EntityCar extends Entity {
                 }
             }
         }
+    }
+
+    /**
+     * <p>This method is called on the client side when an entity is being loaded in. The additionalData buffer is sent from the server
+     * and is populated by the server using the writeSpawnData method.</p>
+     * <br></br><p>"this is basically NBT for entity spawn, to keep data between client and server in sync because some data is not automatically shared."</p>
+     * @param additionalData The packet data stream
+     */
+    @Override
+    public void readSpawnData(ByteBuf additionalData) {
+        locked = additionalData.readBoolean();
+    }
+
+    /**
+     * <p>This method is called on the server side when a connected client is loading the entity. Data written
+     * to the ByteBuffer will be synced with the client and available to the client through the readSpawnData method.</p>
+     * <br></br><p>"this is basically NBT for entity spawn, to keep data between client and server in sync because some data is not automatically shared."</p>
+     * @param buffer The packet data stream
+     */
+    @Override
+    public void writeSpawnData(ByteBuf buffer) {
+        buffer.writeBoolean(locked);
     }
 }

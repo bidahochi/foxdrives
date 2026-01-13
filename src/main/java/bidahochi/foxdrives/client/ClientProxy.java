@@ -1,6 +1,8 @@
 package bidahochi.foxdrives.client;
 
 
+import bidahochi.foxdrives.client.gui.GuiIDs;
+import bidahochi.foxdrives.client.gui.lockGui.GuiLockMenu;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.entities.EntitySeat;
@@ -38,26 +40,28 @@ public class ClientProxy extends CommonProxy
     public boolean isClient(){return true;}
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    {
         System.out.println("Open client");
         Entity entity = world.getEntityByID(x);
-        if (ID == 101) {
-
-
-
-
-
-
-
-
-            return entity != null ? new GuiWrap(player, (EntityCar) entity) : null;
-        } else if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest){
-
-
-            System.out.println("Open client");
-            return new GuiCarInventory(player.inventory, (EntityCarChest) player.worldObj.getEntityByID(ID));
+        switch (ID)
+        {
+            case 101:
+                return entity != null ? new GuiWrap(player, (EntityCar) entity) : null;
+            case GuiIDs.LOCK_MENU:
+                if (entity != null) { // If player is riding the entity (locomotives).
+                    return new GuiLockMenu(player, (EntityCar) entity);
+                } else { // If player is not riding the entity (freight).
+                    return entity != null ? new GuiLockMenu(player, ((EntityCar) entity)) : null;
+                }
+            default:
+                if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest)
+                {
+                    System.out.println("Open client");
+                    return new GuiCarInventory(player.inventory, (EntityCarChest) player.worldObj.getEntityByID(ID));
+                }
+                return null;
         }
-        return null;
     }
 
     public static final net.minecraft.client.renderer.entity.RenderPlayer playerRender = new net.minecraft.client.renderer.entity.RenderPlayer()

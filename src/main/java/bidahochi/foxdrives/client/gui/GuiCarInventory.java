@@ -1,6 +1,7 @@
 package bidahochi.foxdrives.client.gui;
 
 import bidahochi.foxdrives.FoxDrives;
+import bidahochi.foxdrives.client.gui.specialButtons.TransportLockGuiHandler;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.util.ContainerCarInventory;
 import bidahochi.foxdrives.util.PacketInteract;
@@ -95,6 +96,8 @@ public class GuiCarInventory extends GuiContainer {
         buttonList.add(
                 new GuiButton( 11,rowOneX,rowOneY, 80,buttonHeight,
                         car.isBeaconEnabled() ? "Beacons On" : "Beacons Off"));
+        buttonList.add(
+                TransportLockGuiHandler.createLockButton(car, mc.thePlayer, topRowX, topRowY, 0, -10, 60));;
 
 
 
@@ -111,9 +114,17 @@ public class GuiCarInventory extends GuiContainer {
             case 12:
                 FoxDrives.interactChannel.sendToServer(new PacketInteract(button.id, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
             break;
+            case 50:
+                TransportLockGuiHandler.handleLockButton(this, button, Minecraft.getMinecraft().thePlayer, car, isShiftKeyDown());
+                break;
         }
     }
 
     public static int percentTop(int value){return (int)(guiTop*(value*0.01f));}
     public static int percentLeft(int value){return (int)(guiLeft*(value*0.01f));}
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
 }

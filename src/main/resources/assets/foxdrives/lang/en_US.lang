@@ -62,4 +62,23 @@ wrapmenu.Lights Off.name=Lights Off
 wrapmenu.Hide Models.name=Hide Models
 wrapmenu.Show Models.name=Show Models
 
+train.owner.name=You are not the owner!
+train.locked.name=Locked
+train.unlocked.name=Unlocked
+train.trustedplus.name=Trusted+
+train.trusted.name=Trusted
+
+lockmenu.Unlock.name=Unlock
+lockmenu.Lock.name=Lock
+
+lockmenu.Title_Trusted_Players.name=Trusted Players
+lockmenu.Save and Close.name=Save and Close
+lockmenu.Save To All Cars in Consist.name=Save To All Cars in Consist
+lockmenu.Copy.name=Copy Configuration
+lockmenu.Paste.name=Paste Configuration
+
+menu.item.lockout=Lockout
+menu.item.lockout.public=Public Skins
+menu.item.lockout.notpublic=No Public Skins
+
 item.foxdrives.creativetab=FoxDrives

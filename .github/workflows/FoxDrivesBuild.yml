@@ -1,0 +1,61 @@
+name: FoxTC Build
+
+# TODO: Add more triggers here, including a workflow_dispatch trigger
+on: 
+  push:
+  pull_request:
+
+jobs:
+  Build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin 
+          java-version: 8
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: false
+
+      # Cache Gradle stuff
+      - name: Cache Gradle stuff
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-   
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Gradle Build
+        run: ./gradlew build
+
+      # Credit to https://stackoverflow.com/questions/58033366/how-to-get-the-current-branch-within-github-actions
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      # Credit to https://stackoverflow.com/questions/59810838/how-to-get-the-short-sha-for-the-github-workflow
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      # Upload the build artifacts
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: foxdrives-${{ steps.extract_branch.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
+          path: build/libs/*

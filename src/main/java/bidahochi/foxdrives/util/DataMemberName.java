@@ -14,6 +14,7 @@ public enum DataMemberName
     isBeaconEnabled("isBeaconEnabled"),
     beaconCycleIndex("beaconCycleIndex"),
     ditchLightMode("ditchLightMode"),
+    isTransportLocked("isTransportLocked"),
     vehicleDetailsJSONString("vehicleDetailsJSONString"),
     vehicleDetailsJSON("vehicleDetailsJSON");
 

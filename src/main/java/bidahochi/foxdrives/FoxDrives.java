@@ -13,6 +13,7 @@ import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_estate;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
 import bidahochi.foxdrives.util.*;
+import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -70,6 +71,7 @@ public class FoxDrives {
     //the networking channel
     public static SimpleNetworkWrapper interactChannel;
     public static SimpleNetworkWrapper wrapColorChannel;
+    public static SimpleNetworkWrapper lockChannel;
     //the entityID for the first entity registered. must be 18 or higher because forge is dumb.
     private static int registryPosition=18;
 
@@ -107,6 +109,9 @@ public class FoxDrives {
         wrapColorChannel = NetworkRegistry.INSTANCE.newSimpleChannel("wrapColor");
         interactChannel.registerMessage(HANDLERS[0], PacketInteract.class, 1, Side.SERVER);
         wrapColorChannel.registerMessage(PacketWrapColor.Handler.class, PacketWrapColor.class, 2, Side.SERVER);
+        lockChannel = NetworkRegistry.INSTANCE.newSimpleChannel("FD.lock");
+        lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, 3, Side.SERVER);
+        lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, 4, Side.CLIENT);
 
         //init item stuff
         tab= new FoxTab("FoxDrives", "creativetab");

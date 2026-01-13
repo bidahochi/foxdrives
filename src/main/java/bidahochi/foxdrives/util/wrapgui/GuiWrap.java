@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -83,9 +84,14 @@ public class GuiWrap extends GuiScreen {
         totalOptions = car.getSkins().length;
         currentPage = (car.getDataWatcher().getWatchableObjectInt(DW_SKIN)) / RESULTS_PER_PAGE;
         try {
-            Constructor[] constructor = car.getClass().getConstructors();
-            renderEntity = car.getClass().cast(constructor[1].newInstance(car.worldObj));
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            renderEntity = (EntityCar) car.getClass().getConstructor(World.class).newInstance(car.worldObj);
+        }
+        catch (NoSuchMethodException noSuchMethodException)
+        {
+            FoxDrives.fdLog.fatal("YOU ARE MISSING THE CONSTRUCTOR THAT PASSES WORLD " + car.getClass().getName());
+            throw new RuntimeException(noSuchMethodException);
+        }
+        catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
         optionsOnCurrentPage = Math.min(RESULTS_PER_PAGE, totalOptions - currentPage * RESULTS_PER_PAGE);
