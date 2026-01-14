@@ -66,9 +66,12 @@ public class GuiCar extends GuiContainer {
         buttonList.add(
                 new GuiButton( 12,rowOnePos1 += 80,rowOnePos2, 80,buttonHeight,
                         entity.isDitchLightsEnabled() ? "DitchLights On" : "DitchLights Off"));
-        buttonList.add(
-                TransportLockGuiHandler.createLockButton(entity, mc.thePlayer, rowOnePos1, rowOnePos2, 0, 20, 51));
+        GuiButton lockbutton = TransportLockGuiHandler.createLockButton(entity, mc.thePlayer, rowOnePos1, rowOnePos2, 0, 20, 51);
 
+        if (lockbutton != null)
+        {
+            buttonList.add(lockbutton);
+        }
     }
 
     @Override

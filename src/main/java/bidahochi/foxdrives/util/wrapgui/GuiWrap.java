@@ -373,4 +373,9 @@ public class GuiWrap extends GuiScreen {
         }
         super.handleMouseInput();
     }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
 }

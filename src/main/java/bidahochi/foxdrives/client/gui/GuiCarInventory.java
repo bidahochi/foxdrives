@@ -96,10 +96,13 @@ public class GuiCarInventory extends GuiContainer {
         buttonList.add(
                 new GuiButton( 11,rowOneX,rowOneY, 80,buttonHeight,
                         car.isBeaconEnabled() ? "Beacons On" : "Beacons Off"));
-        buttonList.add(
-                TransportLockGuiHandler.createLockButton(car, mc.thePlayer, topRowX, topRowY, 0, -10, 60));;
 
+        GuiButton lockbutton =TransportLockGuiHandler.createLockButton(car, mc.thePlayer, topRowX, topRowY, 0, -10, 60);
 
+        if (lockbutton != null)
+        {
+            buttonList.add(lockbutton);
+        }
 
     }
 

@@ -46,7 +46,7 @@ public class TransportLockGuiHandler
             return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.trusted.name"));
         }
 
-        return null;
+        return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.locked.name"));
     }
 
     public static void handleLockButton(

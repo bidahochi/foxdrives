@@ -73,10 +73,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     public void setTransportLockedFromPacket(boolean set) {
         // System.out.println(worldObj.isRemote + " " + set);
         locked = set;
-        if (!worldObj.isRemote)
-        {
-            dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-        }
+        dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
 
     /**
@@ -329,11 +326,14 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     @Override
     public boolean interactFirst(EntityPlayer player)
     {
-        if (!worldObj.isRemote && player.getHeldItem() != null && player.getHeldItem().getItem().getUnlocalizedName().toLowerCase().contains("tc:adminbook") && player.canCommandSenderUseCommand(2, ""))
+        if (player.ridingEntity == this)
         {
-            setTransportLockedFromPacket(!locked);
-            player.addChatMessage(new ChatComponentText(locked ? "Locked" : "Unlocked"));
+            return false;
+        }
 
+        ItemStack itemstack = player.inventory.getCurrentItem();
+        if (lockThisTransport(itemstack, player))
+        {
             return true;
         }
 
@@ -397,6 +397,30 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             }
             return true;
         }
+
+        return worldObj.isRemote;
+    }
+
+    private boolean lockThisTransport(ItemStack itemstack, EntityPlayer entityplayer)
+    {
+        if (itemstack != null && itemstack.getItem().getUnlocalizedName().toLowerCase().contains("tc:adminbook"))
+        {
+            if (worldObj.isRemote)
+            {
+                return true;
+            }
+            if (entityplayer.canCommandSenderUseCommand(2, ""))
+            {
+                setTransportLockedFromPacket(!locked);
+                if(!worldObj.isRemote)
+                {
+                    entityplayer.addChatMessage(new ChatComponentText(locked ? "Locked" : "Unlocked"));
+                }
+            }
+
+            return true;
+        }
+
         return false;
     }
 
