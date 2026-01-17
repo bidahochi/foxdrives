@@ -28,7 +28,7 @@ public class ClientProxy extends CommonProxy
 
     public static final RenderCar transportRenderer = new RenderCar();
     /**the keybind for opening the inventory*/
-    public static KeyBinding KeyInventory = new KeyBinding("Open car GUI",  Keyboard.KEY_R, "Fox Drives");
+    public static KeyBinding KeyInventory = new KeyBinding("Open car GUI",  Keyboard.KEY_X, "Fox Drives");
     public static KeyBinding KeyBrake = new KeyBinding("Brake",  Keyboard.KEY_B, "Fox Drives");
     public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "Fox Drives");
     public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "Fox Drives");
