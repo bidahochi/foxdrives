@@ -4,7 +4,9 @@ import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
+import bidahochi.foxdrives.util.PacketInteract;
 import bidahochi.foxdrives.util.TranslationUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +28,7 @@ public class TransportLockGuiHandler
             int buttonWidth
     )
     {
-        if (!stock.getTransportLockedFromPacket())
+        if (!stock.getTransportLocked())
         {
             return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.unlocked.name"));
         }
@@ -68,11 +70,9 @@ public class TransportLockGuiHandler
         // Toggle lock (non-shift)
         if (!shiftDown) {
             toggleLock(stock, button, gui);
-        }
-
-        if (!shiftDown) {
             sendLockPacket(stock);
         }
+
         else {
             openLockMenu(gui, player, stock);
         }
@@ -80,27 +80,27 @@ public class TransportLockGuiHandler
 
     private static void toggleLock(EntityCar stock, GuiButton button, GuiScreen gui)
     {
-        if (!stock.getTransportLockedFromPacket()) {
-            stock.setTransportLockedFromPacket(true);
+        if (!stock.getTransportLocked()) {
+            stock.locked =true;
             button.displayString = TranslationUtil.translate("train.locked.name");
         }
         else {
-            stock.setTransportLockedFromPacket(false);
+            stock.locked =false;
             button.displayString = TranslationUtil.translate("train.unlocked.name");
         }
-        gui.initGui();
     }
 
     private static void sendLockPacket(EntityCar transport)
     {
         FoxDrives.lockChannel.sendToServer(
                 new PacketSetTransportLockedToClient(
-                        transport.getTransportLockedFromPacket(),
+                        transport.locked,
                         transport.getTrustedList(),
                         transport.getEntityId(),
                         false
                 )
         );
+        //FoxDrives.interactChannel.sendToServer(new PacketInteract(50, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
     }
 
     private static void openLockMenu(GuiScreen gui, EntityPlayer player, EntityCar stock)

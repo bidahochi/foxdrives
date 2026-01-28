@@ -27,16 +27,16 @@ public class GuiLockMenu extends GuiLockMenuAbstract {
 
     @Override
     public boolean getLocked() {
-        return rollingStock.getTransportLockedFromPacket();
+        return rollingStock.getTransportLocked();
     }
 
     @Override
     public void setLocked(boolean locked) {
-        rollingStock.setTransportLockedFromPacket(locked);
+        rollingStock.setTransportLocked(locked);
     }
 
     @Override
     public void sendUpdatePacket(boolean propagate) {
-        FoxDrives.lockChannel.sendToServer(new PacketSetTransportLockedToClient(rollingStock.getTransportLockedFromPacket(), currentTrustees, rollingStock.getEntityId(), propagate));
+        FoxDrives.lockChannel.sendToServer(new PacketSetTransportLockedToClient(rollingStock.getTransportLocked(), currentTrustees, rollingStock.getEntityId(), propagate));
     }
 }

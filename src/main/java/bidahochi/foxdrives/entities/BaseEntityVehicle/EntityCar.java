@@ -58,21 +58,21 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     /**
      * Whether this vehicle is locked and can only be used by the Owner
      */
-    private boolean locked = false;
+    public boolean locked = false;
 
     /**
      * Lock packet
      */
-    public boolean getTransportLockedFromPacket() {
-        return locked;
+    public boolean getTransportLocked() {
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isTransportLocked.AsString()).getAsBoolean();
     }
 
     /**
      * Lock packet
      */
-    public void setTransportLockedFromPacket(boolean set) {
-        // System.out.println(worldObj.isRemote + " " + set);
+    public void setTransportLocked(boolean set) {
         locked = set;
+        if (!worldObj.isRemote)
         dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
 
@@ -88,10 +88,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     public void setTransportOwner(String transportOwner)
     {
         this.transportOwner = transportOwner;
-        if (!worldObj.isRemote)
-        {
-            dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-        }
+        dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
 
 
@@ -337,7 +334,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             return true;
         }
 
-        if (this.getTransportLockedFromPacket())
+        if (this.getTransportLocked())
         {
             boolean isTrustedPlayer = isPlayerTrusted(player.getDisplayName());
             if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && isTrustedPlayer == false)
@@ -353,7 +350,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         }
 
         // Owner Only Operations / Trusted to Break
-        if ((this.getTransportLockedFromPacket() == false || player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null)
+        if ((this.getTransportLocked() == false || player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null)
         {
             if(player.getHeldItem().getItem() == FoxDrives.wrap)
             {
@@ -407,11 +404,11 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         {
             if (worldObj.isRemote)
             {
-                return true;
+                return false;
             }
             if (entityplayer.canCommandSenderUseCommand(2, ""))
             {
-                setTransportLockedFromPacket(!locked);
+                setTransportLocked(!locked);
                 if(!worldObj.isRemote)
                 {
                     entityplayer.addChatMessage(new ChatComponentText(locked ? "Locked" : "Unlocked"));
@@ -433,7 +430,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         {
             if (canBeDestroyedByPlayer(damagesource))
             {
-                ((EntityPlayer) damagesource.getEntity()).addChatComponentMessage(new ChatComponentText("Cannot remove " + " owned by " + getTransportOwner() + "."));
+                ((EntityPlayer) damagesource.getEntity()).addChatComponentMessage(new ChatComponentText("Cannot remove" + " owned by " + getTransportOwner() + "."));
                 return false;
             }
 
@@ -469,13 +466,12 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     }
 
     protected boolean canBeDestroyedByPlayer(DamageSource damagesource) {
-        if (this.getTransportLockedFromPacket())
+        if (this.getTransportLocked())
         {
             if (damagesource.getEntity() instanceof EntityPlayer)
             {
                 if (!((EntityPlayer) damagesource.getEntity()).getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && !(this.isPlayerTrustedToBreak(((EntityPlayerMP) damagesource.getEntity()).getDisplayName())))
                 {
-                    ((EntityPlayer) damagesource.getEntity()).addChatMessage(new ChatComponentText("You are not the owner!"));
                     return true;
                 }
             }
@@ -576,6 +572,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         dataWatcher.updateObject(DW_YAW, rotationYaw);
         dataWatcher.updateObject(DW_SKIN, compound.getInteger("skin"));
 
+
         JsonObject vehicleDetailsJson;
         try
         {
@@ -612,7 +609,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         compound.setFloat("vel", velocity);
         compound.setFloat("yaw", rotationYaw);
         compound.setInteger("skin", dataWatcher.getWatchableObjectInt(DW_SKIN));
-        compound.setString(DataMemberName.vehicleDetailsJSON.MemberName, dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON));
+        compound.setString(DataMemberName.vehicleDetailsJSON.MemberName, vehicleDataJSON());
     }
 
     /**
@@ -620,40 +617,38 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
      * @see bidahochi.foxdrives.util.PacketInteract  */
     public void networkInteract(int player, int key)
     {
-        if (!worldObj.isRemote)
-        {
-            switch(key)
-            {
+        if (!worldObj.isRemote) {
+            switch (key) {
                 case 1:
-                    this.dataWatcher.updateObject(DW_RUNNING, running==(byte)1?(byte)0:(byte)1);
-                break;
+                    this.dataWatcher.updateObject(DW_RUNNING, running == (byte) 1 ? (byte) 0 : (byte) 1);
+                    break;
 
                 case 3:
                     //dataWatcher.updateObject(DW_BRAKING, 1);
                     areBrakeLightsOn = !areBrakeLightsOn;
                     braking = true;
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                break;
+                    break;
                 case 4:
-                    setPacketTurnIndicator(turnSignal != -1 ? (byte)-1 : 0);
+                    setPacketTurnIndicator(turnSignal != -1 ? (byte) -1 : 0);
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                     break;
                 case 5:
-                    setPacketTurnIndicator(turnSignal != 1 ? (byte)1 : 0);
+                    setPacketTurnIndicator(turnSignal != 1 ? (byte) 1 : 0);
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                     break;
                 case 10:
                     setPacketLights(isLightsEnabled() ? false : true);
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                break;
+                    break;
                 case 11:
                     setPacketBeacon(isBeaconEnabled() ? false : true);
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                break;
+                    break;
                 case 12:
                     setPacketDitchLightsMode(isDitchLightsEnabled() ? (byte) 0 : (byte) 1);
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                break;
+                    break;
             }
         }
     }

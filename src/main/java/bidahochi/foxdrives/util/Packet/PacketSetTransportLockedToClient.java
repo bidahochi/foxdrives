@@ -95,29 +95,33 @@ public class PacketSetTransportLockedToClient implements IMessage
         {
             if (context.side.isServer()) {
                 Entity transportEntity = context.getServerHandler().playerEntity.worldObj.getEntityByID(message.entityID);
-                if (!message.requestPacket) {
-                    if (transportEntity instanceof EntityCar) {
-                        ((EntityCar) transportEntity).setTransportLockedFromPacket(message.bool);
+                if (!message.requestPacket)
+                {
+                    if (transportEntity instanceof EntityCar)
+                    {
+                        ((EntityCar) transportEntity).setTransportLocked(message.bool);
                         ((EntityCar) transportEntity).setTrustedList(message.trustedList);
                         FoxDrives.lockChannel.sendToAllAround(new PacketSetTransportLockedToClient(message.bool, message.trustedList, message.entityID, false), new NetworkRegistry.TargetPoint(transportEntity.dimension, transportEntity.posX, transportEntity.posY, transportEntity.posZ, 256D));
-
-
                     }
                 }
                 else {
-                    if (transportEntity instanceof EntityCar) {
+                    if (transportEntity instanceof EntityCar)
+                    {
                         if (context.getServerHandler().playerEntity.worldObj.getEntityByID(message.playerEntityID) != null) {
-                            FoxDrives.lockChannel.sendTo(new PacketSetTransportLockedToClient(((EntityCar) transportEntity).getTransportLockedFromPacket(), ((EntityCar) transportEntity).getTrustedList(), message.entityID, false), ((EntityPlayerMP) context.getServerHandler().playerEntity.worldObj.getEntityByID(message.playerEntityID)));
+                            FoxDrives.lockChannel.sendTo(new PacketSetTransportLockedToClient(((EntityCar) transportEntity).getTransportLocked(), ((EntityCar) transportEntity).getTrustedList(), message.entityID, false), ((EntityPlayerMP) context.getServerHandler().playerEntity.worldObj.getEntityByID(message.playerEntityID)));
                         }
                     }
                 }
             }
-            else {
-                if (!message.requestPacket) {
+            else
+            {
+                if (!message.requestPacket)
+                {
                     Entity TrainEntity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityID);
-                    if (TrainEntity instanceof EntityCar) {
+                    if (TrainEntity instanceof EntityCar)
+                    {
                         ((EntityCar) TrainEntity).setTrustedList(message.trustedList);
-                        ((EntityCar) TrainEntity).setTransportLockedFromPacket(message.bool);
+                        ((EntityCar) TrainEntity).setTransportLocked(message.bool);
                     }
                 }
             }
