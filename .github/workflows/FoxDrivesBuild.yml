@@ -1,12 +1,13 @@
-name: FoxTC Build
+name: FoxDrives Build & Pre-Release
 
-# TODO: Add more triggers here, including a workflow_dispatch trigger
-on: 
+on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
-  Build:
+  build:
     runs-on: ubuntu-24.04
 
     steps:
@@ -14,10 +15,10 @@ jobs:
         uses: actions/checkout@v4
 
       # Setup Java
-      - name: Setup Java
+      - name: Setup Java 8
         uses: actions/setup-java@v4
         with:
-          distribution: temurin 
+          distribution: temurin
           java-version: 8
 
       # Setup Gradle
@@ -26,8 +27,8 @@ jobs:
         with:
           validate-wrappers: false
 
-      # Cache Gradle stuff
-      - name: Cache Gradle stuff
+      # Cache Gradle
+      - name: Cache Gradle
         uses: actions/cache@v3
         with:
           path: |
@@ -35,27 +36,57 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            gradle-${{ runner.os }}-   
+            gradle-${{ runner.os }}-
+
       - name: Make gradlew executable
         run: chmod +x gradlew
 
       - name: Gradle Build
         run: ./gradlew build
 
-      # Credit to https://stackoverflow.com/questions/58033366/how-to-get-the-current-branch-within-github-actions
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-        id: extract_branch
+      # ----------------------------
+      # Extract Gradle version
+      # ----------------------------
+      - name: Extract project version
+        id: version
+        run: |
+          VERSION=$(./gradlew -q properties | grep "^version:" | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      # Credit to https://stackoverflow.com/questions/59810838/how-to-get-the-short-sha-for-the-github-workflow
-      - name: Set outputs
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      # ----------------------------
+      # Check if release already exists
+      # ----------------------------
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          git fetch --tags
+          if git tag | grep -q "v${{ steps.version.outputs.version }}"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Release v${{ steps.version.outputs.version }} already exists — skipping publish"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No existing release — will publish"
+          fi
 
-      # Upload the build artifacts
-      - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v4
+      # ----------------------------
+      # Create GitHub Pre-Release
+      # ----------------------------
+      - name: Create GitHub Pre-Release
+        if: steps.check_release.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
         with:
-          name: foxdrives-${{ steps.extract_branch.outputs.branch }}-${{ steps.vars.outputs.sha_short }}
-          path: build/libs/*
+          tag_name: v${{ steps.version.outputs.version }}
+          name: FoxDrives ${{ steps.version.outputs.version }}
+          prerelease: true
+          body: |
+            Automated release for **Fox Drives**
+
+            Branch: `main`
+            Version: `${{ steps.version.outputs.version }}`
+            Commit: `${{ github.sha }}`
+            
+            ⚠ **Note:** If this is a pre-release. It is intended for testing and **does not guarantee stability or completeness**.
+          files: |
+            build/libs/FoxDrives-${{ steps.version.outputs.version }}*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
