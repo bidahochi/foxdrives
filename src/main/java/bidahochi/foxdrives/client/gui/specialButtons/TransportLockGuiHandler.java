@@ -80,13 +80,13 @@ public class TransportLockGuiHandler
 
     private static void toggleLock(EntityCar stock, GuiButton button, GuiScreen gui)
     {
-        if (!stock.getTransportLocked()) {
+        if (!stock.getTransportLocked())
+        {
             stock.locked =true;
-            button.displayString = TranslationUtil.translate("train.locked.name");
         }
-        else {
+        else
+        {
             stock.locked =false;
-            button.displayString = TranslationUtil.translate("train.unlocked.name");
         }
     }
 
