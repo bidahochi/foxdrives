@@ -15,6 +15,9 @@ public class EntityID6400daycab extends EntityCar
         textureDescriptionMap.put(1, "Facelift Stock Configuration");
         textureDescriptionMap.put(2, "Generic White");
         textureDescriptionMap.put(3, "Generic Orange");
+        textureDescriptionMap.put(4, "Generic Green");
+        textureDescriptionMap.put(5, "Generic Red");
+        textureDescriptionMap.put(6, "Magnolia Acres MFG.");
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }
 
@@ -33,7 +36,8 @@ public class EntityID6400daycab extends EntityCar
      */
     @Override
     public String[] getSkins() {
-        return new String[]{"textures/id/ID6400_blank", "textures/id/ID6400_facelift_blank", "textures/id/ID6400_blank2", "textures/id/ID6400_generic_whiteorange"};
+        return new String[]{"textures/id/ID6400_blank", "textures/id/ID6400_facelift_blank", "textures/id/ID6400_blank2", "textures/id/ID6400_generic_whiteorange"
+                , "textures/id/ID6400_facelift_greeny", "textures/id/ID6400_facelift_reddyo", "textures/id/ID6400_magnolia_acres1"};
     }
 
     @Override
