@@ -48,9 +48,11 @@ entity.foxdrives.foxdrives.wagonkart.entity.name=Radio-Dominator Kart
 item.foxdrives.turbotoilet.name=Turbo-Toilet Kart
 entity.foxdrives.foxdrives.turbotoilet.entity.name=Turbo-Toilet Kart
 
-
 item.foxdrives.formula.name=Formula Race Car
 entity.foxdrives.foxdrives.formula.entity.name=Formula Race Car
+
+item.foxdrives.id6400daycab.name=1980s-90s Interdomestic 6400 Daycab Semi Tractor
+entity.foxdrives.foxdrives.id6400daycab.name=1980s-90s Interdomestic 6400 Daycab Semi Tractor
 
 wrapmenu.Close Menu.name=Close Menu
 wrapmenu.Previous Page.name=Previous Page
