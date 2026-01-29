@@ -19,7 +19,7 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 
 	public ModelID6400daycab() //Same as Filename
 	{
-		bodyModel = new ModelRendererTurbo[360];
+		bodyModel = new ModelRendererTurbo[362];
 
 		initbodyModel_1();
 
@@ -379,7 +379,7 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 		bodyModel[345] = new ModelRendererTurbo(this, 94, 2, textureX, textureY, "lamp"); // Box 349 markerlight sunshade
 		bodyModel[346] = new ModelRendererTurbo(this, 94, 6, textureX, textureY, "lamp"); // Box 351 markerlight sunshade
 		bodyModel[347] = new ModelRendererTurbo(this, 109, 15, textureX, textureY, "lamp"); // Box 352 markerlight sunshade
-		bodyModel[348] = new ModelRendererTurbo(this, 260, 102, textureX, textureY); // Box 198 that other kind of hitch that comes in handy in the hit game Beam.NG Drive
+		bodyModel[348] = new ModelRendererTurbo(this, 260, 102, textureX, textureY, "cull"); // Box 198 that other kind of hitch that comes in handy in the hit game Beam.NG Drive
 		bodyModel[349] = new ModelRendererTurbo(this, 255, 99, textureX, textureY); // Box 354 pintle support system
 		bodyModel[350] = new ModelRendererTurbo(this, 4, 39, textureX, textureY); // Box 350 egnine bit TWO
 		bodyModel[351] = new ModelRendererTurbo(this, 272, 115, textureX, textureY); // Box 410 license plate
@@ -391,6 +391,8 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 		bodyModel[357] = new ModelRendererTurbo(this, 289, 118, textureX, textureY, "cull"); // Box 253 cull full fender
 		bodyModel[358] = new ModelRendererTurbo(this, 289, 108, textureX, textureY, "cull"); // Box 358 cull full fender
 		bodyModel[359] = new ModelRendererTurbo(this, 272, 104, textureX, textureY); // Box 108 hazmat plac
+		bodyModel[360] = new ModelRendererTurbo(this, 256, 76, textureX, textureY); // Box 360 cull trailer cables 2
+		bodyModel[361] = new ModelRendererTurbo(this, 257, 72, textureX, textureY); // Box cableholder farback
 
 		bodyModel[0].addBox(-2.5F, -2.5F, -1.01F, 5, 5, 0, 0F); // Box 125 wheel 3
 		bodyModel[0].setRotationPoint(7.5F, 6F, -9F);
@@ -1557,5 +1559,11 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 		bodyModel[359].setRotationPoint(-26.87F, 1.5F, 3F);
 		bodyModel[359].rotateAngleY = -1.57079633F;
 		bodyModel[359].rotateAngleZ = -0.78539816F;
+
+		bodyModel[360].addShapeBox(0F, 0F, 0F, 3, 16, 6, 0F,0F, 0F, 0F, -1.5F, 0F, 0F, -1.5F, 0F, -3F, 0F, 0F, -3F, 0F, -8F, 0F, -1.5F, -8F, 0F, -1.5F, -8F, -3F, 0F, -8F, -3F); // Box 360 cull trailer cables 2
+		bodyModel[360].setRotationPoint(0F, -6F, -1.5F);
+
+		bodyModel[361].addBox(0F, 0F, 0F, 1, 8, 1, 0F); // Box cableholder farback
+		bodyModel[361].setRotationPoint(-0.5F, -6F, -0.5F);
 	}
 }
