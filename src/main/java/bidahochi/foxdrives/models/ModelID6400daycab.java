@@ -245,12 +245,12 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 		bodyModel[211] = new ModelRendererTurbo(this, 163, 41, textureX, textureY, "cull"); // Box 229 CULL exhaust heat sheild
 		bodyModel[212] = new ModelRendererTurbo(this, 198, 81, textureX, textureY); // Box 198 exhaust
 		bodyModel[213] = new ModelRendererTurbo(this, 197, 76, textureX, textureY); // Box 200 exhaust
-		bodyModel[214] = new ModelRendererTurbo(this, 179, 57, textureX, textureY); // Box 243 exhaust tip
+		bodyModel[214] = new ModelRendererTurbo(this, 179, 57, textureX, textureY, "cull"); // Box 243 exhaust tip
 		bodyModel[215] = new ModelRendererTurbo(this, 46, 124, textureX, textureY); // Box 222
 		bodyModel[216] = new ModelRendererTurbo(this, 46, 124, textureX, textureY); // Box 223
 		bodyModel[217] = new ModelRendererTurbo(this, 57, 121, textureX, textureY); // Box 224
 		bodyModel[218] = new ModelRendererTurbo(this, 57, 121, textureX, textureY); // Box 225
-		bodyModel[219] = new ModelRendererTurbo(this, 179, 62, textureX, textureY); // Box 226 exhaust tip
+		bodyModel[219] = new ModelRendererTurbo(this, 179, 62, textureX, textureY, "cull"); // Box 226 exhaust tip
 		bodyModel[220] = new ModelRendererTurbo(this, 112, 64, textureX, textureY); // Box 227
 		bodyModel[221] = new ModelRendererTurbo(this, 112, 43, textureX, textureY); // Box 228
 		bodyModel[222] = new ModelRendererTurbo(this, 197, 85, textureX, textureY); // Box 235 exhaust pipe
@@ -259,8 +259,8 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 		bodyModel[225] = new ModelRendererTurbo(this, 176, 41, textureX, textureY, "cull"); // Box 233 CULL  exhaust heat shield
 		bodyModel[226] = new ModelRendererTurbo(this, 189, 81, textureX, textureY); // Box 234 exhaust
 		bodyModel[227] = new ModelRendererTurbo(this, 188, 76, textureX, textureY); // Box 235 exhaust
-		bodyModel[228] = new ModelRendererTurbo(this, 170, 57, textureX, textureY); // Box 236 exhaust tip
-		bodyModel[229] = new ModelRendererTurbo(this, 170, 62, textureX, textureY); // Box 237 exhaust tip
+		bodyModel[228] = new ModelRendererTurbo(this, 170, 57, textureX, textureY, "cull"); // Box 236 exhaust tip
+		bodyModel[229] = new ModelRendererTurbo(this, 170, 62, textureX, textureY, "cull"); // Box 237 exhaust tip
 		bodyModel[230] = new ModelRendererTurbo(this, 188, 85, textureX, textureY); // Box 238 exhaust
 		bodyModel[231] = new ModelRendererTurbo(this, 188, 66, textureX, textureY); // Box 239 exhaust
 		bodyModel[232] = new ModelRendererTurbo(this, 236, 96, textureX, textureY); // Box 240
@@ -303,8 +303,8 @@ public class ModelID6400daycab extends ModelConverter //Same as Filename
 		bodyModel[269] = new ModelRendererTurbo(this, 46, 105, textureX, textureY); // Box 273 fueltank step
 		bodyModel[270] = new ModelRendererTurbo(this, 82, 105, textureX, textureY); // Box 274 fueltank step
 		bodyModel[271] = new ModelRendererTurbo(this, 82, 103, textureX, textureY); // Box 275 fueltank step
-		bodyModel[272] = new ModelRendererTurbo(this, 179, 67, textureX, textureY); // Box 226 exhaust tip
-		bodyModel[273] = new ModelRendererTurbo(this, 170, 67, textureX, textureY); // Box 237 exhaust tip
+		bodyModel[272] = new ModelRendererTurbo(this, 179, 67, textureX, textureY, "cull"); // Box 226 exhaust tip
+		bodyModel[273] = new ModelRendererTurbo(this, 170, 67, textureX, textureY, "cull"); // Box 237 exhaust tip
 		bodyModel[274] = new ModelRendererTurbo(this, 189, 44, textureX, textureY, "cull"); // Box 278 cull exhaust grab irons
 		bodyModel[275] = new ModelRendererTurbo(this, 196, 44, textureX, textureY, "cull"); // Box 279 cull exhaust grab irons
 		bodyModel[276] = new ModelRendererTurbo(this, 94, 70, textureX, textureY, "cull"); // Box 280 CULL cab skirting
