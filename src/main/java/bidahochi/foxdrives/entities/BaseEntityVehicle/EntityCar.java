@@ -3,6 +3,7 @@ package bidahochi.foxdrives.entities.BaseEntityVehicle;
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.GuiIDs;
+import bidahochi.foxdrives.entities.EntityHitch;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
@@ -332,6 +333,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 	@Override
 	public void applyEntityCollision(Entity entity){
 		if(entity instanceof EntitySeat) return;
+        if (entity instanceof EntityHitch) return;
         if(entity instanceof EntityPlayer && entity.ridingEntity instanceof EntitySeat) return;
         super.applyEntityCollision(entity);
 	}

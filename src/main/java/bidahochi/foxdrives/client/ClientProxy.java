@@ -5,6 +5,7 @@ import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.client.gui.lockGui.GuiLockMenu;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
+import bidahochi.foxdrives.entities.EntityHitch;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.client.gui.GuiCarInventory;
 import bidahochi.foxdrives.util.CommonProxy;
@@ -113,6 +114,7 @@ public class ClientProxy extends CommonProxy
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySeat.class, new RenderSeat());
+        RenderingRegistry.registerEntityRenderingHandler(EntityHitch.class, new RenderSeat());
     }
 
 }

@@ -538,7 +538,8 @@ public class FoxDrives {
         proxy.registerPlayerScaler();
 
         //register seat entity
-        registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition, FoxDrives.instance, 1600, 1, true);
+        registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
+        registerModEntity(EntityHitch.class, MODID + ".hitch.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
 
         //register the event handler, mainly for tracking inputs
         if(event.getSide().isClient())
