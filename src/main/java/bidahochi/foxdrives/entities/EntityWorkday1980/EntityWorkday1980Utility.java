@@ -14,6 +14,8 @@ public class EntityWorkday1980Utility extends EntityCarChest
         textureDescriptionMap.put(0, "Factory Blank");
         textureDescriptionMap.put(1, "CSXT");
         textureDescriptionMap.put(2, "GLC");
+        textureDescriptionMap.put(3, "Magnolia Acres Mfg.");
+        textureDescriptionMap.put(4, "Red Contractor");
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }
 
@@ -33,7 +35,8 @@ public class EntityWorkday1980Utility extends EntityCarChest
      */
     @Override
     public String[] getSkins() {
-        return new String[]{"textures/workday/workday_1980_utility_blank", "textures/workday/workday_1980_utility_CSX", "textures/workday/workday_1980_Utility_GLC"};
+        return new String[]{"textures/workday/workday_1980_utility_blank", "textures/workday/workday_1980_utility_CSX", "textures/workday/workday_1980_Utility_GLC",
+        "textures/workday/workday_1980_utility_magnol","textures/workday/workday_1980_utility_reddy"};
     }
 
     @Override
