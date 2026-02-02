@@ -21,6 +21,7 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -32,10 +33,10 @@ public class ClientProxy extends CommonProxy
 
     public static final RenderCar transportRenderer = new RenderCar();
     /**the keybind for opening the inventory*/
-    public static KeyBinding KeyInventory = new KeyBinding("Open car GUI",  Keyboard.KEY_X, "Fox Drives");
-    public static KeyBinding KeyBrake = new KeyBinding("Brake",  Keyboard.KEY_B, "Fox Drives");
-    public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "Fox Drives");
-    public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "Fox Drives");
+    //public static KeyBinding KeyInventory = new KeyBinding("Open car GUI",  Keyboard.KEY_X, "Fox Drives");
+    //public static KeyBinding KeyBrake = new KeyBinding("Brake",  Keyboard.KEY_B, "Fox Drives");
+    //public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "Fox Drives");
+    //public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "Fox Drives");
 
     @Override
     public Object getEntityRender(){return transportRenderer;}
@@ -50,7 +51,7 @@ public class ClientProxy extends CommonProxy
         Entity entity = world.getEntityByID(x);
         switch (ID)
         {
-            case 101:
+            case GuiIDs.WRAP_MENU:
                 return entity != null ? new GuiWrap(player, (EntityCar) entity) : null;
             case GuiIDs.LOCK_MENU:
                 if (entity != null) { // If player is riding the entity (locomotives).

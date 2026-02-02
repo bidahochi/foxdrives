@@ -2,6 +2,7 @@ package bidahochi.foxdrives.entities.BaseEntityVehicle;
 
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.FoxDrives;
+import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
@@ -367,7 +368,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
                 }
                 else if (getSkins().length > 1)
                 {
-                    player.openGui(FoxDrives.instance, 101, player.getEntityWorld(), this.getEntityId(), -1, (int) this.posZ);
+                    player.openGui(FoxDrives.instance, GuiIDs.WRAP_MENU, player.getEntityWorld(), this.getEntityId(), -1, (int) this.posZ);
                     return true;
                 }
                 //otherwise, try to mount the entity

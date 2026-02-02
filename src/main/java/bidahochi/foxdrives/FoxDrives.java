@@ -85,13 +85,13 @@ public class FoxDrives {
     {
         //full length addresses for client only classes must be used to prevent
         // the import from being loaded on server and crashing.
-        if(event.getSide().isClient())
-        {
-            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyInventory);
-            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyBrake);
-            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyLeftTurn);
-            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyRightTurn);
-        }
+        //if(event.getSide().isClient())
+        //{
+        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyInventory);
+        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyBrake);
+        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyLeftTurn);
+        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyRightTurn);
+        //}
 
         /* Config handler */
         configDirectory = event.getModConfigurationDirectory();
@@ -437,7 +437,9 @@ public class FoxDrives {
         registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition, FoxDrives.instance, 1600, 1, true);
 
         //register the event handler, mainly for tracking inputs
-        if(event.getSide().isClient()){
+        if(event.getSide().isClient())
+        {
+
             MinecraftForge.EVENT_BUS.register(EventManager.instance);
             FMLCommonHandler.instance().bus().register(EventManager.instance);
         }
