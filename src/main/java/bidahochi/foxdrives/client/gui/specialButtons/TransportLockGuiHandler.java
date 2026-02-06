@@ -2,6 +2,7 @@ package bidahochi.foxdrives.client.gui.specialButtons;
 
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.GuiIDs;
+import bidahochi.foxdrives.client.gui.genericButtons.GuiCustomButton;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import bidahochi.foxdrives.util.PacketInteract;
@@ -11,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ResourceLocation;
 
 public class TransportLockGuiHandler
 {
@@ -21,6 +23,7 @@ public class TransportLockGuiHandler
     public static GuiButton createLockButton(
             EntityCar stock,
             EntityPlayer player,
+            ResourceLocation buttonStyle,
             int baseX,
             int baseY,
             int offsetX,
@@ -30,25 +33,25 @@ public class TransportLockGuiHandler
     {
         if (!stock.getTransportLocked())
         {
-            return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.unlocked.name"));
+            return new GuiCustomButton(50, baseX + offsetX, baseY + offsetY, 54, 13, "", buttonStyle,  54, 64);
         }
 
         if (stock.getTransportOwner().equalsIgnoreCase(player.getDisplayName()))
         {
-            return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.locked.name"));
+            return new GuiCustomButton(50, baseX + offsetX, baseY + offsetY, 54, 13, "", buttonStyle,  0, 64);
         }
 
         if (stock.isPlayerTrusted(player.getDisplayName()))
         {
             if (stock.isPlayerTrustedToBreak(player.getDisplayName()))
             {
-                return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.trustedplus.name"));
+                return new GuiCustomButton(50, baseX + offsetX, baseY + offsetY, 54, 13, "", buttonStyle,  0, 92);
             }
 
-            return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.trusted.name"));
+            return new GuiCustomButton(50, baseX + offsetX, baseY + offsetY, 54, 13, "", buttonStyle,  0, 78);
         }
 
-        return new GuiButton(50, baseX + offsetX, baseY + offsetY, buttonWidth, 10, TranslationUtil.translate("train.locked.name"));
+        return new GuiCustomButton(50, baseX + offsetX, baseY + offsetY, 54, 13, "", buttonStyle,  0, 64);
     }
 
     public static void handleLockButton(

@@ -13,8 +13,8 @@ import net.minecraft.world.World;
 public class EntityFormulaCar extends EntityCarChest
 {
 
-    public EntityFormulaCar(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityFormulaCar(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Racing Point");
         textureDescriptionMap.put(1, "Alfa Romeo");
         setGuiRenderScale(getGuiRenderScale() + 5f);

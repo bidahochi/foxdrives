@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class EntityMKDS_Standard extends EntityCarChest
 {
-    public EntityMKDS_Standard(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityMKDS_Standard(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Mario");
         textureDescriptionMap.put(1, "Luigi");
         textureDescriptionMap.put(2, "Peach");

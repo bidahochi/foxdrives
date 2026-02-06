@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class EntityWorkday1980Utility extends EntityCarChest
 {
-    public EntityWorkday1980Utility(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityWorkday1980Utility(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Factory Blank");
         textureDescriptionMap.put(1, "CSXT");
         textureDescriptionMap.put(2, "GLC");

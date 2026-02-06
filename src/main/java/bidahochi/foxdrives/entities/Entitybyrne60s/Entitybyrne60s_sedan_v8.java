@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class Entitybyrne60s_sedan_v8 extends EntityCarChest
 {
-    public Entitybyrne60s_sedan_v8(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public Entitybyrne60s_sedan_v8(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Roadsport Green Top");
         textureDescriptionMap.put(1, "Cubed's Car");
         textureDescriptionMap.put(2, "Police Trim");

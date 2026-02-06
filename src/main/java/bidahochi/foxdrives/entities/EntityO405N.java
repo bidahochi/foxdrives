@@ -2,16 +2,17 @@ package bidahochi.foxdrives.entities;
 
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.models.ModelGilligPhantom;
 import bidahochi.foxdrives.models.ModelO405N;
 import fdfexcraft.tmt_slim.ModelBase;
 import net.minecraft.world.World;
 
-public class EntityO405N extends EntityCar
+public class EntityO405N extends EntityCarChest
 {
 
-    public EntityO405N(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityO405N(World world) {
+        super(world);
         textureDescriptionMap.put(0, "VGF Frankfurt");
         textureDescriptionMap.put(1, "MVG Munich");
         textureDescriptionMap.put(2, "DVG Duisburg");

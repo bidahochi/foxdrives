@@ -2,6 +2,8 @@ package bidahochi.foxdrives;
 
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.util.ConfigHandler;
+import bidahochi.foxdrives.common.inventory.enums.InventorySize;
+import bidahochi.foxdrives.common.inventory.enums.InventoryStyle;
 import bidahochi.foxdrives.util.ItemCar;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.Item;
@@ -35,6 +37,15 @@ public class CarType {
 	public float max_forward_speed = 10;
 	/** max backwards movement speed in meters per tick */
 	public float max_backward_speed = 5;
+
+	public InventorySize inventorySize = InventorySize.STYLE_PROFILE_0x0;
+
+	public InventoryStyle inventoryStyle = InventoryStyle.STYLE_1;
+
+	public String country;
+	public String year;
+	public boolean isFictional;
+
  	//
 	public static CarType TOYOTA_PICKUP_1992;
 	public static CarType REDMUND_1972;
@@ -129,4 +140,27 @@ public class CarType {
 		return this;
 	}
 
+	public CarType inventorySize(InventorySize size)
+	{
+		inventorySize = size;
+		return this;
+	}
+
+	public CarType inventoryStyle(InventoryStyle style)
+	{
+		inventoryStyle = style;
+		return this;
+	}
+
+	public CarType country(String country)
+	{
+		this.country = country;
+		return this;
+	}
+
+	public CarType year(String year)
+	{
+		this.year = year;
+		return this;
+	}
 }

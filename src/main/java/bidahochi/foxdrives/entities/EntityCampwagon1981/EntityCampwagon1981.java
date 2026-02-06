@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 public class EntityCampwagon1981 extends EntityCarChest
 {
 
-    public EntityCampwagon1981(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityCampwagon1981(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Base Trim");
         textureDescriptionMap.put(1, "Premium Trim (Generic Orange)");
         textureDescriptionMap.put(2, "Fleet Trim (Cargo Variant)");

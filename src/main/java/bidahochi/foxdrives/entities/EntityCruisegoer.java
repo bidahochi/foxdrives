@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 public class EntityCruisegoer extends EntityCarChest
 {
 
-    public EntityCruisegoer(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityCruisegoer(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Factory White");
         textureDescriptionMap.put(1, "Ordinary Life");
         textureDescriptionMap.put(2, "Factory Verdigris");

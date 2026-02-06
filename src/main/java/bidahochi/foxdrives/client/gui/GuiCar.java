@@ -1,30 +1,32 @@
 package bidahochi.foxdrives.client.gui;
 
 import bidahochi.foxdrives.FoxDrives;
-import bidahochi.foxdrives.client.gui.specialButtons.TransportLockGuiHandler;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
-import bidahochi.foxdrives.util.PacketInteract;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.util.ResourceLocation;
 
-public class GuiCar extends GuiContainer {
+@Deprecated
+public class GuiCar extends BaseGuiContainer {
     public static int guiTop;
     public static int guiLeft;
     public EntityCar entity;
     private GuiButton button;
 
-    public GuiCar(EntityCar car){
-        super(new Container() {
+    public GuiCar(EntityCar car)
+    {
+        super(new Container()
+        {
             @Override
             public boolean canInteractWith(EntityPlayer player){
                 return !player.isDead;
             }
-        });
+        }, null);
         entity = car;
+        setBaseGui(new ResourceLocation(FoxDrives.MODID, "textures/gui/gui_car.png"));
     }
 
     @Override
@@ -34,6 +36,12 @@ public class GuiCar extends GuiContainer {
         guiTop = new ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight).getScaledHeight();
 
 
+    }
+
+    @Override
+    public EntityCar getEntityCar()
+    {
+        return entity;
     }
 
     @Override
@@ -65,33 +73,14 @@ public class GuiCar extends GuiContainer {
                         entity.isBeaconEnabled() ? "Beacons On" : "Beacons Off"));
         buttonList.add(
                 new GuiButton( 12,rowOnePos1 += 80,rowOnePos2, 80,buttonHeight,
-                        entity.isDitchLightsEnabled() ? "DitchLights On" : "DitchLights Off"));
-        GuiButton lockbutton = TransportLockGuiHandler.createLockButton(entity, mc.thePlayer, rowOnePos1, rowOnePos2, 0, 20, 51);
+                        entity.isAuxLightsEnabled() ? "DitchLights On" : "DitchLights Off"));
+       // GuiButton lockbutton = TransportLockGuiHandler.createLockButton(entity, mc.thePlayer, rowOnePos1, rowOnePos2, 0, 20, 51);
 
-        if (lockbutton != null)
-        {
-            buttonList.add(lockbutton);
-        }
+       //if (lockbutton != null)
+       //{
+       //    buttonList.add(lockbutton);
+       //}
     }
-
-    @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        switch (button.id)
-        {
-            case 1:
-            case 10:
-            case 11:
-            case 12:
-                FoxDrives.interactChannel.sendToServer(new PacketInteract(button.id,Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
-            break;
-            case 50:
-                TransportLockGuiHandler.handleLockButton(this, button, Minecraft.getMinecraft().thePlayer, entity, isShiftKeyDown());
-                break;
-
-        }
-    }
-
 
     public static int percentTop(int value)
     {
@@ -101,9 +90,4 @@ public class GuiCar extends GuiContainer {
     public static int percentLeft(int value)
     {
         return (int) (guiLeft*(value*0.01f));}
-
-    @Override
-    public boolean doesGuiPauseGame() {
-        return false;
-    }
 }
