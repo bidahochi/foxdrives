@@ -6,7 +6,6 @@ import bidahochi.foxdrives.models.Modelbyrne40s_sedan;
 import fdfexcraft.tmt_slim.ModelBase;
 import net.minecraft.world.World;
 
-
 public class Entitybyrne40s_sedan extends EntityCarChest
 {
     public Entitybyrne40s_sedan(World world) {
@@ -20,7 +19,6 @@ public class Entitybyrne40s_sedan extends EntityCarChest
         textureDescriptionMap.put(6, "Cherry Red");
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }
-
 
     /**
      * Returns the model for the entity

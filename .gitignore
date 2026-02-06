@@ -40,3 +40,5 @@ src/main/java/ebf/tim/utility/DoNotInclude.java
 .debris/*
 libs/*
 /src/.debris/
+
+devdata/Trains-PrefixData.tsv

@@ -72,13 +72,32 @@ public class RenderCar extends Render {
                     {
                         car.modelInstance.frontWheels.add(render);
                     }
-                    else if (render.boxName.toLowerCase().contains("front2"))
+                    else if (render.boxName.toLowerCase().contains("front2"))//rear steering
                     {
                         car.modelInstance.frontWheels2.add(render);
                     }
                     else
                     {
                         car.modelInstance.backWheels.add(render);
+                    }
+                }
+                //handle cullwheels
+                if(render.boxName.toLowerCase().contains("cullwheel"))
+                {
+                    if(render.boxName.toLowerCase().contains("front"))
+                    {
+                        car.modelInstance.frontWheels.add(render);
+                        render.noCull = true;
+                    }
+                    else if (render.boxName.toLowerCase().contains("front2"))//rear steering
+                    {
+                        car.modelInstance.frontWheels2.add(render);
+                        render.noCull = true;
+                    }
+                    else
+                    {
+                        car.modelInstance.backWheels.add(render);
+                        render.noCull = true;
                     }
                 }
             }

@@ -8,6 +8,8 @@ import java.util.*;
 public enum BoxName
 {
     cull("cull"),
+    cullwheel("cullwheel"),
+    cullwheelfront("cullwheelfront"),
     ditch("ditch"),
     prime1("prime1"),
     prime2("prime2"),

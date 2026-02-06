@@ -17,7 +17,6 @@ public class EntityToyotaPickup1992 extends EntityCarChest
         textureDescriptionMap.put(4, "Pinstripes");
     }
 
-
     /**
      * Returns the model for the entity
      */
