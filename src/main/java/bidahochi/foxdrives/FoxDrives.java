@@ -146,6 +146,20 @@ public class FoxDrives {
             .inventorySize(InventorySize.STYLE_PROFILE_3x3)
             .year("1992");
 
+        CarType.DOSEI_KIOTE_SEDAN = CarType.register("dosei_kiote_sedan", EntityDoseiKiote_Sedan.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs), new ItemStack(Blocks.gold_block),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
+                        new float[]{ -0.3f, 0.05f, 0.0f }
+                )
+                .maxspeed(18, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1986");
+
         CarType.REDMUND_1972 = CarType.register("redmund_1972", EntityRedmund1972.class)
             .recipe(
                 new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
@@ -443,8 +457,9 @@ public class FoxDrives {
                 )
                 .passpos(new float[]{ 0.25f, 0.45f, 0.6f },
                         new float[]{ -0.25f, 0.45f, 0.6f })//LR, UD, FB
-                .acceleration(0.3f)
-                .maxspeed(14, 8);
+                .acceleration(0.2f)
+                .maxspeed(14, 8)
+                .year("1980-1997");
 
         //CarType Registry Entry registration
         for(CarType type : CarType.REGISTRY.values()){

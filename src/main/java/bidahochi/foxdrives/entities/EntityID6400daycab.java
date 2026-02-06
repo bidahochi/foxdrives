@@ -2,11 +2,12 @@ package bidahochi.foxdrives.entities;
 
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.models.ModelID6400daycab;
 import fdfexcraft.tmt_slim.ModelBase;
 import net.minecraft.world.World;
 
-public class EntityID6400daycab extends EntityCar
+public class EntityID6400daycab extends EntityCarChest
 {
 
     public EntityID6400daycab(World p_i1685_1_) {

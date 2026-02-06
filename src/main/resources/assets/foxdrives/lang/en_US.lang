@@ -6,6 +6,9 @@ item.foxdrives.wrap.name=Vehicle Wrap
 item.foxdrives.toyota_pickup_1992.name=1992 Boiota Pickup
 entity.foxdrives.foxdrives.toyota_pickup_1992.entity.name=1992 Boiota Pickup
 
+item.foxdrives.dosei_kiote_sedan.name=1986 Dosei Kiote Turbo
+entity.foxdrives.foxdrives.dosei_kiote_sedan.entity.name=1986 Dosei Kiote Turbo
+
 item.foxdrives.redmund_1972.name=1972 Pine Redmund
 entity.foxdrives.foxdrives.redmund_1972.entity.name=1972 Pine Redmund
 item.foxdrives.workday_1980.name=1980 Pine Workday
@@ -53,7 +56,7 @@ item.foxdrives.formula.name=Formula Race Car
 entity.foxdrives.foxdrives.formula.entity.name=Formula Race Car
 
 item.foxdrives.id6400daycab.name=1980s-90s Interdomestic 6400 Daycab Semi Tractor
-entity.foxdrives.foxdrives.id6400daycab.name=1980s-90s Interdomestic 6400 Daycab Semi Tractor
+entity.foxdrives.foxdrives.id6400daycab.entity.name=1980s-90s Interdomestic 6400 Daycab Semi Tractor
 
 key.categories.unifiedcontrols=FoxTC/FoxDrives
 
