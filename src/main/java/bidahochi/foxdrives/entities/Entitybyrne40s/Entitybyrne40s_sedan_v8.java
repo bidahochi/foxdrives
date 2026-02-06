@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class Entitybyrne40s_sedan_v8 extends EntityCarChest
 {
-    public Entitybyrne40s_sedan_v8(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public Entitybyrne40s_sedan_v8(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Bayview Blue");
         textureDescriptionMap.put(1, "1948 Police Package");
         textureDescriptionMap.put(2, "1950 Police Package");

@@ -2,16 +2,17 @@ package bidahochi.foxdrives.entities;
 
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.models.ModelHysterH80FT;
 import fdfexcraft.tmt_slim.ModelBase;
 import net.minecraft.world.World;
 
 
-public class EntityHysterH80FT extends EntityCar
+public class EntityHysterH80FT extends EntityCarChest
 {
 
-    public EntityHysterH80FT(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityHysterH80FT(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Yellow");
         textureDescriptionMap.put(1, "Blue");
     }

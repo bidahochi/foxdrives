@@ -1,6 +1,8 @@
 package bidahochi.foxdrives;
 
 import bidahochi.foxdrives.client.ClientProxy;
+import bidahochi.foxdrives.common.handlers.ItemHandler;
+import bidahochi.foxdrives.common.inventory.enums.InventorySize;
 import bidahochi.foxdrives.entities.*;
 import bidahochi.foxdrives.entities.EntityCampwagon1981.EntityCampwagon1981;
 import bidahochi.foxdrives.entities.EntityCampwagon1981.EntityCampwagon1981_v8;
@@ -14,11 +16,13 @@ import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
 import bidahochi.foxdrives.util.*;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
+import bidahochi.foxdrives.util.Packet.PacketSyncBannedItems;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -72,6 +76,8 @@ public class FoxDrives {
     public static SimpleNetworkWrapper interactChannel;
     public static SimpleNetworkWrapper wrapColorChannel;
     public static SimpleNetworkWrapper lockChannel;
+
+    public static SimpleNetworkWrapper BannedItems_CHANNEL;
     //the entityID for the first entity registered. must be 18 or higher because forge is dumb.
     private static int registryPosition=18;
 
@@ -98,21 +104,29 @@ public class FoxDrives {
         ConfigHandler.init(new File(event.getModConfigurationDirectory(), MODID + ".cfg"));
 
         proxy.configDirectory = event.getModConfigurationDirectory().getAbsolutePath();
+        proxy.registerPlayerSyncHandler();
+    }
 
+
+    private SimpleNetworkWrapper buildNewSimpleChannel(String channelName)
+    {
+        return NetworkRegistry.INSTANCE.newSimpleChannel("FD." + channelName);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
         //init networking stuff
-        interactChannel = NetworkRegistry.INSTANCE.newSimpleChannel("FD.key");
-        wrapColorChannel = NetworkRegistry.INSTANCE.newSimpleChannel("wrapColor");
-        interactChannel.registerMessage(HANDLERS[0], PacketInteract.class, 1, Side.SERVER);
-        wrapColorChannel.registerMessage(PacketWrapColor.Handler.class, PacketWrapColor.class, 2, Side.SERVER);
-        lockChannel = NetworkRegistry.INSTANCE.newSimpleChannel("FD.lock");
-        lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, 3, Side.SERVER);
-        lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, 4, Side.CLIENT);
-
+        int discriminator = 0;
+        interactChannel = buildNewSimpleChannel("key");
+        wrapColorChannel = buildNewSimpleChannel("wrapColor");
+        interactChannel.registerMessage(HANDLERS[0], PacketInteract.class, discriminator++, Side.SERVER);
+        wrapColorChannel.registerMessage(PacketWrapColor.Handler.class, PacketWrapColor.class, discriminator++, Side.SERVER);
+        lockChannel = buildNewSimpleChannel("lock");
+        lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, discriminator++, Side.SERVER);
+        lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, discriminator++, Side.CLIENT);
+        BannedItems_CHANNEL = buildNewSimpleChannel("banneditems_sync");
+        BannedItems_CHANNEL.registerMessage(PacketSyncBannedItems.Handler.class, PacketSyncBannedItems.class, discriminator++, Side.CLIENT);
         //init item stuff
         tab= new FoxTab("FoxDrives", "creativetab");
         wrap= RegisterItem(new Item(),"wrap", tab);
@@ -128,7 +142,8 @@ public class FoxDrives {
                 new float[]{ 0.3f, 0.25f, 0.25f },
                 new float[]{ -0.3f, 0.25f, 0.25f }
             )
-            .maxspeed(15, 11);;
+            .maxspeed(15, 11)
+            .year("1992");
 
         CarType.REDMUND_1972 = CarType.register("redmund_1972", EntityRedmund1972.class)
             .recipe(
@@ -141,7 +156,8 @@ public class FoxDrives {
                     new float[]{ -0.3f, 0.25f, 0.25f }
                     )
             .acceleration(0.75f)
-            .maxspeed(13, 8);
+            .maxspeed(13, 8)
+            .year("1972");
 
         CarType.WORKDAY_1980 = CarType.register("workday_1980", EntityWorkday1980.class)
                 .recipe(
@@ -154,7 +170,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                         )
                 .acceleration(0.75f)
-                .maxspeed(15, 10);
+                .maxspeed(15, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x9)
+                .year("1980");
 
         CarType.WORKDAY_1980_Utility = CarType.register("workday_1980_utility", EntityWorkday1980Utility.class)
                 .recipe(
@@ -167,7 +185,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(15, 10);
+                .maxspeed(15, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1980");
 
         CarType.WORKDAY_1980_Utility_Hirail = CarType.register("workday_1980_utility_hirail", EntityWorkday1980UtilityHirail.class)
                 .recipe(
@@ -180,7 +200,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(15, 10);
+                .maxspeed(15, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1980");
 
         CarType.CRUISEGOER = CarType.register("cruisegoer", EntityCruisegoer.class)
                 .recipe(
@@ -207,7 +229,11 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 1.0f }
                 )
                 .acceleration(0.70f)
-                .maxspeed(16, 10);
+                .maxspeed(16, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1981");
+
+
         CarType.CAMPWAGON_1981_V8 = CarType.register("campwagon_1981_v8", EntityCampwagon1981_v8.class)
                 .recipe(
                         new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
@@ -219,7 +245,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 1.0f }
                 )
                 .acceleration(0.77f)
-                .maxspeed(19, 10);
+                .maxspeed(19, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1981");
 
 
         CarType.GILLIG_PHANTOM = CarType.register("gillig_phantom", EntityGilligPhantom.class)
@@ -276,7 +304,8 @@ public class FoxDrives {
                 )
                 .passpos(new float[]{ 0.0f, 0.0f, 0.25f })//LR, UD, FB
                 .acceleration(0.9f)
-                .maxspeed(9, 4);
+                .maxspeed(9, 4)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3);
 
         CarType.WagonKart = CarType.register("wagonkart", EntityWagonKart.class)
                 .recipe(
@@ -286,7 +315,8 @@ public class FoxDrives {
                 )
                 .passpos(new float[]{ 0.0f, 0.3f, 0.0f })//LR, UD, FB
                 .acceleration(0.9f)
-                .maxspeed(9, 4);
+                .maxspeed(9, 4)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3);
 
         CarType.TurboToilet = CarType.register("turbotoilet", EntityTurboToilet.class)
                 .recipe(
@@ -311,7 +341,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(17, 10);
+                .maxspeed(17, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1963-1969");
 
         CarType.BYRNE60S_SEDAN_V8 = CarType.register("byrne60s_sedan_v8", Entitybyrne60s_sedan_v8.class)
                 .recipe(
@@ -326,7 +358,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(19, 10);
+                .maxspeed(19, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1963-1969");
 
         CarType.BYRNE60S_ESTATE = CarType.register("byrne60s_estate", Entitybyrne60s_estate.class)
                 .recipe(
@@ -341,7 +375,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(17, 10);
+                .maxspeed(17, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1963-1970");
 
         CarType.BYRNE40S_SEDAN = CarType.register("byrne40s_sedan", Entitybyrne40s_sedan.class)
                 .recipe(
@@ -356,7 +392,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0f, -0.4f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(16, 10);
+                .maxspeed(16, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1948-1952");
 
         CarType.BYRNE40S_SEDAN_V8 = CarType.register("byrne40s_sedan_v8", Entitybyrne40s_sedan_v8.class)
                 .recipe(
@@ -371,7 +409,9 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0f, -0.4f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(18, 10);
+                .maxspeed(18, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1948-1952");
 
         CarType.AWOOGA = CarType.register("awooga", EntityAwooga.class)
                 .recipe(
@@ -382,6 +422,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.0f, 0.1f, 0.0f })//LR, UD, FB
                 .acceleration(0.6f)
                 .maxspeed(4, 2);
+
         CarType.FORMULA_CAR = CarType.register("formula", EntityFormulaCar.class)
                 .recipe(
                         new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
@@ -444,6 +485,12 @@ public class FoxDrives {
             FMLCommonHandler.instance().bus().register(EventManager.instance);
         }
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent evt)
+    {
+        ItemHandler.parseBannedItems(ConfigHandler.TRANSPORT_INVENTORY_BLACKLIST_RAW);
     }
 
     //shorthand for registering an item, taken from TiM.

@@ -8,8 +8,8 @@ import net.minecraft.world.World;
 
 public class EntityToyotaPickup1992 extends EntityCarChest
 {
-    public EntityToyotaPickup1992(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityToyotaPickup1992(World world) {
+        super(world);
         textureDescriptionMap.put(0, "JC's Truck");
         textureDescriptionMap.put(1, "Factory White");
         textureDescriptionMap.put(2, "Factory Toned Grey");

@@ -9,8 +9,8 @@ import net.minecraft.world.World;
 
 public class Entitybyrne40s_sedan extends EntityCarChest
 {
-    public Entitybyrne40s_sedan(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public Entitybyrne40s_sedan(World world) {
+        super(world);
         textureDescriptionMap.put(0, "1948 Base Trim");
         textureDescriptionMap.put(1, "1950 Base Trim");
         textureDescriptionMap.put(2, "Taxicab A");

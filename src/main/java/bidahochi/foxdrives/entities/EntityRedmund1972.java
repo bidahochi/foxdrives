@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 public class EntityRedmund1972 extends EntityCarChest
 {
 
-    public EntityRedmund1972(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityRedmund1972(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Factory Blank");
         textureDescriptionMap.put(1, "Factory Chocolate Brown");
         textureDescriptionMap.put(2, "Factory Arbor Red");

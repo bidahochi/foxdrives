@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 public class Entitybyrne60s_estate extends EntityCarChest
 {
 
-    public Entitybyrne60s_estate(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public Entitybyrne60s_estate(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Baby Blue");
         textureDescriptionMap.put(1, "Green");
         textureDescriptionMap.put(2, "Fleetpower Trim");

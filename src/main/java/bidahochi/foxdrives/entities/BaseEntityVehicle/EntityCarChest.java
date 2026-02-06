@@ -2,7 +2,6 @@ package bidahochi.foxdrives.entities.BaseEntityVehicle;
 
 import bidahochi.foxdrives.FoxDrives;
 import cpw.mods.fml.common.gameevent.InputEvent;
-import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.AnimalChest;
 import net.minecraft.inventory.IInvBasic;
@@ -29,7 +28,10 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
         this.func_110226_cD();
     }
 
-    public int getMaxSlots(){return 17;}
+    public final int getMaxSlots()
+    {
+        return 2 + type().inventorySize.SlotCount;
+    }
 
     private void func_110226_cD() {
         AnimalChest animalchest = this.inv;

@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 public class Entitybyrne60s_sedan extends EntityCarChest
 {
 
-    public Entitybyrne60s_sedan(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public Entitybyrne60s_sedan(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Blue Top");
         textureDescriptionMap.put(1, "Marian Blue");
         textureDescriptionMap.put(2, "Turqoise");

@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 public class EntityWagonKart extends EntityCarChest
 {
 
-    public EntityWagonKart(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityWagonKart(World world) {
+        super(world);
     }
 
 

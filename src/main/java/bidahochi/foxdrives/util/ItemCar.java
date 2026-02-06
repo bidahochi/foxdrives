@@ -34,6 +34,17 @@ public class ItemCar extends Item {
     {
         par3List.add("\u00a77" + "Pack: " + GetContentPackName());
 
+        if (transport.year != null)
+        {
+            par3List.add("\u00a77" + "Year: " + transport.year);
+        }
+
+        if (transport.country != null)
+        {
+            par3List.add("\u00a77" + "Country: " + transport.country);
+        }
+
+
         if (par1ItemStack.hasTagCompound())
         {
             NBTTagCompound var5 = par1ItemStack.getTagCompound();

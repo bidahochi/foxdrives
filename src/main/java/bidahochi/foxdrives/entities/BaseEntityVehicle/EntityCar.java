@@ -7,8 +7,6 @@ import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
 import bidahochi.foxdrives.util.ItemCar;
-import bidahochi.foxdrives.util.wrapgui.GuiWrap;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
@@ -24,7 +22,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -195,6 +192,11 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         return FoxDrives.JSON_PARSER.parse(string).getAsJsonObject();
     }
 
+    public boolean isRunning()
+    {
+        return dataWatcher.getWatchableObjectByte(DW_RUNNING) > 0;
+    }
+
     public boolean isLightsEnabled()
     {
         return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
@@ -215,9 +217,23 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.beaconCycleIndex.AsString()).getAsByte();
     }
 
-    public boolean isDitchLightsEnabled()
+    public boolean isAuxLightsEnabled()
     {
         return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0;
+    }
+
+    /**
+     * Get Turns Signal Direction
+     * @return Left = -1, Right = 1
+     */
+    public byte getTurnSignalDirection()
+    {
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignal.AsString()).getAsByte();
+    }
+
+    public byte getTurnSignalTick()
+    {
+        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignalTick.AsString()).getAsByte();
     }
 
     public float getVelocity()
@@ -647,7 +663,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                     break;
                 case 12:
-                    setPacketDitchLightsMode(isDitchLightsEnabled() ? (byte) 0 : (byte) 1);
+                    setPacketDitchLightsMode(isAuxLightsEnabled() ? (byte) 0 : (byte) 1);
                     dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
                     break;
             }

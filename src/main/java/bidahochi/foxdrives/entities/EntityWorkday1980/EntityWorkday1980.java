@@ -10,8 +10,8 @@ import net.minecraft.world.World;
 public class EntityWorkday1980 extends EntityCarChest
 {
 
-    public EntityWorkday1980(World p_i1685_1_) {
-        super(p_i1685_1_);
+    public EntityWorkday1980(World world) {
+        super(world);
         textureDescriptionMap.put(0, "Factory Blank");
         textureDescriptionMap.put(1, "Factory Silver W/ Black Stripe");
         textureDescriptionMap.put(2, "Factory Moss Green");
