@@ -1041,4 +1041,10 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     public void writeSpawnData(ByteBuf buffer) {
         buffer.writeBoolean(locked);
     }
+
+    @Override
+    public String getCommandSenderName()
+    {
+        return StatCollector.translateToLocal(type().getItem().getUnlocalizedName()+".name");
+    }
 }
