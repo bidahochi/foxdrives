@@ -1,6 +1,7 @@
 package bidahochi.foxdrives.entities.BaseEntityVehicle;
 
 import bidahochi.foxdrives.FoxDrives;
+import bidahochi.foxdrives.common.handlers.ItemHandler;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.AnimalChest;
@@ -150,5 +151,8 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
     public boolean isUseableByPlayer(EntityPlayer p_70300_1_){return inv.isUseableByPlayer(p_70300_1_);}
     public void openInventory(){inv.openInventory();}
     public void closeInventory(){inv.closeInventory();}
-    public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_){return inv.isItemValidForSlot(p_94041_1_,p_94041_2_);}
+    public boolean isItemValidForSlot(int i, ItemStack itemStack)
+    {
+        return ItemHandler.handleFreight(this, itemStack);
+    }
 }
