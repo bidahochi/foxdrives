@@ -19,7 +19,7 @@ public class ModelDoseiKiote_Sedan extends ModelConverter //Same as Filename
 
 	public ModelDoseiKiote_Sedan() //Same as Filename
 	{
-		bodyModel = new ModelRendererTurbo[240];
+		bodyModel = new ModelRendererTurbo[250];
 
 		initbodyModel_1();
 
@@ -271,6 +271,16 @@ public class ModelDoseiKiote_Sedan extends ModelConverter //Same as Filename
 		bodyModel[237] = new ModelRendererTurbo(this, 1, 51, textureX, textureY); // Box 241
 		bodyModel[238] = new ModelRendererTurbo(this, 62, 51, textureX, textureY); // Box 242
 		bodyModel[239] = new ModelRendererTurbo(this, 150, 44, textureX, textureY); // Box 239 4wd turbo logo
+		bodyModel[240] = new ModelRendererTurbo(this, 42, 55, textureX, textureY); // Box 241
+		bodyModel[241] = new ModelRendererTurbo(this, 52, 48, textureX, textureY); // Box 242
+		bodyModel[242] = new ModelRendererTurbo(this, 110, 28, textureX, textureY); // Box 243
+		bodyModel[243] = new ModelRendererTurbo(this, 108, 28, textureX, textureY); // Box 244
+		bodyModel[244] = new ModelRendererTurbo(this, 110, 28, textureX, textureY); // Box 245
+		bodyModel[245] = new ModelRendererTurbo(this, 108, 28, textureX, textureY); // Box 246
+		bodyModel[246] = new ModelRendererTurbo(this, 110, 28, textureX, textureY); // Box 247
+		bodyModel[247] = new ModelRendererTurbo(this, 110, 28, textureX, textureY); // Box 248
+		bodyModel[248] = new ModelRendererTurbo(this, 152, 47, textureX, textureY, "cull"); // Box 249 cull 4wd turbo logo
+		bodyModel[249] = new ModelRendererTurbo(this, 163, 45, textureX, textureY); // Box 250 trunk emblem
 
 		bodyModel[0].addBox(-1F, -3F, -1F, 2, 6, 2, 0F); // Box 136 Wheel1
 		bodyModel[0].setRotationPoint(-10.5F, 7F, -8F);
@@ -1036,5 +1046,41 @@ public class ModelDoseiKiote_Sedan extends ModelConverter //Same as Filename
 
 		bodyModel[239].addShapeBox(0F, 0F, 0F, 0, 1, 6, 0F,0F, -0.125F, 0F, 0F, -0.125F, 0F, 0F, -0.125F, 0F, 0F, -0.125F, 0F, 0F, -0.125F, 0F, 0F, -0.125F, 0F, 0F, -0.125F, 0F, 0F, -0.125F, 0F); // Box 239 4wd turbo logo
 		bodyModel[239].setRotationPoint(23.01F, 2.9F, -3F);
+
+		bodyModel[240].addShapeBox(0F, 0F, 0F, 21, 1, 1, 0F,0F, -0.5F, -0.75F, 0F, -0.5F, -0.75F, 0F, -0.5F, 0F, 0F, -0.5F, 0F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0F, 0F, 0F, 0F, 0F, 0F); // Box 241
+		bodyModel[240].setRotationPoint(-6F, 0.5F, -9F);
+
+		bodyModel[241].addShapeBox(0F, 0F, 0F, 21, 1, 1, 0F,0F, -0.5F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, -0.75F, 0F, -0.5F, -0.75F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, 0F, -0.5F, 0F, 0F, -0.5F); // Box 242
+		bodyModel[241].setRotationPoint(-6F, 0.5F, 8F);
+
+		bodyModel[242].addShapeBox(0F, 0F, -1F, 4, 1, 1, 0F,0F, -0.5F, 0F, 0F, -0.375F, 0F, 0F, 0.125F, 0F, 0F, 0F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0.125F); // Box 243
+		bodyModel[242].setRotationPoint(15F, 1F, -7F);
+		bodyModel[242].rotateAngleY = 1.57079633F;
+
+		bodyModel[243].addShapeBox(0F, 0F, -1F, 6, 1, 1, 0F,0F, -0.375F, 0F, 0F, -0.375F, 0F, 0F, 0.125F, 0F, 0F, 0.125F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0.125F); // Box 244
+		bodyModel[243].setRotationPoint(15F, 1F, -3F);
+		bodyModel[243].rotateAngleY = 1.57079633F;
+
+		bodyModel[244].addShapeBox(0F, 0F, -1F, 4, 1, 1, 0F,0F, -0.375F, 0F, 0F, -0.5F, 0F, 0F, 0F, 0F, 0F, 0.125F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0.125F); // Box 245
+		bodyModel[244].setRotationPoint(15F, 1F, 3F);
+		bodyModel[244].rotateAngleY = 1.57079633F;
+
+		bodyModel[245].addShapeBox(0F, 0F, -1F, 6, 1, 1, 0F,0F, 0.125F, 0F, 0F, 0.125F, 0F, 0F, -0.375F, 0F, 0F, -0.375F, 0F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0F, 0F, -0.5F, 0F); // Box 246
+		bodyModel[245].setRotationPoint(-7F, 1F, -3F);
+		bodyModel[245].rotateAngleY = 1.57079633F;
+
+		bodyModel[246].addShapeBox(0F, 0F, -1F, 4, 1, 1, 0F,0F, 0.125F, 0F, 0F, 0F, 0F, 0F, -0.5F, 0F, 0F, -0.375F, 0F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0F, 0F, -0.5F, 0F); // Box 247
+		bodyModel[246].setRotationPoint(-7F, 1F, 3F);
+		bodyModel[246].rotateAngleY = 1.57079633F;
+
+		bodyModel[247].addShapeBox(0F, 0F, -1F, 4, 1, 1, 0F,0F, 0F, 0F, 0F, 0.125F, 0F, 0F, -0.375F, 0F, 0F, -0.5F, 0F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0.125F, 0F, -0.5F, 0F, 0F, -0.5F, 0F); // Box 248
+		bodyModel[247].setRotationPoint(-7F, 1F, -7F);
+		bodyModel[247].rotateAngleY = 1.57079633F;
+
+		bodyModel[248].addShapeBox(0F, 0F, 0F, 4, 1, 1, 0F,0F, -0.125F, 0.01F, 0F, -0.125F, 0.01F, 0F, -0.125F, 17.01F, 0F, -0.125F, 17.01F, 0F, -0.125F, 0.01F, 0F, -0.125F, 0.01F, 0F, -0.125F, 17.01F, 0F, -0.125F, 17.01F); // Box 249 cull 4wd turbo logo
+		bodyModel[248].setRotationPoint(4.5F, 5.5F, -9F);
+
+		bodyModel[249].addShapeBox(0F, 0F, 0F, 0, 1, 2, 0F,0.125F, -0.25F, 0F, -0.075F, -0.25F, 0F, -0.075F, -0.25F, 0F, 0.125F, -0.25F, 0F, 0F, -0.25F, 0F, 0F, -0.25F, 0F, 0F, -0.25F, 0F, 0F, -0.25F, 0F); // Box 250 trunk emblem
+		bodyModel[249].setRotationPoint(22.95F, 1.5F, -1F);
 	}
 }

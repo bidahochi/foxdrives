@@ -150,13 +150,26 @@ public class FoxDrives {
                 .recipe(
                         new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs), new ItemStack(Blocks.gold_block),
-                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone)
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.cobblestone)
                 )
                 .passpos(
                         new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
                         new float[]{ -0.3f, 0.05f, 0.0f }
                 )
                 .maxspeed(18, 10)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1986");
+        CarType.DOSEI_KIOTE_WAGON = CarType.register("dosei_kiote_wagon", EntityDoseiKiote_Wagon.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs), new ItemStack(Blocks.gold_block),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.cobblestone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
+                        new float[]{ -0.3f, 0.05f, 0.0f }
+                )
+                .maxspeed(17, 10)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1986");
 

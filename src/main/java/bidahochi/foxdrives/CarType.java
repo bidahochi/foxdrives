@@ -49,6 +49,7 @@ public class CarType {
  	//
 	public static CarType TOYOTA_PICKUP_1992;
 	public static CarType DOSEI_KIOTE_SEDAN;
+	public static CarType DOSEI_KIOTE_WAGON;
 	public static CarType REDMUND_1972;
 	public static CarType WORKDAY_1980;
 	public static CarType WORKDAY_1980_Utility;

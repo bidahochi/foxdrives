@@ -10,9 +10,9 @@ public class EntityDoseiKiote_Sedan extends EntityCarChest
 {
     public EntityDoseiKiote_Sedan(World world) {
         super(world);
-        textureDescriptionMap.put(0, "Factory Silver W/ Blue Interior");
+        textureDescriptionMap.put(0, "Factory White-Silver W/ Blue Interior");
         textureDescriptionMap.put(1, "Factory Desert W/ Tan Interior");
-        textureDescriptionMap.put(2, "");
+        textureDescriptionMap.put(2, "Factory Grey W/ Blue Interior");
         textureDescriptionMap.put(3, "");
         textureDescriptionMap.put(4, "");
     }
@@ -32,7 +32,8 @@ public class EntityDoseiKiote_Sedan extends EntityCarChest
      */
     @Override
     public String[] getSkins() {
-        return new String[]{"textures/dosei/dosei_kiote_sedan_turbo_silverwhite", "textures/dosei/dosei_kiote_sedan_turbo_deserttan"};
+        return new String[]{"textures/dosei/dosei_kiote_sedan_turbo_silverwhite", "textures/dosei/dosei_kiote_sedan_turbo_deserttan",
+                "textures/dosei/dosei_kiote_sedan_turbo_silverreal"};
     }
 
     @Override

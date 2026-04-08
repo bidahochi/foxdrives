@@ -6,8 +6,10 @@ item.foxdrives.wrap.name=Vehicle Wrap
 item.foxdrives.toyota_pickup_1992.name=1992 Boiota Pickup
 entity.foxdrives.foxdrives.toyota_pickup_1992.entity.name=1992 Boiota Pickup
 
-item.foxdrives.dosei_kiote_sedan.name=1986 Dosei Kiote Turbo
-entity.foxdrives.foxdrives.dosei_kiote_sedan.entity.name=1986 Dosei Kiote Turbo
+item.foxdrives.dosei_kiote_sedan.name=1986 Dosei Kiote Turbo 4dr
+entity.foxdrives.foxdrives.dosei_kiote_sedan.entity.name=1986 Dosei Kiote Turbo 4dr
+item.foxdrives.dosei_kiote_wagon.name=1986 Dosei Kiote Turbo Wagon
+entity.foxdrives.foxdrives.dosei_kiote_wagon.entity.name=1986 Dosei Kiote Turbo Wagon
 
 item.foxdrives.redmund_1972.name=1972 Pine Redmund
 entity.foxdrives.foxdrives.redmund_1972.entity.name=1972 Pine Redmund
