@@ -5,6 +5,7 @@ import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.models.ModelHysterH80FT;
 import fdfexcraft.tmt_slim.ModelBase;
+import fdfexcraft.tmt_slim.Vec3f;
 import net.minecraft.world.World;
 
 
@@ -39,6 +40,11 @@ public class EntityHysterH80FT extends EntityCarChest
     @Override
     public CarType type(){
         return CarType.HYSTER_H80FT;
+    }
+
+    @Override
+    public Vec3f getModelScale() {
+        return new Vec3f(0.75,0.75,0.75);
     }
 
 }

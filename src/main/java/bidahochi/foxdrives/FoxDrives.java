@@ -154,7 +154,9 @@ public class FoxDrives {
                 )
                 .passpos(
                         new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
-                        new float[]{ -0.3f, 0.05f, 0.0f }
+                        new float[]{ -0.3f, 0.05f, 0.0f },
+                        new float[]{ 0.3f, 0.05f, -0.4f },
+                        new float[]{ -0.3f, 0.05f, -0.4f }
                 )
                 .maxspeed(18, 10)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
@@ -167,7 +169,9 @@ public class FoxDrives {
                 )
                 .passpos(
                         new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
-                        new float[]{ -0.3f, 0.05f, 0.0f }
+                        new float[]{ -0.3f, 0.05f, 0.0f },
+                        new float[]{ 0.3f, 0.05f, -0.4f },
+                        new float[]{ -0.3f, 0.05f, -0.4f }
                 )
                 .maxspeed(17, 10)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
@@ -241,7 +245,9 @@ public class FoxDrives {
                 )
                 .passpos(
                         new float[]{ 0.27f, 0.05f, 0.05f },
-                        new float[]{ -0.27f, 0.05f, 0.05f }
+                        new float[]{ -0.27f, 0.05f, 0.05f },
+                        new float[]{ 0.3f, 0.25f, -0.5f },
+                        new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.75f)
                 .inventorySize(InventorySize.STYLE_PROFILE_0x0)
@@ -255,8 +261,10 @@ public class FoxDrives {
                         new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
                 )
                 .passpos(
-                        new float[]{ 0.3f, 0.25f, 0.0f },
-                        new float[]{ -0.3f, 0.25f, 1.0f }
+                        new float[]{ 0.3f, 0.25f, 0.0f },//LR, UD, FB
+                        new float[]{ -0.3f, 0.25f, 0.0f },
+                        new float[]{ 0.3f, 0.25f, -0.5f },
+                        new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.70f)
                 .maxspeed(16, 10)
@@ -272,7 +280,9 @@ public class FoxDrives {
                 )
                 .passpos(
                         new float[]{ 0.3f, 0.25f, 0.0f },
-                        new float[]{ -0.3f, 0.25f, 1.0f }
+                        new float[]{ -0.3f, 0.25f, 0.0f },
+                        new float[]{ 0.3f, 0.25f, -0.5f },
+                        new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.77f)
                 .maxspeed(19, 10)
@@ -322,7 +332,7 @@ public class FoxDrives {
                 new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                 new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
             )
-            .passpos(new float[]{ 0.0f, 0.5f, 0.0f })
+            .passpos(new float[]{ 0.0f, 0.3f, 0.1f })
             .rearsteer(true)
             .maxspeed(3, 3);
 
@@ -473,6 +483,18 @@ public class FoxDrives {
                 .acceleration(0.2f)
                 .maxspeed(14, 8)
                 .year("1980-1997");
+
+        CarType.PC100 = CarType.register("pc100", EntityPC100.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.4f, 0.65f, 0.9f },
+                        new float[]{ -0.4f, 0.65f, 0.9f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(13.5f, 7.5f)
+                .year("1973-1995");
 
         //CarType Registry Entry registration
         for(CarType type : CarType.REGISTRY.values()){
