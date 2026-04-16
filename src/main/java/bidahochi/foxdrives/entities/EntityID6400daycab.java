@@ -19,6 +19,9 @@ public class EntityID6400daycab extends EntityCarChest
         textureDescriptionMap.put(4, "Generic Green");
         textureDescriptionMap.put(5, "Generic Red");
         textureDescriptionMap.put(6, "Magnolia Acres MFG.");
+        textureDescriptionMap.put(7, "Alaska West Express");
+        textureDescriptionMap.put(8, "Alaska West Express (Dirt & Grime)");
+
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }
 
@@ -38,7 +41,8 @@ public class EntityID6400daycab extends EntityCarChest
     @Override
     public String[] getSkins() {
         return new String[]{"textures/id/ID6400_blank", "textures/id/ID6400_facelift_blank", "textures/id/ID6400_blank2", "textures/id/ID6400_generic_whiteorange"
-                , "textures/id/ID6400_facelift_greeny", "textures/id/ID6400_facelift_reddyo", "textures/id/ID6400_magnolia_acres1"};
+                , "textures/id/ID6400_facelift_greeny", "textures/id/ID6400_facelift_reddyo", "textures/id/ID6400_magnolia_acres1", "textures/id/ID6400_AWE"
+                , "textures/id/ID6400_AWE_Dirty"};
     }
 
     @Override
