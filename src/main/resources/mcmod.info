@@ -1,8 +1,9 @@
 [{
   "modid": "foxdrives",
   "name": "FoxDrives",
-  "description": "",
-  "version": "0.5.1",
+  "description": "Semi-TC scaled driveable cars, trucks, and more!",
+  "version": "0.5.2",
+  "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["Bidahochi"],
