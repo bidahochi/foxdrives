@@ -12,8 +12,6 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import foxmods.unifiedcontrols.client.SharedKeyState;
-import foxmods.unifiedcontrols.client.UnifiedKeyRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
@@ -39,34 +37,30 @@ public class EventManager {
         if(Minecraft.getMinecraft().currentScreen != null) return;
         if(!(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCar)) return;
 
-        UnifiedKeyRegistry.init();
-        SharedKeyState.poll();
-
-        if(SharedKeyState.gui()){
-            if(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCarChest)
-            {
+        if(ClientProxy.KeyInventory.isPressed()){
+            if(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCarChest){
                 FoxDrives.interactChannel.sendToServer(new PacketInteract(
                         2,Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
             } else {
-                //FMLCommonHandler.instance().showGuiScreen(new GuiCar((EntityCar) Minecraft.getMinecraft().thePlayer.ridingEntity));
+                FMLCommonHandler.instance().showGuiScreen(new GuiCar((EntityCar) Minecraft.getMinecraft().thePlayer.ridingEntity));
             }
         }
 
-        if (SharedKeyState.left())
+        if (ClientProxy.KeyLeftTurn.isPressed())
         {
             if(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCar){
                 FoxDrives.interactChannel.sendToServer(new PacketInteract(4, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
             }
         }
 
-        if (SharedKeyState.right())
+        if (ClientProxy.KeyRightTurn.isPressed())
         {
             if(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCar){
                 FoxDrives.interactChannel.sendToServer(new PacketInteract(5, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
             }
         }
 
-        if(SharedKeyState.brake())
+        if(ClientProxy.KeyBrake.isPressed())
         {
             if(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCar){
                 FoxDrives.interactChannel.sendToServer(new PacketInteract(3, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
@@ -96,7 +90,7 @@ public class EventManager {
         else{
             car =player.ridingEntity instanceof EntityCar ? (EntityCar)player.ridingEntity : player.ridingEntity instanceof EntitySeat ? ((EntitySeat)player.ridingEntity).car : null;
         }
-        if(car == null )
+        if(car == null)
         {
             return;
         }
