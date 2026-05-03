@@ -17,6 +17,7 @@ import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
 import bidahochi.foxdrives.util.*;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import bidahochi.foxdrives.util.Packet.PacketSyncBannedItems;
+import bidahochi.foxdrives.util.Packet.PacketSyncHitch;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -76,6 +77,7 @@ public class FoxDrives {
     public static SimpleNetworkWrapper interactChannel;
     public static SimpleNetworkWrapper wrapColorChannel;
     public static SimpleNetworkWrapper lockChannel;
+    public static SimpleNetworkWrapper hitchSyncChannel;
 
     public static SimpleNetworkWrapper BannedItems_CHANNEL;
     //the entityID for the first entity registered. must be 18 or higher because forge is dumb.
@@ -127,6 +129,9 @@ public class FoxDrives {
         lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, discriminator++, Side.CLIENT);
         BannedItems_CHANNEL = buildNewSimpleChannel("banneditems_sync");
         BannedItems_CHANNEL.registerMessage(PacketSyncBannedItems.Handler.class, PacketSyncBannedItems.class, discriminator++, Side.CLIENT);
+
+        hitchSyncChannel = buildNewSimpleChannel("hitch_sync");
+        hitchSyncChannel.registerMessage(PacketSyncHitch.Handler.class, PacketSyncHitch.class, discriminator++, Side.CLIENT);
         //init item stuff
         tab= new FoxTab("FoxDrives", "creativetab");
         wrap= RegisterItem(new Item(),"wrap", tab);
@@ -496,6 +501,13 @@ public class FoxDrives {
                 .maxspeed(13.5f, 7.5f)
                 .year("1973-1995");
 
+        TrailerType.DRYVAN53FT = TrailerType.register("53ftdryvan", Entity53ftDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                );
+
         //CarType Registry Entry registration
         for(CarType type : CarType.REGISTRY.values()){
             registerModEntity(type.clazz, MODID + "." + type.regname + ".entity", registryPosition, FoxDrives.instance, 1600, 3, true);
@@ -534,11 +546,50 @@ public class FoxDrives {
             registryPosition++;
         }
 
+        //TrailerType Registry Entry registration
+        for(TrailerType type : TrailerType.REGISTRY.values()){
+            registerModEntity(type.clazz, MODID + "." + type.regname + ".entity", registryPosition, FoxDrives.instance, 1600, 3, true);
+            RegisterItem(type.getItem(), type.regname, tab);
+            if(type.getRecipe() != null){
+                String firstRow="";
+                firstRow+=type.getRecipe()[0]!=null?"A":" ";
+                firstRow+=type.getRecipe()[1]!=null?"B":" ";
+                firstRow+=type.getRecipe()[2]!=null?"C":" ";
+                String secondRow="";
+                secondRow+=type.getRecipe()[3]!=null?"D":" ";
+                secondRow+=type.getRecipe()[4]!=null?"E":" ";
+                secondRow+=type.getRecipe()[5]!=null?"F":" ";
+                String thirdRow="";
+                thirdRow+=type.getRecipe()[6]!=null?"G":" ";
+                thirdRow+=type.getRecipe()[7]!=null?"H":" ";
+                thirdRow+=type.getRecipe()[8]!=null?"I":" ";
+
+                List<Object> recipe = new ArrayList<>();
+                recipe.add(firstRow);
+                recipe.add(secondRow);
+                recipe.add(thirdRow);
+
+                //loop for all the items in the array, then make an entry for the ones that exist
+                //use a char array for a simple shorthand to figure out which char to use the the matching ID.
+                char[] c = {'A','B','C','D','E','F','G','H','I'};
+                for(int i=0; i<type.getRecipe().length;i++){
+                    if(type.getRecipe()[i]!=null){
+                        recipe.add(c[i]);
+                        recipe.add(type.getRecipe()[i]);
+                    }
+                }
+                GameRegistry.addRecipe(new ItemStack(type.getItem()), recipe.toArray());
+            }
+            proxy.registerTrailerRenderer(type.clazz);
+            registryPosition++;
+        }
+
         //register player scaler
         proxy.registerPlayerScaler();
 
         //register seat entity
-        registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition, FoxDrives.instance, 1600, 1, true);
+        registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
+        //registerModEntity(EntityReceiver.class, MODID + ".hitch.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
 
         //register the event handler, mainly for tracking inputs
         if(event.getSide().isClient())

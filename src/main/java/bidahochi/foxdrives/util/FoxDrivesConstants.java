@@ -11,4 +11,7 @@ public class FoxDrivesConstants
     public static int DW_VEL = 22;
     //public static int DW_THROTTLE = 22;
     //public static int DW_BRAKING = 23;
+    public static int DW_PARENT = 24;
+    public static int DW_CHILD = 25;
+    public static int DW_HITCHSTATE = 26;
 }

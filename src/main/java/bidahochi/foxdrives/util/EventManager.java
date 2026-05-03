@@ -2,6 +2,7 @@ package bidahochi.foxdrives.util;
 
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.ClientProxy;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingParent;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.entities.EntitySeat;
@@ -15,6 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import foxmods.unifiedcontrols.client.SharedKeyState;
 import foxmods.unifiedcontrols.client.UnifiedKeyRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,6 +72,13 @@ public class EventManager {
         {
             if(Minecraft.getMinecraft().thePlayer.ridingEntity instanceof EntityCar){
                 FoxDrives.interactChannel.sendToServer(new PacketInteract(3, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
+            }
+        }
+
+        if (UnifiedKeyRegistry.hitchToggle.isPressed()) {
+            EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+            if (player.ridingEntity instanceof AbstractTowingParent) {
+                FoxDrives.interactChannel.sendToServer(new PacketInteract(6, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
             }
         }
     }
