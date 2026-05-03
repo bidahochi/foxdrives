@@ -46,12 +46,8 @@ public class EntityID6400daycab extends AbstractTowingParent
     }
 
     @Override
-    public CarType type(){
-        return CarType.ID6400daycab;
-    }
+    public CarType type() { return CarType.ID6400daycab; }
 
-    public Vec3f getHitchPosition() {
-        return new Vec3f(0,-0.5,-0.75);
-    }
+    public Vec3f getReceiverPosition() { return new Vec3f(0,-0.5,-0.75); }
 
 }

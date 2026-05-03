@@ -1,12 +1,12 @@
 package bidahochi.foxdrives.entities.BaseEntityVehicle;
 
-import bidahochi.foxdrives.CarType;
+import bidahochi.foxdrives.TrailerType;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
-import bidahochi.foxdrives.util.ItemCar;
+import bidahochi.foxdrives.util.ItemTrailer;
 import com.google.gson.JsonObject;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -17,8 +17,6 @@ import fdfexcraft.tmt_slim.Vec3f;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -34,10 +32,11 @@ import java.util.*;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
-public abstract class EntityCar extends Entity implements IEntityAdditionalSpawnData {
+public abstract class EntityTrailer extends Entity implements IEntityAdditionalSpawnData {
 
     @SideOnly(Side.CLIENT)
     public ModelBase modelInstance;
+
     //@SideOnly(Side.CLIENT)
     public long lastFrame = System.currentTimeMillis();
 
@@ -45,10 +44,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     public double transportX=0,transportY=0,transportZ=0;
     public float servyaw;
     public int tickOffset=0;
-    public byte running=0;
     public float velocity=0;
-    //public float throttle;
-    public boolean braking;
     private float guiRenderScale = 25f;
 
     /**
@@ -81,8 +77,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.vehicleOwner.AsString()).getAsString();
     }
 
-    public void setTransportOwner(String transportOwner)
-    {
+    public void setTransportOwner(String transportOwner) {
         this.transportOwner = transportOwner;
         dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
@@ -109,7 +104,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
      /**
      * entity spawn
      */
-    public EntityCar(World world) {
+    public EntityTrailer(World world) {
         super(world);
         //this can be called on server from the inventory car class, so, dont do client stuff there
         if(world.isRemote)
@@ -127,20 +122,24 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
      * Literally just exists to properly init the datawatcher stuff.
      */
     @Override
-    protected void entityInit(){
+    protected void entityInit() {
         this.dataWatcher.addObject(DW_VEL, velocity);
         this.dataWatcher.addObject(DW_VEHICLEDATAJSON, vehicleDataJSON());//tracks vehicle lighting
-        this.dataWatcher.addObject(DW_RUNNING, running);//tracks if the entity is on or not
         this.dataWatcher.addObject(DW_ROLL, roll);//tracks the entity roll from being hit
         this.dataWatcher.addObject(DW_HEALTH, health);//tracks entity health
         this.dataWatcher.addObject(DW_SKIN, 0);//used to track currently selected skin
         this.dataWatcher.addObject(DW_YAW, 0f);//used to track rotation yaw
+        if (this instanceof ITowingChild) {
+            this.dataWatcher.addObject(DW_PARENT, "");
+        }
+        if (this instanceof ITowingParent) {
+            this.dataWatcher.addObject(DW_CHILD, "");
+        }
         //this.dataWatcher.addObject(DW_THROTTLE, 0f);//throttle
         //this.dataWatcher.addObject(DW_BRAKING, 0);//throttle
     }
 
-    public JsonObject vehicleDataAsJsonObjectDW()
-    {
+    public JsonObject vehicleDataAsJsonObjectDW() {
         try
         {
             return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON));
@@ -151,10 +150,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         }
     }
 
-    public int getSkin()
-    {
-        return dataWatcher.getWatchableObjectInt(DW_SKIN);
-    }
+    public int getSkin() { return dataWatcher.getWatchableObjectInt(DW_SKIN); }
 
     private boolean isHeadlightsEnabled = false;
     private boolean isBeaconEnabled = false;
@@ -164,10 +160,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     private byte turnSignalTick = 0;
     private boolean areBrakeLightsOn = false;
 
-    public String vehicleDataJSON()
-    {
-        return vehicleDataAsJSON().toString();
-    }
+    public String vehicleDataJSON() { return vehicleDataAsJSON().toString(); }
 
     public JsonObject vehicleDataAsJSON()
     {
@@ -190,78 +183,40 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         return FoxDrives.JSON_PARSER.parse(string).getAsJsonObject();
     }
 
-    public boolean isRunning()
-    {
-        return dataWatcher.getWatchableObjectByte(DW_RUNNING) > 0;
-    }
+    //TODO: everything with lighting pulls from the towing entity
+    public boolean isLightsEnabled() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean(); }
 
-    public boolean isLightsEnabled()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
-    }
+    public boolean areBrakeLightsOn() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean(); }
 
-    public boolean areBrakeLightsOn()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
-    }
+    public boolean isBeaconEnabled() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean(); }
 
-    public boolean isBeaconEnabled()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean();
-    }
+    public byte getBeaconCycleIndex() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.beaconCycleIndex.AsString()).getAsByte(); }
 
-    public byte getBeaconCycleIndex()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.beaconCycleIndex.AsString()).getAsByte();
-    }
+    public boolean isAuxLightsEnabled() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0; }
 
-    public boolean isAuxLightsEnabled()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0;
-    }
+
 
     /**
      * Get Turns Signal Direction
      * @return Left = -1, Right = 1
      */
-    public byte getTurnSignalDirection()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignal.AsString()).getAsByte();
-    }
+    public byte getTurnSignalDirection() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignal.AsString()).getAsByte(); }
 
-    public byte getTurnSignalTick()
-    {
-        return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignalTick.AsString()).getAsByte();
-    }
+    public byte getTurnSignalTick() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignalTick.AsString()).getAsByte(); }
 
-    public float getVelocity()
-    {
-        return dataWatcher.getWatchableObjectFloat(DW_VEL);
-    }
+    public float getVelocity() { return dataWatcher.getWatchableObjectFloat(DW_VEL); }
 
-    public void setPacketLights(boolean isHeadlightsOn)
-    {
-        isHeadlightsEnabled = isHeadlightsOn;
-    }
+    public void setPacketLights(boolean isHeadlightsOn) { isHeadlightsEnabled = isHeadlightsOn; }
 
-    public void setPacketTurnIndicator(byte turnIndicator)
-    {
-        turnSignal = turnIndicator;
-    }
+    public void setPacketTurnIndicator(byte turnIndicator) { turnSignal = turnIndicator; }
 
-    public void setPacketBeacon(boolean isVehicleBeaconEnabled)
-    {
-        isBeaconEnabled = isVehicleBeaconEnabled;
-    }
+    public void setPacketBeacon(boolean isVehicleBeaconEnabled) { isBeaconEnabled = isVehicleBeaconEnabled; }
 
     /**Sets the Ditch light mode
      *
      * @param ditchLightMode set 0 for off,
      */
-    public void setPacketDitchLightsMode(byte ditchLightMode)
-    {
-        this.ditchLightMode = ditchLightMode;
-    }
+    public void setPacketDitchLightsMode(byte ditchLightMode) { this.ditchLightMode = ditchLightMode; }
 
 
     /**
@@ -337,41 +292,32 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 
     /**add entity mount functionality, and remove item interactions*/
     @Override
-    public boolean interactFirst(EntityPlayer player)
-    {
-        if (player.ridingEntity == this)
-        {
+    public boolean interactFirst(EntityPlayer player) {
+        if (player.ridingEntity == this) {
             return false;
         }
 
         ItemStack itemstack = player.inventory.getCurrentItem();
-        if (lockThisTransport(itemstack, player))
-        {
+        if (lockThisTransport(itemstack, player)) {
             return true;
         }
 
-        if (this.getTransportLocked())
-        {
+        if (this.getTransportLocked()) {
             boolean isTrustedPlayer = isPlayerTrusted(player.getDisplayName());
-            if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && isTrustedPlayer == false)
-            {
+            if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && isTrustedPlayer == false) {
                 if (!worldObj.isRemote) player.addChatMessage(new ChatComponentText("Vehicle is locked by " + this.getTransportOwner() + "."));
                 return true;
             }
-            else if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() == FoxDrives.wrap  && !isTrustedPlayer == false)
-            {
+            else if (!player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) && player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() == FoxDrives.wrap  && !isTrustedPlayer == false) {
                 if (!worldObj.isRemote) player.addChatMessage(new ChatComponentText("Vehicle is locked by " + this.getTransportOwner() + "."));
                 return true;
             }
         }
 
         // Owner Only Operations / Trusted to Break
-        if ((this.getTransportLocked() == false || player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null)
-        {
-            if(player.getHeldItem().getItem() == FoxDrives.wrap)
-            {
-                if (!player.isSneaking())
-                {
+        if ((!this.getTransportLocked() || player.getDisplayName().equalsIgnoreCase(this.getTransportOwner()) || isPlayerTrustedToBreak(player.getDisplayName())) && player.getHeldItem() != null) {
+            if(player.getHeldItem().getItem() == FoxDrives.wrap) {
+                if (!player.isSneaking()) {
                     //gets current skin value and loops around to 0 if it's past the entity's skin count.
                     int skin = dataWatcher.getWatchableObjectInt(DW_SKIN) + 1;
                     if (skin >= getSkins().length)
@@ -381,8 +327,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
                     dataWatcher.updateObject(DW_SKIN, skin);
                     return true;
                 }
-                else if (getSkins().length > 1)
-                {
+                else if (getSkins().length > 1) {
                     player.openGui(FoxDrives.instance, GuiIDs.WRAP_MENU, player.getEntityWorld(), this.getEntityId(), -1, (int) this.posZ);
                     return true;
                 }
@@ -390,22 +335,19 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             }
         }
 
-        if (!this.worldObj.isRemote)
-        {
-            if(riddenByEntity == null)
-            {
+        if (!this.worldObj.isRemote) {
+            if(riddenByEntity == null && !type().passenger_pos.isEmpty()) {
                 player.mountEntity(this);
             }
-            else if(player.ridingEntity == null)
-            {
-                if(passengers.size() + 1 < type().passenger_pos.size())
-                {
-                    EntitySeat seat = new EntitySeat(this);
+            else if(player.ridingEntity == null && !type().passenger_pos.isEmpty()) {
+                if(passengers.size() + 1 < type().passenger_pos.size()) {
+                    //TODO: refactor seats to allow more than just cars.
+                    /*EntitySeat seat = new EntitySeat(this);
                     seat.setPosition(posX, posY, posZ);
                     seat.getDataWatcher().updateObject(17, getEntityId());
                     worldObj.spawnEntityInWorld(seat);
                     passengers.add(seat);
-                    player.mountEntity(seat);
+                    player.mountEntity(seat);*/
                 }
             }
             return true;
@@ -442,7 +384,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
      */
     public boolean attackEntityFrom(DamageSource damagesource, float p_70097_2_) {
         if(worldObj.isRemote || isDead) return false;
-        if (damagesource.getEntity() instanceof EntityPlayer && damagesource.isProjectile() == false)
+        if (damagesource.getEntity() instanceof EntityPlayer && !damagesource.isProjectile())
         {
             if (canBeDestroyedByPlayer(damagesource))
             {
@@ -464,10 +406,10 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
                     setDead();
                     if(player != null && !player.capabilities.isCreativeMode)
                     {
-                        Item item = CarType.getItemByClass(this.getClass());
+                        Item item = TrailerType.getItemByClass(this.getClass());
                         if(item != null)
                         {
-                            ItemStack stack = ItemCar.setPersistentData(new ItemStack(item, 1), this);
+                            ItemStack stack = ItemTrailer.setPersistentData(new ItemStack(item, 1), this);
                             exportTrustedListToNBT(stack != null ? stack.getTagCompound() : null);
                             EntityItem ent = new EntityItem(worldObj);
                             ent.setEntityItemStack(stack);
@@ -499,62 +441,23 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         return false;
     }
 
-    public void onEntityDestruction(DamageSource damagesource)
-    {
-        // Mostly used for child classes
-    }
+    public void onEntityDestruction(DamageSource damagesource) { /* Mostly used for child classes */ }
 
-    public float getDamage(){
-        return this.dataWatcher.getWatchableObjectFloat(DW_HEALTH);
-    }
-    public void setDamage(float d){
-        this.dataWatcher.updateObject(DW_HEALTH, d);
-    }
-    public float getRollingDirection(){
-        return this.dataWatcher.getWatchableObjectFloat(DW_ROLL);
-    }
-    public void setRollingDirection(float r){
-        this.dataWatcher.updateObject(DW_ROLL, r);
-    }
+    public float getDamage() { return this.dataWatcher.getWatchableObjectFloat(DW_HEALTH); }
+    public void setDamage(float d) { this.dataWatcher.updateObject(DW_HEALTH, d); }
 
-    public void setRollingVel(float vel)
-    {
+    public float getRollingDirection() { return this.dataWatcher.getWatchableObjectFloat(DW_ROLL); }
+    public void setRollingDirection(float r) { this.dataWatcher.updateObject(DW_ROLL, r); }
+
+    public void setRollingVel(float vel) {
         this.velocity = vel;
         dataWatcher.updateObject(DW_VEL, velocity);
-    }
-
-    private void cycleTurnSignalIndex()
-    {
-        if (turnSignal != 0 && ticksExisted % 7 == 0)
-        {
-            turnSignalTick++;
-            if (turnSignalTick == 2)
-            {
-                turnSignalTick = 0;
-            }
-        }
-    }
-
-    private void cycleBeaconIndex()
-    {
-        if (isBeaconEnabled && ticksExisted % 5 == 0)
-        {
-            beaconCycleIndex++;
-            if (beaconCycleIndex == 4)
-            {
-                beaconCycleIndex = 0;
-            }
-        }
     }
 
     /** called every tick
      * replaces core entity update functionality, since EntityLiving does too much stuff we don't need.*/
     @Override
-    public void onUpdate()
-    {
-        cycleBeaconIndex();
-        cycleTurnSignalIndex();
-
+    public void onUpdate() {
         //handle the get punched animation
         if (this.getRollingDirection() > 0) {
             this.setRollingDirection(this.getRollingDirection() - 1);
@@ -568,8 +471,6 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         }
         //handle super update crap
         this.onEntityUpdate();
-        //handle movement
-        this.moveEntityWithHeading();
 
         if (!worldObj.isRemote) {
             dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
@@ -579,15 +480,16 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     /** save/load stuff */
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
-        running= compound.getByte("run");
         velocity=compound.getFloat("vel");
         rotationYaw=compound.getFloat("yaw");
-        dataWatcher.updateObject(DW_RUNNING, running);
         dataWatcher.updateObject(DW_YAW, rotationYaw);
         dataWatcher.updateObject(DW_SKIN, compound.getInteger("skin"));
-
-
-
+        if (this instanceof ITowingChild) {
+            dataWatcher.updateObject(DW_PARENT, compound.getString("parentID"));
+        }
+        if (this instanceof ITowingParent) {
+            dataWatcher.updateObject(DW_CHILD, compound.getString("childID"));
+        }
         JsonObject vehicleDetailsJson;
         try
         {
@@ -603,14 +505,12 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 
         if (compound.hasKey("UUIDMost")) {
             this.entityUniqueID = new UUID(compound.getLong("UUIDMost"), compound.getLong("UUIDLeast"));
-            System.out.println("Loaded entity UUID: " + this.entityUniqueID);
         }
 
         dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
 
-    private void ReverseMapJson(JsonObject vehicleDetailsJson)
-    {
+    private void ReverseMapJson(JsonObject vehicleDetailsJson) {
         transportOwner = vehicleDetailsJson.get(DataMemberName.vehicleOwner.AsString()).getAsString();
         vehicleCreator = vehicleDetailsJson.get(DataMemberName.vehicleCreator.AsString()).getAsString();
         isHeadlightsEnabled = vehicleDetailsJson.get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
@@ -625,157 +525,33 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 
     @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
-        compound.setByte("run", running);
         compound.setFloat("vel", velocity);
         compound.setFloat("yaw", rotationYaw);
         compound.setInteger("skin", dataWatcher.getWatchableObjectInt(DW_SKIN));
+        if (this instanceof ITowingChild) {
+            compound.setString("parentID", dataWatcher.getWatchableObjectString(DW_PARENT));
+        }
+        if (this instanceof ITowingParent) {
+            compound.setString("childID", dataWatcher.getWatchableObjectString(DW_CHILD));
+        }
         compound.setString(DataMemberName.vehicleDetailsJSON.MemberName, vehicleDataJSON());
         compound.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
         compound.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
     }
 
-    /**
-     * handles interaction from client over network.
-     * @see bidahochi.foxdrives.util.PacketInteract  */
-    public void networkInteract(int player, int key)
-    {
-        if (!worldObj.isRemote) {
-            switch (key) {
-                case 1:
-                    this.dataWatcher.updateObject(DW_RUNNING, running == (byte) 1 ? (byte) 0 : (byte) 1);
-                    break;
-
-                case 3:
-                    //dataWatcher.updateObject(DW_BRAKING, 1);
-                    areBrakeLightsOn = !areBrakeLightsOn;
-                    braking = true;
-                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                    break;
-                case 4:
-                    setPacketTurnIndicator(turnSignal != -1 ? (byte) -1 : 0);
-                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                    break;
-                case 5:
-                    setPacketTurnIndicator(turnSignal != 1 ? (byte) 1 : 0);
-                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                    break;
-                case 10:
-                    setPacketLights(isLightsEnabled() ? false : true);
-                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                    break;
-                case 11:
-                    setPacketBeacon(isBeaconEnabled() ? false : true);
-                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                    break;
-                case 12:
-                    setPacketDitchLightsMode(isAuxLightsEnabled() ? (byte) 0 : (byte) 1);
-                    dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Moves the entity based on the rider heading and rider.moveForward
-     */
-    public void moveEntityWithHeading()
-    {
-        if(running != dataWatcher.getWatchableObjectByte(DW_RUNNING)){
-            running = dataWatcher.getWatchableObjectByte(DW_RUNNING);
-        }
-
-        if (!worldObj.isRemote && running == 0)
-        {
-            velocity = 0;
-            motionX = 0;
-            motionY = 0;
-            motionZ = 0;
-        }
-        else if(!worldObj.isRemote)
-        {
-            motionX *= 0.9;
-            motionY = -0.4905;
-            motionZ *= 0.9;
-            velocity *= 0.92;
-            EntityLivingBase rider = ((EntityLivingBase)this.riddenByEntity);
-            if(rider != null){
-                velocity += rider.moveForward * type().accel ;
-            }
-            if(braking){
-                velocity *= 0.5;
-                if(velocity < 0.1 && velocity > -0.1) velocity = 0;
-                //dataWatcher.updateObject(DW_BRAKING, 0);
-                braking = false;
-            }
-            if(running == 0 || riddenByEntity == null){
-                velocity = 0;
-            }
-            else if(velocity <= 0f){
-                velocity *= 0.35f;
-            }
-            clampTopSpeed(velocity);
-            float diff = rider == null ? 0f : rotationYaw - rider.rotationYaw;
-            if(running != 0){
-                rotationYaw -= (diff * turnStrength(velocity <= 0.0F));
-                dataWatcher.updateObject(DW_YAW, rotationYaw);
-            }
-
-            this.stepHeight = canClimbFullBlocks()?1.0f:canClimbSlabs()?0.5f:0.0f;
-            moveEntityWithHeading(0, velocity);
-            motionX -= Math.sin(Math.toRadians(rotationYaw)) * velocity * 0.05;
-            motionZ += Math.cos(Math.toRadians(rotationYaw)) * velocity * 0.05;
-            //moveEntity(motionX, motionY, motionZ);
-
-            double d0 = 0.25D;
-            List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, getBoundingBox().expand(d0, d0, d0));
-            for(Object o : list){
-                if(o instanceof EntityPlayer && ((Entity)o).ridingEntity instanceof EntitySeat) continue;
-                if(o instanceof EntityLiving && ((Entity)o).getBoundingBox() != null && ((Entity)o).getBoundingBox().intersectsWith(getBoundingBox())){
-                    ((Entity)o).attackEntityFrom(new EntityDamageSource("player", this), 5);
-                }
-            }
-        } else if(tickOffset >0) {
-            prevPosX=posX;prevPosZ=posZ;
-            setPosition(
-                    this.posX + (this.transportX - this.posX) / (double) this.tickOffset,
-                    this.posY + (this.transportY - this.posY) / (double) this.tickOffset,
-                    this.posZ + (this.transportZ - this.posZ) / (double) this.tickOffset
-            );
-            tickOffset--;
-            prevRotationYaw = rotationYaw;
-            rotationYaw = rotationYaw + (((servyaw - rotationYaw) + 180) % 360 - 180) / tickOffset;
-        }
-    }
-
-    public void clampTopSpeed(double velocity) {
-        //clamp top speed
-        if(velocity > type().max_forward_speed){
-            this.velocity = type().max_forward_speed;
-        }
-        else if(velocity < -type().max_backward_speed){
-            this.velocity = -type().max_backward_speed;
-        }
-    }
+    //we don't want vanilla mvmnt to apply at all.
+    @Override
+    public void moveEntity(double x, double y, double z) { }
 
     @SideOnly(Side.CLIENT)
     public void setPositionAndRotation2(double p_70056_1_, double p_70056_3_, double p_70056_5_, float p_70056_7_, float p_70056_8_, int p_70056_9_) {
-        transportX=p_70056_1_;
-        transportY=p_70056_3_;
-        transportZ=p_70056_5_;
-        //adds 2 to the tick offset to match the entity registration's update frequency of 3.
-        //as noted in the cpw.mods.fml.common.registry.EntityRegistry.registerModEntity
-        //     call of FoxDrives.java#init(FMLInitializationEvent)
-        tickOffset = p_70056_9_ + 2;
-        servyaw = dataWatcher.getWatchableObjectFloat(DW_YAW);
-
-        //force an extra rider position update. probably unnecessary, but better safe than laggy.
-        updateRiderPosition();
+        super.setPositionAndRotation2(p_70056_1_, p_70056_3_, p_70056_5_, p_70056_7_, p_70056_8_, 1);
     }
 
     /**sets the position of the entity riding*/
     @Override
-    public void updateRiderPosition(){
-        if (this.riddenByEntity != null) {
+    public void updateRiderPosition() {
+        if (this.riddenByEntity != null && !type().passenger_pos.isEmpty()) {
 
             float[] pos = type().passenger_pos.get(0);
             //rotate yaw
@@ -809,7 +585,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 
     //todo: plays driving sounds using vanilla step sound heresy
     @Override
-    public void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_){}
+    public void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_) {}
 
     @Override
     public void setDead(){
@@ -820,143 +596,24 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         }
     }
 
-    /** Gets this Entity's CarType */
-    public abstract CarType type();
+    /** Gets this Entity's TrailerType */
+    public abstract TrailerType type();
 
-    public float getGuiRenderScale() {
-        return guiRenderScale;
-    }
+    public float getGuiRenderScale() { return guiRenderScale; }
 
-    public void setGuiRenderScale(float guiRenderScale) {
-        this.guiRenderScale = guiRenderScale;
-    }
+    public void setGuiRenderScale(float guiRenderScale) { this.guiRenderScale = guiRenderScale; }
 
-    public Vec3f getModelRotation() {
-        return new Vec3f(0,0,0);
-    }
+    public Vec3f getModelRotation() { return new Vec3f(0,0,0); }
 
-    public Vec3f getModelOffset() {
-        return new Vec3f(0,0,0);
-    }
+    public Vec3f getModelOffset() { return new Vec3f(0,0,0); }
 
-    public Vec3f getModelScale() {
-        return new Vec3f(1,1,1);
-    }
+    public Vec3f getModelScale() { return new Vec3f(1,1,1); }
 
-    /**
-     * Moves the entity based on the specified heading.  Args: strafe, forward
-     */
-    public void moveEntityWithHeading(float p_70612_1_, float p_70612_2_)
-    {
-        double d0;
-
-        if (this.isInWater())
-        {
-            d0 = this.posY;
-            this.moveFlying(p_70612_1_, p_70612_2_, !false ? 0.04F : 0.02F);
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            this.motionX *= 0.800000011920929D;
-            this.motionY *= 0.800000011920929D;
-            this.motionZ *= 0.800000011920929D;
-            this.motionY -= 0.02D;
-
-            if (this.isCollidedHorizontally && this.isOffsetPositionInLiquid(this.motionX, this.motionY + 0.6000000238418579D - this.posY + d0, this.motionZ))
-            {
-                this.motionY = 0.30000001192092896D;
-            }
-        }
-        else if (this.handleLavaMovement())
-        {
-            d0 = this.posY;
-            this.moveFlying(p_70612_1_, p_70612_2_, 0.02F);
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            this.motionX *= 0.5D;
-            this.motionY *= 0.5D;
-            this.motionZ *= 0.5D;
-            this.motionY -= 0.02D;
-
-            if (this.isCollidedHorizontally && this.isOffsetPositionInLiquid(this.motionX, this.motionY + 0.6000000238418579D - this.posY + d0, this.motionZ))
-            {
-                this.motionY = 0.30000001192092896D;
-            }
-        }
-        else
-        {
-            float f2 = 0.91F;
-
-            if (this.onGround)
-            {
-                f2 = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.91F;
-            }
-
-            float f3 = 0.16277136F / (f2 * f2 * f2);
-            float f4;
-
-            if (this.onGround)
-            {
-                f4 = 0.1F * f3;
-            }
-            else
-            {
-                f4 = 0.02F;
-            }
-
-            this.moveFlying(p_70612_1_, p_70612_2_, f4);
-            f2 = 0.91F;
-
-            if (this.onGround)
-            {
-                f2 = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.91F;
-            }
-
-
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-
-            if (this.worldObj.isRemote && (!this.worldObj.blockExists((int)this.posX, 0, (int)this.posZ) || !this.worldObj.getChunkFromBlockCoords((int)this.posX, (int)this.posZ).isChunkLoaded))
-            {
-                if (this.posY > 0.0D)
-                {
-                    this.motionY = -0.1D;
-                }
-                else
-                {
-                    this.motionY = 0.0D;
-                }
-            }
-            else
-            {
-                this.motionY -= 0.08D;
-            }
-
-            this.motionY *= 0.9800000190734863D;
-            this.motionX *= (double)f2;
-            this.motionZ *= (double)f2;
-        }
-
-        //this.prevLimbSwingAmount = this.limbSwingAmount;
-        d0 = this.posX - this.prevPosX;
-        double d1 = this.posZ - this.prevPosZ;
-        float f6 = MathHelper.sqrt_double(d0 * d0 + d1 * d1) * 4.0F;
-
-        if (f6 > 1.0F)
-        {
-            f6 = 1.0F;
-        }
-
-        //this.limbSwingAmount += (f6 - this.limbSwingAmount) * 0.4F;
-        //this.limbSwing += this.limbSwingAmount;
-
-
-
-    }
     // Implements Locked & Trusted List
-
     /**
      * @return Returns String ArrayList of trusted players' usernames.
      */
-    public List<TrustedPlayer> getTrustedList() {
-        return trustedList;
-    }
+    public List<TrustedPlayer> getTrustedList() { return trustedList; }
     public void setTrustedList(List<TrustedPlayer> trustedList) { this.trustedList = trustedList; }
 
     /**
@@ -1032,9 +689,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
      * @param additionalData The packet data stream
      */
     @Override
-    public void readSpawnData(ByteBuf additionalData) {
-        locked = additionalData.readBoolean();
-    }
+    public void readSpawnData(ByteBuf additionalData) { locked = additionalData.readBoolean(); }
 
     /**
      * <p>This method is called on the server side when a connected client is loading the entity. Data written
@@ -1043,13 +698,5 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
      * @param buffer The packet data stream
      */
     @Override
-    public void writeSpawnData(ByteBuf buffer) {
-        buffer.writeBoolean(locked);
-    }
-
-    @Override
-    public String getCommandSenderName()
-    {
-        return StatCollector.translateToLocal(type().getItem().getUnlocalizedName()+".name");
-    }
+    public void writeSpawnData(ByteBuf buffer) { buffer.writeBoolean(locked); }
 }

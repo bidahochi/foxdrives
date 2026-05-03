@@ -5,7 +5,7 @@ import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.client.gui.lockGui.GuiLockMenu;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
-import bidahochi.foxdrives.entities.EntityHitch;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityTrailer;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.client.gui.GuiCarInventory;
 import bidahochi.foxdrives.util.CommonProxy;
@@ -17,16 +17,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import foxmods.playerscale.DelegatingRenderPlayer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-
-import java.lang.reflect.Method;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
@@ -76,6 +70,11 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
+    public void registerTrailerRenderer(Class<? extends EntityTrailer> clazz){
+        RenderingRegistry.registerEntityRenderingHandler(clazz, transportRenderer);
+    }
+
+    @Override
     public void registerPlayerScaler()
     {
         //RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, playerRender);
@@ -114,7 +113,7 @@ public class ClientProxy extends CommonProxy
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySeat.class, new RenderSeat());
-        RenderingRegistry.registerEntityRenderingHandler(EntityHitch.class, new RenderSeat());
+        //RenderingRegistry.registerEntityRenderingHandler(EntityReceiver.class, new RenderSeat());
     }
 
 }

@@ -30,8 +30,8 @@ public class PacketInteract implements IMessage {
     public void fromBytes(ByteBuf bbuf) {
         key = bbuf.readInt();
         entityId = bbuf.readInt();
-        dimensionId=bbuf.readInt();
-        playerId=bbuf.readInt();
+        dimensionId = bbuf.readInt();
+        playerId = bbuf.readInt();
         Entity e = DimensionManager.getWorld(dimensionId).getEntityByID(entityId);
         if (e instanceof EntityCar) {
             ((EntityCar)e).networkInteract(playerId, key);

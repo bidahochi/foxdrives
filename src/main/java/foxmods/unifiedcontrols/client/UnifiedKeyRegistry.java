@@ -20,6 +20,8 @@ public final class UnifiedKeyRegistry {
     public static KeyBinding HORN;
     public static KeyBinding SOUND_2;
 
+    public static KeyBinding hitchToggle;
+
     private UnifiedKeyRegistry() {}
 
     /** Initializes keys, registers them if not already done */
@@ -46,6 +48,7 @@ public final class UnifiedKeyRegistry {
         BRAKE     = new KeyBinding("Brake", Keyboard.KEY_B, CATEGORY);
         HORN = new KeyBinding("Transport Horn", Keyboard.KEY_H, CATEGORY);
         SOUND_2 = new KeyBinding("Transport Secondary Sound (Bell)", Keyboard.KEY_B, CATEGORY);
+        hitchToggle = new KeyBinding("Toggle hitching", Keyboard.KEY_L, CATEGORY); //L for link?
 
         ClientRegistry.registerKeyBinding(GUI);
         ClientRegistry.registerKeyBinding(LEFT);
@@ -53,6 +56,7 @@ public final class UnifiedKeyRegistry {
         ClientRegistry.registerKeyBinding(BRAKE);
         ClientRegistry.registerKeyBinding(HORN);
         ClientRegistry.registerKeyBinding(SOUND_2);
+        ClientRegistry.registerKeyBinding(hitchToggle);
 
         bb.put(KEY, new KeyBinding[]{GUI, LEFT, RIGHT, BRAKE, HORN, SOUND_2});
     }

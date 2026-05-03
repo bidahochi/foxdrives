@@ -4,6 +4,7 @@ import bidahochi.foxdrives.common.handlers.PlayerSyncHandler;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.common.inventory.containers.ContainerStyleOneInventory;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityTrailer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.Entity;
@@ -80,6 +81,7 @@ public class CommonProxy implements IGuiHandler {
     public Object getEntityRender(){return null;}
 
     public void registerCarRenderer(Class<? extends EntityCar> clazz){}
+    public void registerTrailerRenderer(Class<? extends EntityTrailer> clazz){}
 
     public void registerPlayerScaler(){}
 
