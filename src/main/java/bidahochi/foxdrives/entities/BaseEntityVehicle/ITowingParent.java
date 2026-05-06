@@ -22,4 +22,10 @@ public interface ITowingParent {
     Entity getEntity();
 
     default HitchType getHitchType() { return HitchType.BOTH; }
+
+    int getLinkedChildID();
+
+    int getLinkingID();
+
+    default double getDetectionRange() { return 2.0D; }
 }

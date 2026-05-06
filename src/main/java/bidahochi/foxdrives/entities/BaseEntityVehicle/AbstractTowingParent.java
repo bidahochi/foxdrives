@@ -5,6 +5,7 @@ import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.util.HitchState;
 import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.util.Packet.PacketSyncHitch;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
@@ -16,7 +17,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 import java.util.List;
-import java.util.UUID;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
@@ -24,26 +24,28 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
     private ITowingChild towedVehicle = null;
 
-    private double DETECTION_RANGE = 2D;
-
     private int detectionCooldown = 0;
+
+    private static int parentUniqueIDs = -1;
 
     public HitchState hitchState = HitchState.IDLE;
 
     public AbstractTowingParent(World world) {
         super(world);
-        /*hitch = new EntityReceiver(world, this);
-        hitch.setPosition(posX, posY, posZ);
-        hitch.getDataWatcher().updateObject(17, getEntityId());
-        worldObj.spawnEntityInWorld(hitch);*/
     }
 
     @Override
     public void entityInit() {
         super.entityInit();
-        dataWatcher.addObject(DW_HITCHSTATE, HitchState.IDLE.ordinal());
-        dataWatcher.addObject(DW_CHILD, "");
+        this.dataWatcher.addObject(DW_HITCHSTATE, HitchState.IDLE.ordinal());
+        this.dataWatcher.addObject(DW_CHILD, -1);
+        this.dataWatcher.addObject(DW_UNIQUEID, -1);
     }
+
+    public int getLinkedChildID() { return dataWatcher.getWatchableObjectInt(DW_CHILD); }
+
+
+    public int getLinkingID() { return this.dataWatcher.getWatchableObjectInt(DW_UNIQUEID); }
 
     @Override
     public ITowingChild childVehicle() { return towedVehicle; }
@@ -67,7 +69,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
     @Override
     public void networkInteract(int player, int key) {
-        if (!worldObj.isRemote) {
+        if (!this.worldObj.isRemote) {
             if(key == 6) {
                 System.out.println("toggle hitching");
                 if (hitchState == HitchState.COUPLED) {
@@ -88,47 +90,43 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (!this.worldObj.isRemote) {
-            if (this.hitchState == HitchState.SEARCHING && this.childVehicle() == null && detectionCooldown-- <= 0) { // only check four times a second instead of every tick.
-                System.out.println("Searching!!!");
-                detectionCooldown = 5;
-                AbstractTowingChild nearbyChild = findNearbyChild();
-                if (nearbyChild != null) {
-                    onChildDetected(nearbyChild);
-                }
+
+        if (!this.worldObj.isRemote && this.getLinkingID() == -1) {
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() != null) {
+                setNewUniqueID(this.getEntityId());
             }
         }
 
-        if (addedToChunk && this.childVehicle() == null && !this.dataWatcher.getWatchableObjectString(DW_CHILD).isEmpty()) {
-            System.out.println("Searching for child");
-            String childUUID = this.dataWatcher.getWatchableObjectString(DW_CHILD);
-            if (!childUUID.isEmpty()) {
-                reattachChild(UUID.fromString(childUUID));
+        /**
+         * As entities can't be registered in nbttagcompound we instead use this
+         * system. When the world loads, only the (int) linkedChildID is known.
+         * This method search for the entity with the ID corresponding to linkedChildID.
+         * When found, (ITowingChild) towedVehicle will be updated accordingly.
+         */
+        if (((this.hitchState == HitchState.SEARCHING && this.childVehicle() == null) || (this.towedVehicle == null && this.getLinkedChildID() != -1)) && detectionCooldown-- <= 0) { // only check four times a second instead of every tick.
+            System.out.println("Searching!!!");
+            detectionCooldown = 5;
+            AbstractTowingChild nearbyChild = findNearbyChild();
+            if (nearbyChild != null) {
+                onChildDetected(nearbyChild);
             }
         }
     }
 
-    private void reattachChild(UUID targetUUID) {
-        List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(15, 15, 15));
-        if (list == null || list.isEmpty()) return;
-        for (Object entity : list) {
-            if (!(entity instanceof ITowingChild)) continue;
+    public int setNewUniqueID(int id) {
+        if (id <= 0)
+            id = parentUniqueIDs++;
+        else
+            parentUniqueIDs = id++;
 
-            Entity towingEntity = ((ITowingChild) entity).getEntity();
-            if (towingEntity.getUniqueID() != null && towingEntity.getUniqueID().equals(targetUUID)) {
-                this.setChildVehicle((ITowingChild) entity);
-                ((AbstractTowingChild) entity).setParentVehicle(this);
+        this.dataWatcher.updateObject(DW_UNIQUEID, id);
+        getEntityData().setInteger("uniqueID", id);
 
-                if (!this.worldObj.isRemote) {
-                    this.dataWatcher.updateObject(DW_CHILD, targetUUID.toString());
-                }
-                return;
-            }
-        }
+        return id;
     }
 
     public AbstractTowingChild findNearbyChild() {
-        AxisAlignedBB searchBox = this.boundingBox.expand(DETECTION_RANGE, DETECTION_RANGE / 2, DETECTION_RANGE);
+        AxisAlignedBB searchBox = this.boundingBox.expand(getDetectionRange(), getDetectionRange() / 2, getDetectionRange());
         List<?> entities = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, searchBox);
         if (entities.isEmpty()) {
             return null;
@@ -141,10 +139,13 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
             AbstractTowingChild child = (AbstractTowingChild) obj;
 
-            //if the trailer is already attached to a receiver
+            //if the trailer is supposed to be attached to us already.
+            if (child.getLinkedParentID() == this.getLinkingID() && this.getLinkedChildID() == child.getLinkingID()) return child;
+
+            //if the trailer is already attached to a parent
             if (child.getParentVehicle() != null) { continue; }
 
-            //if the trailers receiver doesn't match the hitch type of the vehicle
+            //if the trailer's receiver doesn't match the hitch type of this
             if (child.getReceiverType() != this.getHitchType() && this.getHitchType() != HitchType.BOTH && child.getReceiverType() != HitchType.BOTH) { continue; }
 
             double dist = this.getDistanceSqToEntity(child);
@@ -161,11 +162,11 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     private void onChildDetected(AbstractTowingChild child) {
         System.out.println("Child detected, coupling");
         this.hitchState = HitchState.COUPLED;
+        dataWatcher.updateObject(DW_CHILD, child.getLinkingID());
+        child.setLinkedParentID(this.getLinkingID());
         this.setChildVehicle(child);
         child.setParentVehicle(this);
         syncHitchState();
-        dataWatcher.updateObject(DW_CHILD, childVehicle().getEntity().getUniqueID().toString());
-        child.getDataWatcher().updateObject(DW_PARENT, this.getUniqueID().toString());
         //worldObj.playSoundAtEntity(this, "hitchingNoise", 1, 1);
     }
 
@@ -180,7 +181,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
     private void syncHitchState() {
         dataWatcher.updateObject(DW_HITCHSTATE, hitchState.ordinal());
-        if (!worldObj.isRemote) {
+        if (!this.worldObj.isRemote) {
             FoxDrives.hitchSyncChannel.sendToAllAround(new PacketSyncHitch(getEntityId(), hitchState, childVehicle().getEntityId()),
                     new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
         }
@@ -189,13 +190,14 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     @Override
     public void readEntityFromNBT(NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        dataWatcher.updateObject(DW_CHILD, compound.getString("childID"));
+        this.dataWatcher.updateObject(DW_UNIQUEID, compound.getInteger("uniqueID"));
+        this.dataWatcher.updateObject(DW_CHILD, compound.getInteger("childID"));
     }
 
 
     @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setString("childID", dataWatcher.getWatchableObjectString(DW_CHILD));
+        compound.setInteger("childID", dataWatcher.getWatchableObjectInt(DW_CHILD));
     }
 }

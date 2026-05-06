@@ -1,21 +1,20 @@
 package bidahochi.foxdrives.entities.BaseEntityVehicle;
 
 import bidahochi.foxdrives.TrailerType;
+import cpw.mods.fml.common.FMLCommonHandler;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
-import java.util.List;
-import java.util.UUID;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
 public class AbstractTowingChild extends EntityTrailer implements ITowingChild {
 
-    private UUID parentVehicleUUID = null;
-
     private ITowingParent parentVehicle;
+
+    private static int childUniqueIDs = -1;
 
     public AbstractTowingChild(World world) { super(world); }
 
@@ -36,10 +35,14 @@ public class AbstractTowingChild extends EntityTrailer implements ITowingChild {
 
     public void setParentVehicle(ITowingParent parent) {
         this.parentVehicle = parent;
-        this.parentVehicleUUID = parent.getEntity().getUniqueID();
-        this.dataWatcher.updateObject(DW_PARENT, parent.getEntity().getUniqueID().toString());
-        System.out.println("Setting parent UUID in DW: " + parentVehicleUUID);
+        this.dataWatcher.updateObject(DW_PARENT, parent.getLinkingID());
     }
+
+    public int getLinkedParentID() { return dataWatcher.getWatchableObjectInt(DW_PARENT); }
+
+    public void setLinkedParentID(int parentID) { dataWatcher.updateObject(DW_PARENT, parentID); }
+
+    public int getLinkingID() { return this.dataWatcher.getWatchableObjectInt(DW_UNIQUEID); }
 
     @Override
     public Entity getEntity() { return this; }
@@ -51,6 +54,12 @@ public class AbstractTowingChild extends EntityTrailer implements ITowingChild {
 
     @Override
     public void onUpdate() {
+        if (!this.worldObj.isRemote && this.getLinkingID() == -1) {
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() != null) {
+                setNewUniqueID(this.getEntityId());
+            }
+        }
+
         ITowingParent parent = resolveParentVehicle();
         if (parent == null) {
             super.onUpdate();
@@ -116,73 +125,55 @@ public class AbstractTowingChild extends EntityTrailer implements ITowingChild {
         if (!worldObj.isRemote) {
             dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
         }
-        if (addedToChunk && ((this.getParentVehicle() == null && !this.dataWatcher.getWatchableObjectString(DW_PARENT).isEmpty()))) {
-            System.out.println("Searching for parent");
-            List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(15, 15, 15));
-            if (list != null && !list.isEmpty()) {
-                for (Object entity : list) {
-                    if (entity instanceof ITowingParent) {
-                        if (((ITowingParent)entity).getEntity().getUniqueID() != null && ((ITowingParent)entity).getEntity().getUniqueID()
-                                .equals(UUID.fromString(this.dataWatcher.getWatchableObjectString(DW_PARENT)))) {
-                            this.setParentVehicle(((ITowingParent)entity));
-                            ((AbstractTowingParent)entity).setChildVehicle(this);
-                        }
-                    }
-                }
-            }
-        }
+    }
+
+
+    public int setNewUniqueID(int id) {
+        if (id <= 0)
+            id = childUniqueIDs++;
+        else
+            childUniqueIDs = id++;
+        this.dataWatcher.updateObject(DW_UNIQUEID, id);
+        getEntityData().setInteger("uniqueID", id);
+
+        return id;
     }
 
     public ITowingParent resolveParentVehicle() {
         if (!worldObj.isRemote) {
             //SERVER
-            if (parentVehicleUUID == null) return null;
-
-            if (parentVehicle != null && !parentVehicle.getEntity().isDead
-            && parentVehicle.getEntity().getUniqueID().equals(parentVehicleUUID)) {
+            if (parentVehicle != null && !parentVehicle.getEntity().isDead) {
                 return parentVehicle;
             }
-            parentVehicle = null;
-            for (Object obj : worldObj.loadedEntityList) {
-                Entity e = (Entity) obj;
-                if (!(e instanceof ITowingParent)) continue;
-                if (!e.isDead && ((ITowingParent)e).getEntity().getUniqueID().equals(parentVehicleUUID)) {
-                    parentVehicle = (ITowingParent) e;
-                    break;
-                }
-            }
-            return parentVehicle;
         } else {
             //CLIENT
-            if (dataWatcher.getWatchableObjectString(DW_PARENT).isEmpty()) { return null; }
-            parentVehicleUUID = UUID.fromString(dataWatcher.getWatchableObjectString(DW_PARENT));
-            UUID parentId = UUID.fromString(dataWatcher.getWatchableObjectString(DW_PARENT));
-            if (parentId.toString().isEmpty()) return null;
-            if (parentVehicle != null && !parentVehicle.getEntity().isDead
-            && ((AbstractTowingParent)parentVehicle.getEntity()).getEntity().getUniqueID().equals(parentVehicleUUID)) {
+            if (parentVehicle != null && !parentVehicle.getEntity().isDead) {
                 return parentVehicle;
             }
 
             for (Object obj : worldObj.loadedEntityList) {
                 Entity e = (Entity) obj;
                 if (!(e instanceof ITowingParent)) continue;
-                if (((ITowingParent)e).getEntity().getUniqueID() == null) {
-                    System.out.println("linkingID null for some reason");
-                    continue;
-                }
-                if (!e.isDead && ((ITowingParent)e).getEntity().getUniqueID().equals(parentVehicleUUID)) {
+                if (e.isDead) continue;
+                AbstractTowingParent vehicle = (AbstractTowingParent) ((ITowingParent)e).getEntity();
+                if (vehicle.childVehicle() != null && vehicle.childVehicle().equals(this)) {
                     parentVehicle = (ITowingParent) e;
                     break;
                 }
             }
-            return parentVehicle;
         }
-
+        return parentVehicle;
     }
 
     @Override
     public void applyEntityCollision(Entity entity){
         if(this.getParentVehicle() != null && this.getParentVehicle() == entity) return;
         super.applyEntityCollision(entity);
+    }
+
+    @Override
+    public void readEntityFromNBT(NBTTagCompound compound) {
+        super.readEntityFromNBT(compound);
+        this.dataWatcher.updateObject(DW_UNIQUEID, getEntityData().getInteger("uniqueID"));
     }
 }

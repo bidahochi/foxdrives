@@ -8,7 +8,6 @@ import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
 import bidahochi.foxdrives.util.ItemTrailer;
 import com.google.gson.JsonObject;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -130,11 +129,12 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         this.dataWatcher.addObject(DW_SKIN, 0);//used to track currently selected skin
         this.dataWatcher.addObject(DW_YAW, 0f);//used to track rotation yaw
         if (this instanceof ITowingChild) {
-            this.dataWatcher.addObject(DW_PARENT, "");
+            this.dataWatcher.addObject(DW_PARENT, -1);
         }
         if (this instanceof ITowingParent) {
-            this.dataWatcher.addObject(DW_CHILD, "");
+            this.dataWatcher.addObject(DW_CHILD, -1);
         }
+        this.dataWatcher.addObject(DW_UNIQUEID, -1);
         //this.dataWatcher.addObject(DW_THROTTLE, 0f);//throttle
         //this.dataWatcher.addObject(DW_BRAKING, 0);//throttle
     }
@@ -485,10 +485,10 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         dataWatcher.updateObject(DW_YAW, rotationYaw);
         dataWatcher.updateObject(DW_SKIN, compound.getInteger("skin"));
         if (this instanceof ITowingChild) {
-            dataWatcher.updateObject(DW_PARENT, compound.getString("parentID"));
+            dataWatcher.updateObject(DW_PARENT, compound.getInteger("parentID"));
         }
         if (this instanceof ITowingParent) {
-            dataWatcher.updateObject(DW_CHILD, compound.getString("childID"));
+            dataWatcher.updateObject(DW_CHILD, compound.getInteger("childID"));
         }
         JsonObject vehicleDetailsJson;
         try
@@ -529,14 +529,12 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         compound.setFloat("yaw", rotationYaw);
         compound.setInteger("skin", dataWatcher.getWatchableObjectInt(DW_SKIN));
         if (this instanceof ITowingChild) {
-            compound.setString("parentID", dataWatcher.getWatchableObjectString(DW_PARENT));
+            compound.setInteger("parentID", dataWatcher.getWatchableObjectInt(DW_PARENT));
         }
         if (this instanceof ITowingParent) {
-            compound.setString("childID", dataWatcher.getWatchableObjectString(DW_CHILD));
+            compound.setInteger("childID", dataWatcher.getWatchableObjectInt(DW_CHILD));
         }
         compound.setString(DataMemberName.vehicleDetailsJSON.MemberName, vehicleDataJSON());
-        compound.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
-        compound.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
     }
 
     //we don't want vanilla mvmnt to apply at all.

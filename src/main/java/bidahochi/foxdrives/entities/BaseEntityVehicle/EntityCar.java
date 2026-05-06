@@ -8,7 +8,6 @@ import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.DataMemberName;
 import bidahochi.foxdrives.util.ItemCar;
 import com.google.gson.JsonObject;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -601,10 +600,6 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             FoxDrives.fdLog.info(e.getMessage());
         }
 
-        if (compound.hasKey("UUIDMost")) {
-            this.entityUniqueID = new UUID(compound.getLong("UUIDMost"), compound.getLong("UUIDLeast"));
-            System.out.println("Loaded entity UUID: " + this.entityUniqueID);
-        }
 
         dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
@@ -630,8 +625,6 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         compound.setFloat("yaw", rotationYaw);
         compound.setInteger("skin", dataWatcher.getWatchableObjectInt(DW_SKIN));
         compound.setString(DataMemberName.vehicleDetailsJSON.MemberName, vehicleDataJSON());
-        compound.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
-        compound.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
     }
 
     /**

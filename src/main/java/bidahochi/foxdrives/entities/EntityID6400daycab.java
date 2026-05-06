@@ -50,4 +50,6 @@ public class EntityID6400daycab extends AbstractTowingParent
 
     public Vec3f getReceiverPosition() { return new Vec3f(0,-0.5,-0.75); }
 
+    @Override
+    public double getDetectionRange() { return 3D; }
 }
