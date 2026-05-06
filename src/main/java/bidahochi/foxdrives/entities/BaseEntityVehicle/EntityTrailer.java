@@ -31,7 +31,7 @@ import java.util.*;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
-public abstract class EntityTrailer extends Entity implements IEntityAdditionalSpawnData {
+public abstract class EntityTrailer extends Entity implements IEntityAdditionalSpawnData, IWrappable {
 
     @SideOnly(Side.CLIENT)
     public ModelBase modelInstance;
@@ -697,4 +697,9 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
      */
     @Override
     public void writeSpawnData(ByteBuf buffer) { buffer.writeBoolean(locked); }
+
+
+    public Map<Integer, String> getTextureDescriptionMap() { return textureDescriptionMap; }
+
+    public World getWorld() { return worldObj; }
 }

@@ -2,6 +2,8 @@ package bidahochi.foxdrives.util.wrapgui;
 
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityTrailer;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IWrappable;
 import bidahochi.foxdrives.util.ConfigHandler;
 import bidahochi.foxdrives.util.PacketWrapColor;
 import bidahochi.foxdrives.util.RenderCar;
@@ -11,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
@@ -33,8 +36,8 @@ import static bidahochi.foxdrives.util.FoxDrivesConstants.DW_SKIN;
 @SideOnly(Side.CLIENT)
 public class GuiWrap extends GuiScreen {
     private final EntityPlayer editingPlayer;
-    private final EntityCar car;
-    private final EntityCar renderEntity;
+    private final IWrappable car;
+    private final Entity renderEntity;
     private float yaw = 0.0f;
     final private int MENU_TEXTURE_WIDTH = 206;
     final private int MENU_TEXTURE_HEIGHT = 200;
@@ -77,14 +80,19 @@ public class GuiWrap extends GuiScreen {
     ResourceLocation leftMenuTexture = new ResourceLocation(FoxDrives.MODID + ":textures/gui/gui_paintbrush_menu_left.png");
     private final float renderScale;
 
-    public GuiWrap(EntityPlayer editingPlayer, EntityCar car) {
+    public GuiWrap(EntityPlayer editingPlayer, IWrappable car) {
         this.editingPlayer = editingPlayer;
         this.car = car;
         renderScale = car.getGuiRenderScale();
         totalOptions = car.getSkins().length;
         currentPage = (car.getDataWatcher().getWatchableObjectInt(DW_SKIN)) / RESULTS_PER_PAGE;
         try {
-            renderEntity = (EntityCar) car.getClass().getConstructor(World.class).newInstance(car.worldObj);
+            if (car instanceof EntityCar)
+                renderEntity = (EntityCar) car.getClass().getConstructor(World.class).newInstance(car.getWorld());
+            else if (car instanceof EntityTrailer)
+                renderEntity = (EntityTrailer) car.getClass().getConstructor(World.class).newInstance(car.getWorld());
+            else
+                renderEntity = null;
         }
         catch (NoSuchMethodException noSuchMethodException)
         {
@@ -193,7 +201,7 @@ public class GuiWrap extends GuiScreen {
                 GL11.glScalef(-renderScale, renderScale, renderScale);
                 GL11.glRotatef(180, 0, 0, 1);
                 GL11.glRotatef(yaw, 0, 1, 0);
-                RenderManager.instance.renderEntityWithPosYaw(renderEntity, car.yOffset, 0, 0, 0, 0);
+                RenderManager.instance.renderEntityWithPosYaw(renderEntity, 0, 0, 0, 0, 0);
                 GL11.glPopMatrix();
 
                 offsetX += 95;
@@ -218,8 +226,8 @@ public class GuiWrap extends GuiScreen {
             for (int i = 0; i < optionsOnCurrentPage; i++) {
                 loopRenderColor = i + RESULTS_PER_PAGE * currentPage;
                 ((GuiButtonWrap) this.buttonList.get(i + 3)).setType(GuiButtonWrap.Type.SELECTIONBOX, (loopRenderColor == car.getDataWatcher().getWatchableObjectInt(DW_SKIN)) ? GuiButtonWrap.Texture.ACTIVE : GuiButtonWrap.Texture.INACTIVE);
-                if (car.textureDescriptionMap.containsKey(loopRenderColor))
-                    colorName = car.textureDescriptionMap.get(loopRenderColor);
+                if (car.getTextureDescriptionMap().containsKey(loopRenderColor))
+                    colorName = car.getTextureDescriptionMap().get(loopRenderColor);
                 else
                     colorName = car.getSkins()[car.getDataWatcher().getWatchableObjectInt(DW_SKIN)];
                 fontRendererObj.drawSplitString(colorName, (int) ((offsetX + 14) - (0.5 * fontRendererObj.splitStringWidth(colorName, 82))), (int) offsetY, 82, fontColor);
@@ -261,14 +269,14 @@ public class GuiWrap extends GuiScreen {
         } else { // If the mouse is anywhere else on the screen...
             if (renderModels) {
                 // Draw texture descriptions if they exist...
-                if (!car.textureDescriptionMap.isEmpty()) {
+                if (!car.getTextureDescriptionMap().isEmpty()) {
                     GuiButtonWrap loopButton;
                     for (int i = 0; i < optionsOnCurrentPage; i++) {
                         loopRenderColor = i + RESULTS_PER_PAGE * currentPage;
                         loopButton = ((GuiButtonWrap) buttonList.get(i + 3));
                         if (mouseX > loopButton.xPosition && mouseX < loopButton.xPosition + loopButton.width && mouseY > loopButton.yPosition && mouseY < loopButton.yPosition + loopButton.height)
-                            if (car.textureDescriptionMap.containsKey(loopRenderColor))
-                                drawHoveringText(Collections.singletonList(car.textureDescriptionMap.get(loopRenderColor)), mouseX, mouseY, fontRendererObj);
+                            if (car.getTextureDescriptionMap().containsKey(loopRenderColor))
+                                drawHoveringText(Collections.singletonList(car.getTextureDescriptionMap().get(loopRenderColor)), mouseX, mouseY, fontRendererObj);
                     }
                 }
             }

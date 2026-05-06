@@ -6,6 +6,7 @@ import bidahochi.foxdrives.client.gui.lockGui.GuiLockMenu;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityTrailer;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IWrappable;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.client.gui.GuiCarInventory;
 import bidahochi.foxdrives.util.CommonProxy;
@@ -47,7 +48,7 @@ public class ClientProxy extends CommonProxy
         switch (ID)
         {
             case GuiIDs.WRAP_MENU:
-                return entity != null ? new GuiWrap(player, (EntityCar) entity) : null;
+                return entity != null ? new GuiWrap(player, (IWrappable) entity) : null;
             case GuiIDs.LOCK_MENU:
                 if (entity != null) { // If player is riding the entity (locomotives).
                     return new GuiLockMenu(player, (EntityCar) entity);

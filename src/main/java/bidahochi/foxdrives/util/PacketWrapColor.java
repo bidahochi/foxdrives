@@ -1,6 +1,7 @@
 package bidahochi.foxdrives.util;
 
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IWrappable;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
@@ -37,7 +38,7 @@ public class PacketWrapColor implements IMessage {
         @Override
         public IMessage onMessage(PacketWrapColor message, MessageContext context) {
             Entity carEntity = context.getServerHandler().playerEntity.worldObj.getEntityByID(message.entityID);
-            if (carEntity instanceof EntityCar) {
+            if (carEntity instanceof IWrappable) {
                 carEntity.getDataWatcher().updateObject(DW_SKIN, message.wrapColor);
             }
             return null;

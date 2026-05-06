@@ -33,7 +33,7 @@ import java.util.*;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
-public abstract class EntityCar extends Entity implements IEntityAdditionalSpawnData {
+public abstract class EntityCar extends Entity implements IEntityAdditionalSpawnData, IWrappable {
 
     @SideOnly(Side.CLIENT)
     public ModelBase modelInstance;
@@ -1045,4 +1045,8 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     {
         return StatCollector.translateToLocal(type().getItem().getUnlocalizedName()+".name");
     }
+
+    public Map<Integer, String> getTextureDescriptionMap() { return textureDescriptionMap; }
+
+    public World getWorld() { return worldObj; }
 }

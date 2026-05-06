@@ -14,7 +14,7 @@ public class Entity53ftDryvan extends AbstractTowingChild {
         super(world);
         textureDescriptionMap.put(0, "Blank Trailer");
         textureDescriptionMap.put(1, "Fern Rock Trailer");
-        setGuiRenderScale(getGuiRenderScale());
+        setGuiRenderScale(15);
     }
 
     @Override
