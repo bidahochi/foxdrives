@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
-public class AbstractTowingChild extends EntityTrailer implements ITowingChild {
+public abstract class AbstractTowingChild extends EntityTrailer implements ITowingChild {
 
     private ITowingParent parentVehicle;
 
@@ -35,7 +35,7 @@ public class AbstractTowingChild extends EntityTrailer implements ITowingChild {
 
     public void setParentVehicle(ITowingParent parent) {
         this.parentVehicle = parent;
-        this.dataWatcher.updateObject(DW_PARENT, parent.getLinkingID());
+        this.dataWatcher.updateObject(DW_PARENT, parent != null ? parent.getLinkingID() : -1);
     }
 
     public int getLinkedParentID() { return dataWatcher.getWatchableObjectInt(DW_PARENT); }

@@ -4,6 +4,7 @@ import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.util.HitchState;
 import bidahochi.foxdrives.entities.util.HitchType;
+import bidahochi.foxdrives.util.Packet.PacketDecoupleHitch;
 import bidahochi.foxdrives.util.Packet.PacketSyncHitch;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -44,6 +45,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
     public int getLinkedChildID() { return dataWatcher.getWatchableObjectInt(DW_CHILD); }
 
+    public void setLinkedChildID(int childID) { dataWatcher.updateObject(DW_CHILD, childID); }
 
     public int getLinkingID() { return this.dataWatcher.getWatchableObjectInt(DW_UNIQUEID); }
 
@@ -73,13 +75,14 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
             if(key == 6) {
                 System.out.println("toggle hitching");
                 if (hitchState == HitchState.COUPLED) {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Already hitched!"));
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("unhitching trailer"));
+                    decouple();
                 }
-                if (hitchState == HitchState.SEARCHING) {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Hitching mode disabled"));
+                else if (hitchState == HitchState.SEARCHING) {
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("hitching mode disabled"));
                     hitchState = HitchState.IDLE;
                 } else {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Hitching mode enabled"));
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("hitching mode enabled"));
                     hitchState = HitchState.SEARCHING;
                 }
             }
@@ -166,24 +169,30 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
         child.setLinkedParentID(this.getLinkingID());
         this.setChildVehicle(child);
         child.setParentVehicle(this);
-        syncHitchState();
+        syncHitchState(false);
         //worldObj.playSoundAtEntity(this, "hitchingNoise", 1, 1);
     }
 
     private void decouple() {
-        if (towedVehicle != null) {
-            ((AbstractTowingChild) towedVehicle).setParentVehicle(null);
-        }
-        this.setChildVehicle(null);
+        System.out.println("Decoupling");
         hitchState = HitchState.IDLE;
-        syncHitchState();
+        dataWatcher.updateObject(DW_CHILD, -1);
+        syncHitchState(true);
+        ((AbstractTowingChild)childVehicle().getEntity()).setLinkedParentID(-1);
+        ((AbstractTowingChild)childVehicle().getEntity()).setParentVehicle(null);
+        this.setChildVehicle(null);
     }
 
-    private void syncHitchState() {
+    private void syncHitchState(boolean decouple) {
         dataWatcher.updateObject(DW_HITCHSTATE, hitchState.ordinal());
         if (!this.worldObj.isRemote) {
-            FoxDrives.hitchSyncChannel.sendToAllAround(new PacketSyncHitch(getEntityId(), hitchState, childVehicle().getEntityId()),
-                    new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
+            if (decouple) {
+                FoxDrives.decoupleHitchChannel.sendToAllAround(new PacketDecoupleHitch(getEntityId(), HitchState.IDLE, childVehicle().getEntityId()),
+                        new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
+            } else {
+                FoxDrives.hitchSyncChannel.sendToAllAround(new PacketSyncHitch(getEntityId(), hitchState, childVehicle().getEntityId()),
+                        new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
+            }
         }
     }
 
