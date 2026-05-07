@@ -48,8 +48,8 @@ public class PacketSyncHitch implements IMessage {
                 AbstractTowingParent parent = (AbstractTowingParent) Minecraft.getMinecraft().theWorld.getEntityByID(message.entityID);
                 if (parent != null) {
                     parent.hitchState = HitchState.values()[message.stateOrdinal];
-                    parent.setChildVehicle((ITowingChild)Minecraft.getMinecraft().theWorld.getEntityByID(message.coupledChildID));
-                    ((AbstractTowingChild)Minecraft.getMinecraft().theWorld.getEntityByID(message.coupledChildID)).setParentVehicle(parent);
+                    parent.setChildVehicle((ITowingChild) Minecraft.getMinecraft().theWorld.getEntityByID(message.coupledChildID));
+                    ((AbstractTowingChild) Minecraft.getMinecraft().theWorld.getEntityByID(message.coupledChildID)).setParentVehicle(parent);
                 }
             }
             return null;

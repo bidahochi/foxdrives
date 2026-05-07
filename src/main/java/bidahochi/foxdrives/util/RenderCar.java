@@ -342,9 +342,6 @@ public class RenderCar extends Render {
         lastRenderedYaw = trailerRenderYaw;
 
 
-
-
-
         //add 180 to the rotation because of course its 180 out.
         trailerRenderYaw += 180;
 

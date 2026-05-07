@@ -17,4 +17,7 @@ public interface ITowingChild {
     Entity getEntity();
 
     default HitchType getReceiverType() { return HitchType.BOTH; }
+
+
+    int getLinkingID();
 }

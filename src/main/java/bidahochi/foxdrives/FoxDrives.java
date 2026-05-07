@@ -15,6 +15,7 @@ import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_estate;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
 import bidahochi.foxdrives.util.*;
+import bidahochi.foxdrives.util.Packet.PacketDecoupleHitch;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import bidahochi.foxdrives.util.Packet.PacketSyncBannedItems;
 import bidahochi.foxdrives.util.Packet.PacketSyncHitch;
@@ -78,6 +79,7 @@ public class FoxDrives {
     public static SimpleNetworkWrapper wrapColorChannel;
     public static SimpleNetworkWrapper lockChannel;
     public static SimpleNetworkWrapper hitchSyncChannel;
+    public static SimpleNetworkWrapper decoupleHitchChannel;
 
     public static SimpleNetworkWrapper BannedItems_CHANNEL;
     //the entityID for the first entity registered. must be 18 or higher because forge is dumb.
@@ -132,6 +134,10 @@ public class FoxDrives {
 
         hitchSyncChannel = buildNewSimpleChannel("hitch_sync");
         hitchSyncChannel.registerMessage(PacketSyncHitch.Handler.class, PacketSyncHitch.class, discriminator++, Side.CLIENT);
+
+        decoupleHitchChannel = buildNewSimpleChannel("decouple_hitch_sync");
+        decoupleHitchChannel.registerMessage(PacketDecoupleHitch.Handler.class, PacketDecoupleHitch.class, discriminator++, Side.CLIENT);
+
         //init item stuff
         tab= new FoxTab("FoxDrives", "creativetab");
         wrap= RegisterItem(new Item(),"wrap", tab);
