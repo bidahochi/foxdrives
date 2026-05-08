@@ -14,6 +14,7 @@ import bidahochi.foxdrives.entities.Entitybyrne40s.Entitybyrne40s_sedan_v8;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_estate;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
+import bidahochi.foxdrives.entities.Trailers.*;
 import bidahochi.foxdrives.util.*;
 import bidahochi.foxdrives.util.Packet.PacketDecoupleHitch;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
@@ -483,6 +484,8 @@ public class FoxDrives {
                 .acceleration(1)
                 .maxspeed(26, 3);
 
+        //semi trucks
+
         CarType.ID6400daycab = CarType.register("id6400daycab", EntityID6400daycab.class)
                 .recipe(
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
@@ -507,12 +510,51 @@ public class FoxDrives {
                 .maxspeed(13.5f, 7.5f)
                 .year("1973-1995");
 
+
+        //trailers
+
         TrailerType.DRYVAN53FT = TrailerType.register("53ftdryvan", Entity53ftDryvan.class)
                 .recipe(
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
                 );
+
+        TrailerType.FLATBED53FT= TrailerType.register("53ftflatbed", Entity53ftFlatbed.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                );
+
+        TrailerType.FUELTANKER53FT= TrailerType.register("53ftfueltanker", Entity53ftFuelTanker.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                );
+
+        TrailerType.TANDEMDRYVAN35FT= TrailerType.register("35fttandem", Entity35ftTandemDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                );
+
+        TrailerType.DRYVAN40FT= TrailerType.register("40ftdryvan", Entity40ftDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.gravel)
+                );
+
+        TrailerType.DRYVAN28FT= TrailerType.register("28ftdryvan", Entity28ftDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                );
+
 
         //CarType Registry Entry registration
         for(CarType type : CarType.REGISTRY.values()){

@@ -42,6 +42,11 @@ public class TrailerType {
 
     //
     public static TrailerType DRYVAN53FT;
+    public static TrailerType FLATBED53FT;
+    public static TrailerType FUELTANKER53FT;
+    public static TrailerType TANDEMDRYVAN35FT;
+    public static TrailerType DRYVAN40FT;
+    public static TrailerType DRYVAN28FT;
 
     public TrailerType(String id, Class<? extends EntityTrailer> trailerClass){
         regname = id;

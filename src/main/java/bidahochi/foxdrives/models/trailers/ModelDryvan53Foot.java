@@ -7,7 +7,7 @@
 // Created on: 27.12.2024 - 13:48:40
 // Last changed on: 27.12.2024 - 13:48:40
 
-package bidahochi.foxdrives.models; //Path where the model is located
+package bidahochi.foxdrives.models.trailers; //Path where the model is located
 
 import fdfexcraft.tmt_slim.ModelConverter;
 import fdfexcraft.tmt_slim.ModelRendererTurbo;

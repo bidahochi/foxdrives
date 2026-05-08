@@ -1,13 +1,13 @@
 package bidahochi.foxdrives.entities;
 
 import bidahochi.foxdrives.CarType;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
-import bidahochi.foxdrives.models.ModelID6400daycab;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingParent;
 import bidahochi.foxdrives.models.Modelpc100;
 import fdfexcraft.tmt_slim.ModelBase;
+import fdfexcraft.tmt_slim.Vec3f;
 import net.minecraft.world.World;
 
-public class EntityPC100 extends EntityCarChest
+public class EntityPC100 extends AbstractTowingParent
 {
 
     public EntityPC100(World p_i1685_1_) {
@@ -46,5 +46,7 @@ public class EntityPC100 extends EntityCarChest
     public CarType type(){
         return CarType.PC100;
     }
+
+    public Vec3f getReceiverPosition() { return new Vec3f(0,-0.5,-0.825); }// 0, -0.5, f/b
 
 }

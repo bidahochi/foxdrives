@@ -75,14 +75,14 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
             if(key == 6) {
                 System.out.println("toggle hitching");
                 if (hitchState == HitchState.COUPLED) {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("unhitching trailer"));
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Detatching trailer"));
                     decouple();
                 }
                 else if (hitchState == HitchState.SEARCHING) {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("hitching mode disabled"));
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Hitching mode disabled"));
                     hitchState = HitchState.IDLE;
                 } else {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("hitching mode enabled"));
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Hitching mode enabled"));
                     hitchState = HitchState.SEARCHING;
                 }
             }
