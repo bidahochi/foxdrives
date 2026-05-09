@@ -1049,4 +1049,10 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     public Map<Integer, String> getTextureDescriptionMap() { return textureDescriptionMap; }
 
     public World getWorld() { return worldObj; }
+
+    public boolean isLocked() { return locked; }
+
+    public void setLocked(boolean locked) { this.locked = locked; }
+
+    public Vec3 getPosition() { return Vec3.createVectorHelper(posX, posY, posZ); }
 }

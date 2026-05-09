@@ -14,7 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
-public abstract class EntityCarChest extends EntityCar implements IInventory, IInvBasic, IInventoryEntity {
+public abstract class AbstractTowingChildChest extends AbstractTowingChild implements IInventory, IInvBasic, IInventoryEntity {
 
     AnimalChest inv;
 
@@ -23,16 +23,12 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
      *
      * @param world
      */
-    public EntityCarChest(World world)
-    {
+    public AbstractTowingChildChest(World world) {
         super(world);
         this.func_110226_cD();
     }
 
-    public final int getMaxSlots()
-    {
-        return 2 + type().inventorySize.SlotCount;
-    }
+    public final int getMaxSlots() { return type().inventorySize.SlotCount; }
 
     private void func_110226_cD() {
         AnimalChest animalchest = this.inv;
@@ -66,10 +62,8 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
     public void onInventoryChanged(InventoryBasic p_76316_1_) {}
 
     @Override
-    public void onEntityDestruction(DamageSource damagesource)
-    {
-        if (inv != null)
-        {
+    public void onEntityDestruction(DamageSource damagesource) {
+        if (inv != null) {
             for (int i = 0; i < inv.getSizeInventory(); ++i) {
                 ItemStack itemstack = inv.getStackInSlot(i);
 
@@ -82,7 +76,7 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
 
 
     @Override
-    public void writeToNBT(NBTTagCompound tag){
+    public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
 
         NBTTagList nbttaglist = new NBTTagList();
@@ -104,7 +98,7 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag){
+    public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         if(tag.hasKey("Items")) {
             NBTTagList nbttaglist = tag.getTagList("Items", 10);
@@ -121,40 +115,39 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
         }
     }
 
-    /**
-     * handles interaction from client over network.
-     * @see bidahochi.foxdrives.util.PacketInteract
-     * @see bidahochi.foxdrives.util.EventManager#onClientKeyPress(InputEvent.MouseInputEvent) */
     @Override
-    public void networkInteract(int player, int key) {
-        if (!worldObj.isRemote) {
-            if(key==2){//open inventory
-                System.out.println("Open inv");
-                ((EntityPlayer)worldObj.getEntityByID(player)).openGui(FoxDrives.instance, getEntityId(), worldObj, 0, 0, 0);
-            }
-            else super.networkInteract(player, key);
-        }
+    public boolean interactFirst(EntityPlayer player) {
+        if (super.interactFirst(player)) return true;
+
+        player.openGui(FoxDrives.instance, getEntityId(), worldObj, 0, 0, 0);
+        return true;
     }
-
-
 
     //redirect all inventory logic to the AnimalChest
-    public int getSizeInventory(){return inv.getSizeInventory();}
-    public ItemStack getStackInSlot(int p_70301_1_){return inv.getStackInSlot(p_70301_1_);}
-    public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_){return inv.decrStackSize(p_70298_1_,p_70298_2_);}
-    public ItemStack getStackInSlotOnClosing(int p_70304_1_){return inv.getStackInSlotOnClosing(p_70304_1_);}
-    public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_){inv.setInventorySlotContents(p_70299_1_,p_70299_2_);}
-    public String getInventoryName(){return inv.getInventoryName();}
-    public boolean hasCustomInventoryName(){return inv.hasCustomInventoryName();}
-    public int getInventoryStackLimit(){return inv.getInventoryStackLimit();}
-    public void markDirty(){inv.markDirty();}
-    public boolean isUseableByPlayer(EntityPlayer p_70300_1_){return inv.isUseableByPlayer(p_70300_1_);}
-    public void openInventory(){inv.openInventory();}
-    public void closeInventory(){inv.closeInventory();}
-    public boolean isItemValidForSlot(int i, ItemStack itemStack)
-    {
-        return ItemHandler.handleFreight(this, itemStack);
-    }
-    public IInventory getInventory(){return inv;}
+    public int getSizeInventory() { return inv.getSizeInventory(); }
 
+    public ItemStack getStackInSlot(int slotNum) {return inv.getStackInSlot(slotNum); }
+
+    public ItemStack decrStackSize(int slotNUm, int amt) { return inv.decrStackSize(slotNUm, amt); }
+
+    public ItemStack getStackInSlotOnClosing(int slotNum) { return inv.getStackInSlotOnClosing(slotNum); }
+
+    public void setInventorySlotContents(int slotNum, ItemStack itemStack) { inv.setInventorySlotContents(slotNum,itemStack); }
+
+    public String getInventoryName() { return inv.getInventoryName(); }
+
+    public boolean hasCustomInventoryName() { return inv.hasCustomInventoryName(); }
+
+    public int getInventoryStackLimit() { return inv.getInventoryStackLimit(); }
+
+    public void markDirty() { inv.markDirty(); }
+
+    public boolean isUseableByPlayer(EntityPlayer player) { return inv.isUseableByPlayer(player); }
+
+    public void openInventory() { inv.openInventory(); }
+
+    public void closeInventory() { inv.closeInventory(); }
+    public boolean isItemValidForSlot(int i, ItemStack itemStack) { return ItemHandler.handleFreight(this, itemStack); }
+
+    public IInventory getInventory() { return inv; }
 }

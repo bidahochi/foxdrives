@@ -2,6 +2,7 @@ package bidahochi.foxdrives.client.gui;
 
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -39,10 +40,7 @@ public class GuiCar extends BaseGuiContainer {
     }
 
     @Override
-    public EntityCar getEntityCar()
-    {
-        return entity;
-    }
+    public IInventoryEntity getEntityCar() { return (IInventoryEntity)entity; }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float t, int x, int y){

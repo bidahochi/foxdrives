@@ -3,10 +3,12 @@ package bidahochi.foxdrives.client.gui;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.specialButtons.TransportLockGuiHandler;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import bidahochi.foxdrives.util.PacketInteract;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.Entity;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
@@ -21,7 +23,7 @@ public abstract class BaseGuiContainer extends GuiContainer
     protected ResourceLocation baseGui;
     protected ResourceLocation baseButtonStyle;
 
-    public abstract EntityCar getEntityCar();
+    public abstract IInventoryEntity getEntityCar();
 
     public BaseGuiContainer(Container container, IInventory player)
     {

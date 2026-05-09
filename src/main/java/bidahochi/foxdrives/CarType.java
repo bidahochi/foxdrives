@@ -4,6 +4,7 @@ import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.util.ConfigHandler;
 import bidahochi.foxdrives.common.inventory.enums.InventorySize;
 import bidahochi.foxdrives.common.inventory.enums.InventoryStyle;
+import bidahochi.foxdrives.util.ITypeHolder;
 import bidahochi.foxdrives.util.ItemCar;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.Item;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author Ferdinand Calo' (FEX___96)
  */
-public class CarType {
+public class CarType implements ITypeHolder {
 
 	public static LinkedHashMap<String, CarType> REGISTRY = new LinkedHashMap<>();
 	public final Class<? extends EntityCar> clazz;
@@ -122,6 +123,8 @@ public class CarType {
 		max_backward_speed = back * ConfigHandler.SPEED_MULTIPLIER;
 		return this;
 	}
+
+	public InventorySize getInventorySize() { return inventorySize; }
 
 	public Item getItem(){
 		return item;

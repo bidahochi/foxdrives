@@ -518,7 +518,8 @@ public class FoxDrives {
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
-                );
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x5);
 
         TrailerType.FLATBED53FT= TrailerType.register("53ftflatbed", Entity53ftFlatbed.class)
                 .recipe(

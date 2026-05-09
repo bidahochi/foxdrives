@@ -2,11 +2,9 @@ package bidahochi.foxdrives.client;
 
 
 import bidahochi.foxdrives.client.gui.GuiIDs;
+import bidahochi.foxdrives.client.gui.GuiTrailerInventory;
 import bidahochi.foxdrives.client.gui.lockGui.GuiLockMenu;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityTrailer;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.IWrappable;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.*;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.client.gui.GuiCarInventory;
 import bidahochi.foxdrives.util.CommonProxy;
@@ -51,15 +49,17 @@ public class ClientProxy extends CommonProxy
                 return entity != null ? new GuiWrap(player, (IWrappable) entity) : null;
             case GuiIDs.LOCK_MENU:
                 if (entity != null) { // If player is riding the entity (locomotives).
-                    return new GuiLockMenu(player, (EntityCar) entity);
+                    return new GuiLockMenu(player, (IInventoryEntity) entity);
                 } else { // If player is not riding the entity (freight).
-                    return entity != null ? new GuiLockMenu(player, ((EntityCar) entity)) : null;
+                    return entity != null ? new GuiLockMenu(player, ((IInventoryEntity) entity)) : null;
                 }
             default:
-                if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest)
-                {
+                if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest) {
                     System.out.println("Open client");
-                    return new GuiCarInventory(player.inventory, (EntityCarChest) player.worldObj.getEntityByID(ID));
+                    return new GuiCarInventory(player.inventory, (IInventoryEntity) player.worldObj.getEntityByID(ID));
+                } else if (player.worldObj.getEntityByID(ID) instanceof AbstractTowingChildChest) {
+                    System.out.println("Open client");
+                    return new GuiTrailerInventory(player.inventory, (AbstractTowingChildChest) player.worldObj.getEntityByID(ID));
                 }
                 return null;
         }

@@ -335,7 +335,7 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
             }
         }
 
-        if (!this.worldObj.isRemote) {
+        if (!this.worldObj.isRemote && player.isSneaking()) {
             if(riddenByEntity == null && !type().passenger_pos.isEmpty()) {
                 player.mountEntity(this);
             }
@@ -702,4 +702,10 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
     public Map<Integer, String> getTextureDescriptionMap() { return textureDescriptionMap; }
 
     public World getWorld() { return worldObj; }
+
+    public boolean isLocked() { return locked; }
+
+    public void setLocked(boolean locked) { this.locked = locked; }
+
+    public Vec3 getPosition() { return Vec3.createVectorHelper(posX, posY, posZ); }
 }
