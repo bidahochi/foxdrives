@@ -17,11 +17,14 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
 public abstract class AbstractTowingParent extends EntityCarChest implements ITowingParent {
+
+    public HashMap<HitchType, Vec3f> hitchPos = new HashMap<HitchType, Vec3f>();
 
     private ITowingChild towedVehicle = null;
 
@@ -53,7 +56,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     public ITowingChild childVehicle() { return towedVehicle; }
 
     @Override
-    public Vec3f getReceiverPosition() { return null; }
+    public HashMap<HitchType, Vec3f> getHitchOffsets() { return hitchPos; }
 
     @Override
     public Entity getEntity() { return this; }
@@ -149,7 +152,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
             if (child.getParentVehicle() != null) { continue; }
 
             //if the trailer's receiver doesn't match the hitch type of this
-            if (child.getReceiverType() != this.getHitchType() && this.getHitchType() != HitchType.BOTH && child.getReceiverType() != HitchType.BOTH) { continue; }
+            if (child.getReceiverType() != this.getHitchType() && this.getHitchType() != HitchType.ALL && child.getReceiverType() != HitchType.ALL) { continue; }
 
             double dist = this.getDistanceSqToEntity(child);
 

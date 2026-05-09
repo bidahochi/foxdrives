@@ -4,6 +4,7 @@ import bidahochi.foxdrives.common.inventory.enums.InventorySize;
 import bidahochi.foxdrives.common.inventory.enums.InventoryStyle;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityTrailer;
 import bidahochi.foxdrives.util.ConfigHandler;
+import bidahochi.foxdrives.util.ITypeHolder;
 import bidahochi.foxdrives.util.ItemTrailer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.Item;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class TrailerType {
+public class TrailerType implements ITypeHolder {
 
     public static LinkedHashMap<String, TrailerType> REGISTRY = new LinkedHashMap<>();
     public final Class<? extends EntityTrailer> clazz;
@@ -56,7 +57,7 @@ public class TrailerType {
 
     public static TrailerType register(String id, Class<? extends EntityTrailer> clazz){
         if (REGISTRY.containsKey(id)) {
-            System.out.println("ERROR: CAR with ID '" + id + "' ALREADY exists!");
+            System.out.println("ERROR: Trailer with ID '" + id + "' ALREADY exists!");
             FMLCommonHandler.instance().exitJava(1, true);
             return null;
         }
@@ -87,16 +88,7 @@ public class TrailerType {
         return this;
     }
 
-    public TrailerType acceleration(float val){
-        accel = val;
-        return this;
-    }
-
-    public TrailerType maxspeed(float front, float back){
-        max_forward_speed = front * ConfigHandler.SPEED_MULTIPLIER;
-        max_backward_speed = back * ConfigHandler.SPEED_MULTIPLIER;
-        return this;
-    }
+    public InventorySize getInventorySize() { return inventorySize; }
 
     public Item getItem(){
         return item;
@@ -106,9 +98,9 @@ public class TrailerType {
         return recipe;
     }
 
-    public static Item getItemByClass(Class<? extends EntityTrailer> carclass){
+    public static Item getItemByClass(Class<? extends EntityTrailer> trailerClass){
         for(TrailerType type : REGISTRY.values()){
-            if(type.clazz == carclass) return type.item;
+            if(type.clazz == trailerClass) return type.item;
         }
         return null;
     }

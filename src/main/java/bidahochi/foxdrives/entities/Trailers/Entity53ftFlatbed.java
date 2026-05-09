@@ -2,6 +2,7 @@ package bidahochi.foxdrives.entities.Trailers;
 
 import bidahochi.foxdrives.TrailerType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingChild;
+import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.trailers.Modelflatbed53Foot;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
@@ -17,6 +18,7 @@ public class Entity53ftFlatbed extends AbstractTowingChild {
         textureDescriptionMap.put(3, "Generic 3");
         textureDescriptionMap.put(4, "Generic 4 (oversized banner)");
         setGuiRenderScale(15);
+        receiverPos = new Vec3f(0.0f, -0.5f, 4.0);//dont touch, vertical, frontback
     }
 
     @Override
@@ -36,5 +38,5 @@ public class Entity53ftFlatbed extends AbstractTowingChild {
     }
 
     @Override
-    public Vec3f getHitchOffset() { return new Vec3f(0.0f, -0.5f, 4.0); }//dont touch, vertical, frontback
+    public HitchType getReceiverType() { return HitchType.FIFTH_WHEEL; }
 }

@@ -2,7 +2,8 @@ package bidahochi.foxdrives.common.inventory.containers;
 
 import bidahochi.foxdrives.common.inventory.slots.DisabledSlot;
 import bidahochi.foxdrives.common.inventory.slots.FuelSlot;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -12,16 +13,18 @@ import net.minecraft.item.ItemStack;
 public class ContainerBaseInventory extends Container
 {
     protected IInventory playerInventory;
-    protected EntityCarChest car;
+    protected IInventoryEntity entity;
 
-    public ContainerBaseInventory(IInventory invPlayer, final EntityCarChest transport)
+    public ContainerBaseInventory(IInventory invPlayer, final IInventoryEntity transport)
     {
-        this.car = transport;
+        this.entity = transport;
         this.playerInventory = invPlayer;
 
         // --- Car slots ---
-        this.addSlotToContainer(new FuelSlot(car, 0, 204 , 26));
-        this.addSlotToContainer(new DisabledSlot(car, 1, 204 , 64));
+        if (entity instanceof EntityCar) {
+            this.addSlotToContainer(new FuelSlot(entity.getInventory(), 0, 204, 26));
+            this.addSlotToContainer(new DisabledSlot(entity.getInventory(), 1, 204, 64));
+        }
     }
 
     /**
@@ -66,8 +69,8 @@ public class ContainerBaseInventory extends Container
 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer) {
-        return this.playerInventory.isUseableByPlayer(entityPlayer) && this.car.isEntityAlive()
-                && this.car.getDistanceToEntity(entityPlayer) < 8.0F;
+        return this.playerInventory.isUseableByPlayer(entityPlayer) && this.entity.isEntityAlive()
+                && this.entity.getDistanceToEntity(entityPlayer) < 8.0F;
     }
 
     /**

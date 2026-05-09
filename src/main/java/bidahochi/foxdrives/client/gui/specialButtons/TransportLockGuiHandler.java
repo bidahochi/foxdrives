@@ -4,6 +4,7 @@ import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.client.gui.genericButtons.GuiCustomButton;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import bidahochi.foxdrives.util.PacketInteract;
 import bidahochi.foxdrives.util.TranslationUtil;
@@ -20,16 +21,8 @@ public class TransportLockGuiHandler
     {
     }
 
-    public static GuiButton createLockButton(
-            EntityCar stock,
-            EntityPlayer player,
-            ResourceLocation buttonStyle,
-            int baseX,
-            int baseY,
-            int offsetX,
-            int offsetY,
-            int buttonWidth
-    )
+    public static GuiButton createLockButton(IInventoryEntity stock, EntityPlayer player, ResourceLocation buttonStyle,
+                                             int baseX, int baseY, int offsetX, int offsetY, int buttonWidth)
     {
         if (!stock.getTransportLocked())
         {
@@ -58,7 +51,7 @@ public class TransportLockGuiHandler
             GuiScreen gui,
             GuiButton button,
             EntityPlayer player,
-            EntityCar stock,
+            IInventoryEntity stock,
             boolean shiftDown
     )
     {
@@ -81,23 +74,23 @@ public class TransportLockGuiHandler
         }
     }
 
-    private static void toggleLock(EntityCar stock, GuiButton button, GuiScreen gui)
+    private static void toggleLock(IInventoryEntity stock, GuiButton button, GuiScreen gui)
     {
         if (!stock.getTransportLocked())
         {
-            stock.locked =true;
+            stock.setLocked(true);
         }
         else
         {
-            stock.locked =false;
+            stock.setLocked(false);
         }
     }
 
-    private static void sendLockPacket(EntityCar transport)
+    private static void sendLockPacket(IInventoryEntity transport)
     {
         FoxDrives.lockChannel.sendToServer(
                 new PacketSetTransportLockedToClient(
-                        transport.locked,
+                        transport.isLocked(),
                         transport.getTrustedList(),
                         transport.getEntityId(),
                         false
@@ -106,7 +99,7 @@ public class TransportLockGuiHandler
         //FoxDrives.interactChannel.sendToServer(new PacketInteract(50, Minecraft.getMinecraft().thePlayer.ridingEntity.getEntityId()));
     }
 
-    private static void openLockMenu(GuiScreen gui, EntityPlayer player, EntityCar stock)
+    private static void openLockMenu(GuiScreen gui, EntityPlayer player, IInventoryEntity stock)
     {
         gui.mc.thePlayer.closeScreen();
         player.openGui(
@@ -115,7 +108,7 @@ public class TransportLockGuiHandler
                 player.getEntityWorld(),
                 stock.getEntityId(),
                 -1,
-                (int) stock.posZ
+                (int) stock.getPosition().zCoord
         );
     }
 }

@@ -2,6 +2,7 @@ package bidahochi.foxdrives.client.gui.lockGui;
 
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -14,12 +15,12 @@ import net.minecraft.entity.player.EntityPlayer;
  */
 @SideOnly(Side.CLIENT)
 public class GuiLockMenu extends GuiLockMenuAbstract {
-    private final EntityCar rollingStock;
+    private final IInventoryEntity rollingStock;
 
     /**
      * @author 02skaplan
      */
-    public GuiLockMenu(EntityPlayer editingPlayer, EntityCar rollingStock) {
+    public GuiLockMenu(EntityPlayer editingPlayer, IInventoryEntity rollingStock) {
         super(editingPlayer);
         this.rollingStock = rollingStock;
         currentTrustees.addAll(rollingStock.getTrustedList());

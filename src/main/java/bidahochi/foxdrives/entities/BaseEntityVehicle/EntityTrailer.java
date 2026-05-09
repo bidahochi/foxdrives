@@ -184,15 +184,51 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
     }
 
     //TODO: everything with lighting pulls from the towing entity
-    public boolean isLightsEnabled() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean(); }
+    public boolean isLightsEnabled() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).isLightsEnabled();
+            }
+        }
+        return false;
+    }
 
-    public boolean areBrakeLightsOn() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean(); }
 
-    public boolean isBeaconEnabled() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean(); }
+    public boolean areBrakeLightsOn() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).areBrakeLightsOn();
+            }
+        }
+        return false;
+    }
 
-    public byte getBeaconCycleIndex() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.beaconCycleIndex.AsString()).getAsByte(); }
+    public boolean isBeaconEnabled() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).isBeaconEnabled();
+            }
+        }
+        return false;
+    }
 
-    public boolean isAuxLightsEnabled() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0; }
+    public byte getBeaconCycleIndex() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).getBeaconCycleIndex();
+            }
+        }
+        return -1;
+    }
+
+    public boolean isAuxLightsEnabled() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).isAuxLightsEnabled();
+            }
+        }
+        return false;
+    }
 
 
 
@@ -200,24 +236,25 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
      * Get Turns Signal Direction
      * @return Left = -1, Right = 1
      */
-    public byte getTurnSignalDirection() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignal.AsString()).getAsByte(); }
+    public byte getTurnSignalDirection() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).getTurnSignalDirection();
+            }
+        }
+        return 0;
+    }
 
-    public byte getTurnSignalTick() { return AsJsonObject(dataWatcher.getWatchableObjectString(DW_VEHICLEDATAJSON)).get(DataMemberName.turnSignalTick.AsString()).getAsByte(); }
+    public byte getTurnSignalTick() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).getTurnSignalTick();
+            }
+        }
+        return -1;
+    }
 
     public float getVelocity() { return dataWatcher.getWatchableObjectFloat(DW_VEL); }
-
-    public void setPacketLights(boolean isHeadlightsOn) { isHeadlightsEnabled = isHeadlightsOn; }
-
-    public void setPacketTurnIndicator(byte turnIndicator) { turnSignal = turnIndicator; }
-
-    public void setPacketBeacon(boolean isVehicleBeaconEnabled) { isBeaconEnabled = isVehicleBeaconEnabled; }
-
-    /**Sets the Ditch light mode
-     *
-     * @param ditchLightMode set 0 for off,
-     */
-    public void setPacketDitchLightsMode(byte ditchLightMode) { this.ditchLightMode = ditchLightMode; }
-
 
     /**
      * Returns the model for the entity
@@ -335,7 +372,7 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
             }
         }
 
-        if (!this.worldObj.isRemote) {
+        if (!this.worldObj.isRemote && player.isSneaking()) {
             if(riddenByEntity == null && !type().passenger_pos.isEmpty()) {
                 player.mountEntity(this);
             }
@@ -702,4 +739,10 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
     public Map<Integer, String> getTextureDescriptionMap() { return textureDescriptionMap; }
 
     public World getWorld() { return worldObj; }
+
+    public boolean isLocked() { return locked; }
+
+    public void setLocked(boolean locked) { this.locked = locked; }
+
+    public Vec3 getPosition() { return Vec3.createVectorHelper(posX, posY, posZ); }
 }
