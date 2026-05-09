@@ -2,6 +2,7 @@ package bidahochi.foxdrives.entities.Trailers;
 
 import bidahochi.foxdrives.TrailerType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingChild;
+import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.trailers.Modeldryvan28ft;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
@@ -15,6 +16,7 @@ public class Entity28ftDryvan extends AbstractTowingChild {
         textureDescriptionMap.put(1, "Coyote Truck Lines");
         textureDescriptionMap.put(2, "PXO Logistics");
         setGuiRenderScale(15);
+        receiverPos = new Vec3f(0, -0.5f, 1.95);
     }
 
     @Override
@@ -34,5 +36,5 @@ public class Entity28ftDryvan extends AbstractTowingChild {
     }
 
     @Override
-    public Vec3f getHitchOffset() { return new Vec3f(0, -0.5f, 1.95); }
+    public HitchType getReceiverType() { return HitchType.FIFTH_WHEEL; }
 }

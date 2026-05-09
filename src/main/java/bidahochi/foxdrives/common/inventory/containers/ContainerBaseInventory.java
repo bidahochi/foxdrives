@@ -2,6 +2,7 @@ package bidahochi.foxdrives.common.inventory.containers;
 
 import bidahochi.foxdrives.common.inventory.slots.DisabledSlot;
 import bidahochi.foxdrives.common.inventory.slots.FuelSlot;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -20,8 +21,10 @@ public class ContainerBaseInventory extends Container
         this.playerInventory = invPlayer;
 
         // --- Car slots ---
-        this.addSlotToContainer(new FuelSlot(entity.getInventory(), 0, 204 , 26));
-        this.addSlotToContainer(new DisabledSlot(entity.getInventory(), 1, 204 , 64));
+        if (entity instanceof EntityCar) {
+            this.addSlotToContainer(new FuelSlot(entity.getInventory(), 0, 204, 26));
+            this.addSlotToContainer(new DisabledSlot(entity.getInventory(), 1, 204, 64));
+        }
     }
 
     /**

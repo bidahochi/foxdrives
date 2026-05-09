@@ -8,9 +8,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
 public abstract class AbstractTowingChild extends EntityTrailer implements ITowingChild {
+
+
+    public Vec3f receiverPos = null;
 
     private ITowingParent parentVehicle;
 
@@ -31,7 +35,7 @@ public abstract class AbstractTowingChild extends EntityTrailer implements ITowi
     public ITowingParent getParentVehicle() { return this.parentVehicle; }
 
     @Override
-    public Vec3f getHitchOffset() { return null; }
+    public Vec3f getReceiverOffset() { return receiverPos; }
 
     public void setParentVehicle(ITowingParent parent) {
         this.parentVehicle = parent;
@@ -79,7 +83,8 @@ public abstract class AbstractTowingChild extends EntityTrailer implements ITowi
         double pPosY = worldObj.isRemote ? parent.getEntity().lastTickPosY + (parent.getEntity().posY - parent.getEntity().lastTickPosY) : parent.getEntity().posY;
         double pPosZ = worldObj.isRemote ? parent.getEntity().lastTickPosZ + (parent.getEntity().posZ - parent.getEntity().lastTickPosZ) : parent.getEntity().posZ;
 
-        Vec3f receiverPos = ((AbstractTowingParent)parent.getEntity()).getReceiverPosition();
+        Vec3f receiverPos = parent.getHitchOffsets().get(this.getReceiverType());
+
         double receiverX = pPosX + (pCos * receiverPos.xCoord - pSin * receiverPos.zCoord);
         double receiverY = pPosY + receiverPos.yCoord;
         double receiverZ = pPosZ + (pSin * receiverPos.xCoord + pCos * receiverPos.zCoord);
@@ -98,9 +103,9 @@ public abstract class AbstractTowingChild extends EntityTrailer implements ITowi
         double cSin = Math.sin(cRad);
         double cCos = Math.cos(cRad);
 
-        double childX = receiverX - (cCos * this.getHitchOffset().xCoord - cSin * this.getHitchOffset().zCoord);
-        double childY = receiverY - this.getHitchOffset().yCoord;
-        double childZ = receiverZ - (cSin * this.getHitchOffset().xCoord + cCos * this.getHitchOffset().zCoord);
+        double childX = receiverX - (cCos * this.getReceiverOffset().xCoord - cSin * this.getReceiverOffset().zCoord);
+        double childY = receiverY - this.getReceiverOffset().yCoord;
+        double childZ = receiverZ - (cSin * this.getReceiverOffset().xCoord + cCos * this.getReceiverOffset().zCoord);
 
         setLocationAndAngles(childX, childY, childZ, childYaw, 0);
         prevPosX = savedPrevX;

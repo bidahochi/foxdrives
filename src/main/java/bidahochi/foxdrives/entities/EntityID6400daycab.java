@@ -2,6 +2,7 @@ package bidahochi.foxdrives.entities;
 
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingParent;
+import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.ModelID6400daycab;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
@@ -23,6 +24,7 @@ public class EntityID6400daycab extends AbstractTowingParent
         textureDescriptionMap.put(8, "Alaska West Express (Dirt & Grime)");
 
         setGuiRenderScale(getGuiRenderScale() + 0f);
+        hitchPos.put(HitchType.FIFTH_WHEEL, new Vec3f(0,-0.5,-0.75));
     }
 
     /**
@@ -48,8 +50,7 @@ public class EntityID6400daycab extends AbstractTowingParent
     @Override
     public CarType type() { return CarType.ID6400daycab; }
 
-    public Vec3f getReceiverPosition() { return new Vec3f(0,-0.5,-0.75); }
-
     @Override
-    public double getDetectionRange() { return 3D; }
+    public HitchType getHitchType() { return HitchType.FIFTH_WHEEL; }
+
 }

@@ -2,6 +2,7 @@ package bidahochi.foxdrives.entities;
 
 import bidahochi.foxdrives.CarType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingParent;
+import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.Modelpc100;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
@@ -20,6 +21,8 @@ public class EntityPC100 extends AbstractTowingParent
         textureDescriptionMap.put(5, "Generic 4 (Environtech Industries, Late Aero)");
         textureDescriptionMap.put(6, "Coyote Truck Lines");
         setGuiRenderScale(getGuiRenderScale() + 0f);
+
+        hitchPos.put(HitchType.FIFTH_WHEEL, new Vec3f(0,-0.5,-0.75)); // 0, -0.5, f/b
     }
 
     /**
@@ -47,6 +50,6 @@ public class EntityPC100 extends AbstractTowingParent
         return CarType.PC100;
     }
 
-    public Vec3f getReceiverPosition() { return new Vec3f(0,-0.5,-0.825); }// 0, -0.5, f/b
-
+    @Override
+    public HitchType getHitchType() { return HitchType.FIFTH_WHEEL; }
 }

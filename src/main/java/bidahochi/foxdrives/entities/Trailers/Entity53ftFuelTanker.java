@@ -2,7 +2,7 @@ package bidahochi.foxdrives.entities.Trailers;
 
 import bidahochi.foxdrives.TrailerType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingChild;
-import bidahochi.foxdrives.models.trailers.ModelDryvan53Foot;
+import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.trailers.Modelfueltanker53ft;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
@@ -18,6 +18,7 @@ public class Entity53ftFuelTanker extends AbstractTowingChild {
         textureDescriptionMap.put(2, "Generic 2");
         textureDescriptionMap.put(3, "Alaska West Express");
         setGuiRenderScale(15);
+        receiverPos = new Vec3f(0, -0.5f, 4.05);//dont touch, vertical, frontback
     }
 
     @Override
@@ -37,5 +38,5 @@ public class Entity53ftFuelTanker extends AbstractTowingChild {
     }
 
     @Override
-    public Vec3f getHitchOffset() { return new Vec3f(0, -0.5f, 4.05); }
+    public HitchType getReceiverType() { return HitchType.FIFTH_WHEEL; }
 }

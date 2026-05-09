@@ -2,8 +2,8 @@ package bidahochi.foxdrives.entities.Trailers;
 
 import bidahochi.foxdrives.TrailerType;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingChild;
+import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.trailers.Modeldryvan40ft;
-import bidahochi.foxdrives.models.trailers.Modeltandemdryvan35ft;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
 import net.minecraft.world.World;
@@ -19,6 +19,7 @@ public class Entity40ftDryvan extends AbstractTowingChild {
         textureDescriptionMap.put(3, "Alaska Marine Lines");
         textureDescriptionMap.put(4, "Alaska West Express");
         setGuiRenderScale(15);
+        receiverPos = new Vec3f(0, -0.5f, 2.87);
     }
 
     @Override
@@ -38,5 +39,5 @@ public class Entity40ftDryvan extends AbstractTowingChild {
     }
 
     @Override
-    public Vec3f getHitchOffset() { return new Vec3f(0, -0.5f, 2.87); }
+    public HitchType getReceiverType() { return HitchType.FIFTH_WHEEL; }
 }

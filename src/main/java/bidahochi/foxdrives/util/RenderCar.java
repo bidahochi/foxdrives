@@ -302,7 +302,7 @@ public class RenderCar extends Render {
         double pSin = Math.sin(pRad);
         double pCos = Math.cos(pRad);
 
-        Vec3f receiverPos = ((AbstractTowingParent) parentEntity).getReceiverPosition();
+        Vec3f receiverPos = ((AbstractTowingParent) parentEntity).getHitchOffsets().get(((AbstractTowingChild) trailer).getReceiverType());
         double receiverX = parentRenderX + (pCos * receiverPos.xCoord - pSin * receiverPos.zCoord);
         double receiverY = parentRenderY + receiverPos.yCoord;
         double receiverZ = parentRenderZ + (pSin * receiverPos.xCoord + pCos * receiverPos.zCoord);
@@ -351,7 +351,7 @@ public class RenderCar extends Render {
         double cSin = Math.sin(cRad);
         double cCos = Math.cos(cRad);
 
-        Vec3f hitchOffset = ((AbstractTowingChild) trailer).getHitchOffset();
+        Vec3f hitchOffset = ((AbstractTowingChild) trailer).getReceiverOffset();
         double trailerRenderX = receiverX - (cCos * hitchOffset.xCoord - cSin * hitchOffset.zCoord);
         double trailerRenderY = receiverY - hitchOffset.yCoord;
         double trailerRenderZ = receiverZ - (cSin * hitchOffset.xCoord + cCos * hitchOffset.zCoord);
