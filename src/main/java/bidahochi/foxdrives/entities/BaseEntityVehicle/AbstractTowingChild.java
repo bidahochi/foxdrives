@@ -74,7 +74,7 @@ public abstract class AbstractTowingChild extends EntityTrailer implements ITowi
         double savedPrevZ = posZ;
         float savedPrevYaw = rotationYaw;
 
-        float parentYaw = parent.getEntity().rotationYaw;
+        float parentYaw = worldObj.isRemote ? parent.getEntity().prevRotationYaw + (parent.getEntity().rotationYaw - parent.getEntity().prevRotationYaw) : parent.getEntity().rotationYaw;
         double pRad = Math.toRadians(parentYaw);
         double pSin = Math.sin(pRad);
         double pCos = Math.cos(pRad);
@@ -89,14 +89,18 @@ public abstract class AbstractTowingChild extends EntityTrailer implements ITowi
         double receiverY = pPosY + receiverPos.yCoord;
         double receiverZ = pPosZ + (pSin * receiverPos.xCoord + pCos * receiverPos.zCoord);
 
-        //get the yaw of the trailer from geometry rather than anything stored internally to ensure its correct.
+        //get the yaw of the trailer from geometry rather than anything stored internally to ensure it's correct.
         double dx = receiverX - posX;
         double dz = receiverZ - posZ;
         float childYaw;
-        if (Math.abs(dx) < 0.001 && Math.abs(dz) < 0.001) {
+        if (Math.abs(dx) < 0.01 && Math.abs(dz) < 0.01) {
             childYaw = parentYaw;
         } else {
             childYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
+        }
+
+        if (!worldObj.isRemote) {
+            dataWatcher.updateObject(DW_YAW, childYaw);
         }
 
         double cRad = Math.toRadians(childYaw);

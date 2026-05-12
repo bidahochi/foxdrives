@@ -14,12 +14,12 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import static bidahochi.foxdrives.util.FoxDrivesConstants.DW_YAW;
 import static org.lwjgl.opengl.GL11.*;
 
 public class RenderCar extends Render {
     private static boolean renderGUIFullBright = false;
     private static boolean renderModeGUI = false;
-    private float lastRenderedYaw = 0f;
 
     /**
      * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then
@@ -308,17 +308,21 @@ public class RenderCar extends Render {
         double receiverZ = parentRenderZ + (pSin * receiverPos.xCoord + pCos * receiverPos.zCoord);
 
         //Find the yaw for the trailer with *geometry*
-        double dx = trailer.posX - receiverX;
-        double dz = trailer.posZ - receiverZ;
+        double trailerRenderX = trailer.lastTickPosX + (trailer.posX - trailer.lastTickPosX) * ticks;
+        double trailerRenderZ = trailer.lastTickPosZ + (trailer.posZ - trailer.lastTickPosZ) * ticks;
+
+        double dx = trailerRenderX - receiverX;
+        double dz = trailerRenderZ - receiverZ;
+
         float trailerRenderYaw;
-        if (Math.abs(dx) < 0.001 && Math.abs(dz) < 0.001) {
+        if (Math.abs(dx) < 0.01 && Math.abs(dz) < 0.01) {
             trailerRenderYaw = parentRenderYaw;
         } else {
             trailerRenderYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
         }
 
         // Low-pass filter against last frame's yaw to remove wobbling.
-        float yawDiff = trailerRenderYaw - lastRenderedYaw;
+        float yawDiff = trailerRenderYaw - trailer.getDataWatcher().getWatchableObjectFloat(DW_YAW);
         while (yawDiff > 180)  yawDiff -= 360;
         while (yawDiff < -180) yawDiff += 360;
 
@@ -337,10 +341,9 @@ public class RenderCar extends Render {
             float t = (absDiff - 1.0f) / (4.0f - 1.0f);
             blendFactor = 0.01f + t * (1.0f - 0.01f);
         }
-
-        trailerRenderYaw = lastRenderedYaw + yawDiff * blendFactor;
-        lastRenderedYaw = trailerRenderYaw;
-
+        trailerRenderYaw = trailer.getDataWatcher().getWatchableObjectFloat(DW_YAW) + yawDiff * blendFactor;
+        while (trailerRenderYaw > 180) trailerRenderYaw -= 360;
+        while (trailerRenderYaw < -180) trailerRenderYaw += 360;
 
         //add 180 to the rotation because of course its 180 out.
         trailerRenderYaw += 180;
@@ -352,9 +355,9 @@ public class RenderCar extends Render {
         double cCos = Math.cos(cRad);
 
         Vec3f hitchOffset = ((AbstractTowingChild) trailer).getReceiverOffset();
-        double trailerRenderX = receiverX - (cCos * hitchOffset.xCoord - cSin * hitchOffset.zCoord);
+        trailerRenderX = receiverX - (cCos * hitchOffset.xCoord - cSin * hitchOffset.zCoord);
         double trailerRenderY = receiverY - hitchOffset.yCoord;
-        double trailerRenderZ = receiverZ - (cSin * hitchOffset.xCoord + cCos * hitchOffset.zCoord);
+        trailerRenderZ = receiverZ - (cSin * hitchOffset.xCoord + cCos * hitchOffset.zCoord);
 
         //convert world render position to camera-relative.
         double camX = trailer.posX - x;
