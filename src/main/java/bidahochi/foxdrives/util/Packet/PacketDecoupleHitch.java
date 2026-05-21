@@ -47,10 +47,12 @@ public class PacketDecoupleHitch implements IMessage {
             if (ctx.side == Side.CLIENT) {
                 AbstractTowingParent parent = (AbstractTowingParent) Minecraft.getMinecraft().theWorld.getEntityByID(message.parentEntity);
                 AbstractTowingChild child = (AbstractTowingChild) Minecraft.getMinecraft().theWorld.getEntityByID(message.childEntity);
-                if (parent != null && child != null) {
+                if (parent != null) {
                     parent.hitchState = HitchState.values()[message.hitchStateOrdinal];
                     parent.setLinkedChildID(-1);
                     parent.setChildVehicle(null);
+                }
+                if (child != null) {
                     child.setLinkedParentID(-1);
                     child.setParentVehicle(null);
                 }

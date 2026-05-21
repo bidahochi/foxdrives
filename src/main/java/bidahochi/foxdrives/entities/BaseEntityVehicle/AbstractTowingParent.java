@@ -117,6 +117,20 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
                 onChildDetected(nearbyChild);
             }
         }
+
+        if (ticksExisted % 20 == 0 && this.hitchState == HitchState.COUPLED) {
+            if (worldObj.getEntityByID(childVehicle().getEntityId()) == null || worldObj.getEntityByID(childVehicle().getEntityId()).isDead) {
+                decouple();
+            }
+        }
+    }
+
+    @Override
+    public void setDead(){
+        if (!worldObj.isRemote) {
+            decouple();
+        }
+        super.setDead();
     }
 
     public int setNewUniqueID(int id) {
@@ -176,13 +190,15 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
         //worldObj.playSoundAtEntity(this, "hitchingNoise", 1, 1);
     }
 
-    private void decouple() {
+    public void decouple() {
         System.out.println("Decoupling");
         hitchState = HitchState.IDLE;
         dataWatcher.updateObject(DW_CHILD, -1);
         syncHitchState(true);
-        ((AbstractTowingChild)childVehicle().getEntity()).setLinkedParentID(-1);
-        ((AbstractTowingChild)childVehicle().getEntity()).setParentVehicle(null);
+        if (childVehicle().getEntity() != null) {
+            ((AbstractTowingChild) childVehicle().getEntity()).setLinkedParentID(-1);
+            ((AbstractTowingChild) childVehicle().getEntity()).setParentVehicle(null);
+        }
         this.setChildVehicle(null);
     }
 
