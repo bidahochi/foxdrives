@@ -230,8 +230,6 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         return false;
     }
 
-
-
     /**
      * Get Turns Signal Direction
      * @return Left = -1, Right = 1
@@ -254,7 +252,24 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         return -1;
     }
 
-    public float getVelocity() { return dataWatcher.getWatchableObjectFloat(DW_VEL); }
+    public boolean isRunning() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).isRunning();
+            }
+        }
+        return false;
+    }
+
+    public float getVelocity() {
+        if (this instanceof ITowingChild) {
+            if (((ITowingChild) this).getParentVehicle() != null) {
+                return ((EntityCar) ((ITowingChild) this).getParentVehicle().getEntity()).getVelocity();
+            }
+        }
+        return 0;
+
+    }
 
     /**
      * Returns the model for the entity
