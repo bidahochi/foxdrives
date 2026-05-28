@@ -19,6 +19,8 @@ public class Entity53ftDryvan extends AbstractTowingChildChest {
         textureDescriptionMap.put(3, "Alaska Marine Lines (dirty)");
         textureDescriptionMap.put(4, "Alaska Marine Lines (absolutely beyond soiled)");
         textureDescriptionMap.put(5, "PXO Logistics");
+        textureDescriptionMap.put(6, "INTERSTATE Trucking");
+
         setGuiRenderScale(15);
         receiverPos = new Vec3f(0, -0.5f, 3.55);
     }
@@ -37,7 +39,7 @@ public class Entity53ftDryvan extends AbstractTowingChildChest {
     public String[] getSkins() {
         return new String[] {"textures/53ft_dryvan/53ft_dryvan_2", "textures/53ft_dryvan/53ft_dryvan_dotc2", "textures/53ft_dryvan/53ft_dryvan_fernrock",
                 "textures/53ft_dryvan/PropTrailerDryvan_ALASKAMARINELINES", "textures/53ft_dryvan/PropTrailerDryvan_ALASKAMARINELINES_CAR_CRASH_EJECTION_CHALLENGE",
-                "textures/53ft_dryvan/53ft_dryvan_pxo"};
+                "textures/53ft_dryvan/53ft_dryvan_pxo", "textures/53ft_dryvan/53ft_dryvan_interstate"};
     }
 
     @Override
