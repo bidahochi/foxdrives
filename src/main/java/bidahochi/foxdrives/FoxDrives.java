@@ -495,7 +495,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.25f, 0.45f, 0.6f },
                         new float[]{ -0.25f, 0.45f, 0.6f })//LR, UD, FB
                 .acceleration(0.2f)
-                .maxspeed(14, 8)
+                .maxspeed(14, 14)
                 .year("1980-1997");
 
         CarType.PC100 = CarType.register("pc100", EntityPC100.class)
@@ -519,14 +519,15 @@ public class FoxDrives {
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
                 )
-                .inventorySize(InventorySize.STYLE_PROFILE_3x5);
+                .inventorySize(InventorySize.STYLE_PROFILE_3x9);
 
         TrailerType.FLATBED53FT= TrailerType.register("53ftflatbed", Entity53ftFlatbed.class)
                 .recipe(
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
-                );
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x9);
 
         TrailerType.FUELTANKER53FT= TrailerType.register("53ftfueltanker", Entity53ftFuelTanker.class)
                 .recipe(
@@ -540,21 +541,24 @@ public class FoxDrives {
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
-                );
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x5);
 
         TrailerType.DRYVAN40FT= TrailerType.register("40ftdryvan", Entity40ftDryvan.class)
                 .recipe(
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.gravel)
-                );
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x7);
 
         TrailerType.DRYVAN28FT= TrailerType.register("28ftdryvan", Entity28ftDryvan.class)
                 .recipe(
                         new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
                         new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                         new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
-                );
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3);
 
 
         //CarType Registry Entry registration

@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 
 public class Entity53ftDryvan extends AbstractTowingChildChest {
 
-
     public Entity53ftDryvan(World world) {
         super(world);
         textureDescriptionMap.put(0, "Blandsville Transportation Services");

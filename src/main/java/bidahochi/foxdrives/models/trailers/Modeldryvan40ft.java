@@ -136,7 +136,7 @@ public class Modeldryvan40ft extends ModelConverter //Same as Filename
 		bodyModel[103] = new ModelRendererTurbo(this, 83, 52, textureX, textureY); // Box 147
 		bodyModel[104] = new ModelRendererTurbo(this, 19, 160, textureX, textureY); // Box 148
 		bodyModel[105] = new ModelRendererTurbo(this, 19, 133, textureX, textureY); // Box 141
-		bodyModel[106] = new ModelRendererTurbo(this, 42, 36, textureX, textureY, "cull"); // Box 144 rollup door CULLBOX
+		bodyModel[106] = new ModelRendererTurbo(this, 42, 36, textureX, textureY); // Box 144 rollup door CULLBOX
 		bodyModel[107] = new ModelRendererTurbo(this, 102, 2, textureX, textureY); // Box 145
 		bodyModel[108] = new ModelRendererTurbo(this, 85, 2, textureX, textureY); // Box 146
 		bodyModel[109] = new ModelRendererTurbo(this, 102, 2, textureX, textureY); // Box 147
