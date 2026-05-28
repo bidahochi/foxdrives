@@ -16,9 +16,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import foxmods.playerscale.DelegatingRenderPlayer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -27,10 +29,11 @@ public class ClientProxy extends CommonProxy
 
     public static final RenderCar transportRenderer = new RenderCar();
     /**the keybind for opening the inventory*/
-    //public static KeyBinding KeyInventory = new KeyBinding("Open car GUI",  Keyboard.KEY_X, "Fox Drives");
-    //public static KeyBinding KeyBrake = new KeyBinding("Brake",  Keyboard.KEY_B, "Fox Drives");
-    //public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "Fox Drives");
-    //public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "Fox Drives");
+    public static KeyBinding KeyInventory = new KeyBinding("Open vehicle GUI",  Keyboard.KEY_X, "FoxDrives");
+    public static KeyBinding KeyBrake = new KeyBinding("Brakelights",  Keyboard.KEY_C, "FoxDrives");
+    public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "FoxDrives");
+    public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "FoxDrives");
+    public static KeyBinding KeyHitch = new KeyBinding("Toggle Hitch",  Keyboard.KEY_L, "FoxDrives");
 
     @Override
     public Object getEntityRender(){return transportRenderer;}

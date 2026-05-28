@@ -52,7 +52,7 @@ import static cpw.mods.fml.common.registry.EntityRegistry.registerModEntity;
 @Mod(modid = FoxDrives.MODID, version = FoxDrives.MOD_VERSION, name = "FoxDrives")
 public class FoxDrives {
     public static final String MODID = "foxdrives";
-    public static final String MOD_VERSION = "0.5.1";
+    public static final String MOD_VERSION = "0.5.2";
 
     //used for TMT render caching. false improves performance dramatically, true can fix rare bugs.
     public static boolean disableCache=false;
@@ -96,13 +96,14 @@ public class FoxDrives {
     {
         //full length addresses for client only classes must be used to prevent
         // the import from being loaded on server and crashing.
-        //if(event.getSide().isClient())
-        //{
-        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyInventory);
-        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyBrake);
-        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyLeftTurn);
-        //    cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyRightTurn);
-        //}
+        if(event.getSide().isClient())
+        {
+            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyInventory);
+            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyBrake);
+            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyLeftTurn);
+            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyRightTurn);
+            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyHitch);
+        }
 
         /* Config handler */
         configDirectory = event.getModConfigurationDirectory();
@@ -641,9 +642,7 @@ public class FoxDrives {
         //registerModEntity(EntityReceiver.class, MODID + ".hitch.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
 
         //register the event handler, mainly for tracking inputs
-        if(event.getSide().isClient())
-        {
-
+        if(event.getSide().isClient()){
             MinecraftForge.EVENT_BUS.register(EventManager.instance);
             FMLCommonHandler.instance().bus().register(EventManager.instance);
         }
