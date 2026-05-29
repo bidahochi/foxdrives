@@ -703,9 +703,6 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             if(running == 0 || riddenByEntity == null){
                 velocity = 0;
             }
-            else if(velocity <= 0f){
-                velocity *= 0.35f;
-            }
             clampTopSpeed(velocity);
             float diff = rider == null ? 0f : rotationYaw - rider.rotationYaw;
             if(running != 0){

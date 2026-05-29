@@ -1,14 +1,14 @@
 package bidahochi.foxdrives.entities.Trailers;
 
 import bidahochi.foxdrives.TrailerType;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingChild;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.AbstractTowingChildChest;
 import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.trailers.Modeldryvan40ft;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
 import net.minecraft.world.World;
 
-public class Entity40ftDryvan extends AbstractTowingChild {
+public class Entity40ftDryvan extends AbstractTowingChildChest {
 
 
     public Entity40ftDryvan(World world) {

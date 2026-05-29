@@ -422,42 +422,41 @@ public class RenderCar extends Render {
             }
         }
 
-        // render objects that change lighting:
-        JsonObject lightDetails = trailer.vehicleDataAsJsonObjectDW();
         for (ModelRendererTurbo lighting : trailer.modelInstance.ignoreLightObjects) {
             switch (lighting.boxName) {
                 case "lamp":
                     // BoxName.headLight
-                    lighting.ignoresLighting = lightDetails.get(DataMemberName.isHeadlightsEnabled.AsString()).getAsBoolean();
+                    lighting.ignoresLighting = trailer.isLightsEnabled();
                     break;
                 case "brakeLight":
                     // BoxName.areBrakeLightsOn
-                    lighting.ignoresLighting = lightDetails.get(DataMemberName.areBrakeLightsOn.AsString()).getAsBoolean();
+                    lighting.ignoresLighting = trailer.areBrakeLightsOn();
                     break;
                 case "leftTurnLight":
                     // BoxName.turnSignal
-                    lighting.ignoresLighting = lightDetails.get(DataMemberName.turnSignal.AsString()).getAsByte() == -1 && (lightDetails.get(DataMemberName.turnSignalTick.AsString()).getAsByte() == 1);
+
+                    lighting.ignoresLighting = trailer.getTurnSignalDirection() == -1 && trailer.getTurnSignalTick() == 1;
                     break;
                 case "rightTurnLight":
                     // BoxName.turnSignal
-                    lighting.ignoresLighting = lightDetails.get(DataMemberName.turnSignal.AsString()).getAsByte() == 1 && (lightDetails.get(DataMemberName.turnSignalTick.AsString()).getAsByte() == 1);
+                    lighting.ignoresLighting = trailer.getTurnSignalDirection() == 1 && trailer.getTurnSignalTick() == 1;
                     break;
                 case "runningLights":
                     // BoxName.runningLight
-                    //lighting.ignoresLighting = trailer.running > 0;
+                    lighting.ignoresLighting = trailer.isRunning();
                     break;
                 case "reverseLight":
                     lighting.ignoresLighting = trailer.getVelocity() < 0f;
                     break;
                 case "commander":
-                    lighting.ignoresLighting = lightDetails.get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean() && trailer.ticksExisted % 30 == 0;
+                    lighting.ignoresLighting = trailer.isBeaconEnabled() && trailer.ticksExisted % 30 == 0;
                     break;
                 case "ditch":
-                    lighting.ignoresLighting = lightDetails.get(DataMemberName.ditchLightMode.AsString()).getAsByte() > 0;
+                    lighting.ignoresLighting = trailer.isAuxLightsEnabled();
                     break;
                 default:
-                    if (lightDetails.get(DataMemberName.isBeaconEnabled.AsString()).getAsBoolean() && lighting.boxName.contains("prime")) {
-                        switch (lightDetails.get(DataMemberName.beaconCycleIndex.AsString()).getAsByte()) {
+                    if (trailer.isBeaconEnabled() && lighting.boxName.contains("prime")) {
+                        switch (trailer.getBeaconCycleIndex()) {
                             case 0:
                                 lighting.ignoresLighting = (lighting.boxName.equals("prime1"));
                                 break;
@@ -479,7 +478,7 @@ public class RenderCar extends Render {
             }
         }
 
-        if (trailer.riddenByEntity != null /*&& trailer.running > 0*/) {
+        if (trailer.riddenByEntity != null) {
             // define the rotation angle, scale based on framerate.
             double rotation = (trailer.velocity/*throttle*/ * trailer.type().max_forward_speed * 0.000001) * (System.currentTimeMillis() - trailer.lastFrame) * 60;
             //rotate back wheels
