@@ -154,7 +154,7 @@ public class FoxDrives {
                 new float[]{ 0.3f, 0.25f, 0.25f },
                 new float[]{ -0.3f, 0.25f, 0.25f }
             )
-            .maxspeed(15, 11)
+            .maxspeed(2.8f, 1)
             .inventorySize(InventorySize.STYLE_PROFILE_3x3)
             .year("1992");
 
@@ -170,7 +170,7 @@ public class FoxDrives {
                         new float[]{ 0.3f, 0.05f, -0.4f },
                         new float[]{ -0.3f, 0.05f, -0.4f }
                 )
-                .maxspeed(18, 10)
+                .maxspeed(3.5f, 1.5f)// speed 3 is approx 100 kmh tc speed
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1986");
         CarType.DOSEI_KIOTE_WAGON = CarType.register("dosei_kiote_wagon", EntityDoseiKiote_Wagon.class)
@@ -185,7 +185,7 @@ public class FoxDrives {
                         new float[]{ 0.3f, 0.05f, -0.4f },
                         new float[]{ -0.3f, 0.05f, -0.4f }
                 )
-                .maxspeed(17, 10)
+                .maxspeed(3.4f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1986");
 
@@ -200,7 +200,7 @@ public class FoxDrives {
                     new float[]{ -0.3f, 0.25f, 0.25f }
                     )
             .acceleration(0.75f)
-            .maxspeed(13, 8)
+            .maxspeed(2.75f, 1.1f)
             .inventorySize(InventorySize.STYLE_PROFILE_3x5)
             .year("1972");
 
@@ -215,7 +215,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                         )
                 .acceleration(0.75f)
-                .maxspeed(15, 10)
+                .maxspeed(3.25f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1980");
 
@@ -230,7 +230,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(15, 10)
+                .maxspeed(3.25f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1980");
 
@@ -245,7 +245,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(15, 10)
+                .maxspeed(3.1f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1980");
 
@@ -263,7 +263,7 @@ public class FoxDrives {
                 )
                 .acceleration(0.75f)
                 .inventorySize(InventorySize.STYLE_PROFILE_0x0)
-                .maxspeed(18, 8);
+                .maxspeed(3.75f, 1.7f);
 
 
         CarType.CAMPWAGON_1981 = CarType.register("campwagon_1981", EntityCampwagon1981.class)
@@ -279,7 +279,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.70f)
-                .maxspeed(16, 10)
+                .maxspeed(3.1f, 1.1f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1981");
 
@@ -297,7 +297,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.77f)
-                .maxspeed(19, 10)
+                .maxspeed(3.35f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1981");
 
@@ -319,7 +319,7 @@ public class FoxDrives {
                 new float[]{ -.3f, 0.25f, -.5f },
                 new float[]{ 0.3f, 0.25f, -.5f }
             )
-            .maxspeed(11, 7);
+            .maxspeed(2.5f, 0.8f);
 
         CarType.O405N = CarType.register("o405n", EntityO405N.class)
                 .recipe(
@@ -336,7 +336,7 @@ public class FoxDrives {
                         new float[]{ -0.35f, 0.4f, -2.2f }
 
                 )
-                .maxspeed(11, 7);
+                .maxspeed(2.15f, 0.7f);
 
         CarType.HYSTER_H80FT = CarType.register("hyster_H80FT", EntityHysterH80FT.class)
             .recipe(
@@ -346,7 +346,7 @@ public class FoxDrives {
             )
             .passpos(new float[]{ 0.0f, 0.3f, 0.1f })
             .rearsteer(true)
-            .maxspeed(3, 3);
+            .maxspeed(1f, 1f);
 
         CarType.MKDS_Standard = CarType.register("mkds_standard", EntityMKDS_Standard.class)
                 .recipe(
@@ -391,7 +391,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(17, 10)
+                .maxspeed(3.2f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1963-1969");
 
@@ -408,7 +408,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(19, 10)
+                .maxspeed(3.5f, 1.3f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1963-1969");
 
@@ -425,7 +425,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(17, 10)
+                .maxspeed(3.15f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1963-1970");
 
@@ -442,7 +442,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0f, -0.4f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(16, 10)
+                .maxspeed(2.8f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1948-1952");
 
@@ -459,7 +459,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0f, -0.4f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(18, 10)
+                .maxspeed(3.0f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1948-1952");
 
@@ -472,7 +472,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.0f, 0.1f, 0.0f })//LR, UD, FB
                 .acceleration(0.6f)
                 .inventorySize(InventorySize.STYLE_PROFILE_0x0)
-                .maxspeed(4, 2);
+                .maxspeed(1.5f, 1f);
 
         CarType.FORMULA_CAR = CarType.register("formula", EntityFormulaCar.class)
                 .recipe(
@@ -495,7 +495,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.25f, 0.45f, 0.6f },
                         new float[]{ -0.25f, 0.45f, 0.6f })//LR, UD, FB
                 .acceleration(0.2f)
-                .maxspeed(14, 3)
+                .maxspeed(3, 0.75f)
                 .year("1980-1997");
 
         CarType.PC100 = CarType.register("pc100", EntityPC100.class)
@@ -507,7 +507,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.4f, 0.65f, 0.9f },
                         new float[]{ -0.4f, 0.65f, 0.9f })//LR, UD, FB
                 .acceleration(0.2f)
-                .maxspeed(13.5f, 7.5f)
+                .maxspeed(3.1f, 0.75f)
                 .year("1973-1995");
 
         CarType.HTT = CarType.register("htt", EntityHTT.class)
@@ -519,7 +519,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.25f, 0.45f, 0.0f },
                         new float[]{ -0.25f, 0.45f, 0.0f })//LR, UD, FB
                 .acceleration(0.2f)
-                .maxspeed(14, 3)
+                .maxspeed(2.9f, 0.75f)
                 .year("1989-2002");
 
         CarType.HTT_3ax = CarType.register("htt_3ax", EntityHTT_3ax.class)
@@ -531,7 +531,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.25f, 0.45f, 0.0f },
                         new float[]{ -0.25f, 0.45f, 0.0f })//LR, UD, FB
                 .acceleration(0.2f)
-                .maxspeed(14, 3)
+                .maxspeed(3, 0.75f)
                 .year("1990-1995");
 
 
