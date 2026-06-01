@@ -73,6 +73,8 @@ public class CarType implements ITypeHolder {
 	public static CarType AWOOGA;
 	public static CarType ID6400daycab;
 	public static CarType PC100;
+	public static CarType HTT_3ax;
+	public static CarType HTT;
 
 	public CarType(String id, Class<? extends EntityCar> carclass){
 		regname = id;

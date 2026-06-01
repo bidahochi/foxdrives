@@ -495,7 +495,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.25f, 0.45f, 0.6f },
                         new float[]{ -0.25f, 0.45f, 0.6f })//LR, UD, FB
                 .acceleration(0.2f)
-                .maxspeed(14, 14)
+                .maxspeed(14, 3)
                 .year("1980-1997");
 
         CarType.PC100 = CarType.register("pc100", EntityPC100.class)
@@ -509,6 +509,30 @@ public class FoxDrives {
                 .acceleration(0.2f)
                 .maxspeed(13.5f, 7.5f)
                 .year("1973-1995");
+
+        CarType.HTT = CarType.register("htt", EntityHTT.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.dirt),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.25f, 0.45f, 0.0f },
+                        new float[]{ -0.25f, 0.45f, 0.0f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(14, 3)
+                .year("1989-2002");
+
+        CarType.HTT_3ax = CarType.register("htt_3ax", EntityHTT_3ax.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.dirt),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.25f, 0.45f, 0.0f },
+                        new float[]{ -0.25f, 0.45f, 0.0f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(14, 3)
+                .year("1990-1995");
 
 
         //trailers
