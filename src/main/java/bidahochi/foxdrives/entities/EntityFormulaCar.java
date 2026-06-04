@@ -15,8 +15,17 @@ public class EntityFormulaCar extends EntityCarChest
 
     public EntityFormulaCar(World world) {
         super(world);
-        textureDescriptionMap.put(0, "Racing Point");
-        textureDescriptionMap.put(1, "Alfa Romeo");
+        textureDescriptionMap.put(0, "Racing Point (2019)");
+        textureDescriptionMap.put(1, "Alfa Romeo (2019)");
+        textureDescriptionMap.put(2, "Red Bull (2019)");
+        textureDescriptionMap.put(3, "Toro Rosso (2019)");
+        textureDescriptionMap.put(4, "Renault (2019)");
+        textureDescriptionMap.put(5, "Haas (2019)");
+        textureDescriptionMap.put(6, "Scuderia Ferrari (2019)");
+        textureDescriptionMap.put(7, "Mercedes-AMG (2019)");
+        textureDescriptionMap.put(8, "Williams (2019)");
+        textureDescriptionMap.put(9, "McLaren (2019)");
+        textureDescriptionMap.put(10, "Menards");
         setGuiRenderScale(getGuiRenderScale() + 5f);
     }
 
@@ -36,7 +45,10 @@ public class EntityFormulaCar extends EntityCarChest
      */
     @Override
     public String[] getSkins() {
-        return new String[]{"textures/formula/bwt", "textures/formula/alfa"};
+        return new String[]{"textures/formula/bwt", "textures/formula/alfa", "textures/formula/redbull",
+                "textures/formula/toro", "textures/formula/renault", "textures/formula/haas",
+                "textures/formula/ferrari", "textures/formula/merc", "textures/formula/williams",
+                "textures/formula/mclaren", "textures/formula/menards"};
     }
 
     @Override
