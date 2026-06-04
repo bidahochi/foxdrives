@@ -482,7 +482,7 @@ public class FoxDrives {
                 )
                 .passpos(new float[]{ 0, -0.25f, 0f })
                 .acceleration(1)
-                .maxspeed(26, 3);
+                .maxspeed(10.95f, 3);
 
         //semi trucks
 
