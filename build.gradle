@@ -41,6 +41,9 @@ compileJava { sourceCompatibility = targetCompatibility = "1.8" }
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
     runDir = "run"
+
+    replace "@MOD_VERSION@", project.version
+    replaceIn "FoxDrives.java"
 }
 
 repositories {

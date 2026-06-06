@@ -76,7 +76,6 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     public void networkInteract(int player, int key) {
         if (!this.worldObj.isRemote) {
             if(key == 6) {
-                System.out.println("toggle hitching");
                 if (hitchState == HitchState.COUPLED) {
                     ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Detatching trailer"));
                     decouple();
@@ -179,7 +178,6 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     }
 
     private void onChildDetected(AbstractTowingChild child) {
-        System.out.println("Child detected, coupling");
         this.hitchState = HitchState.COUPLED;
         dataWatcher.updateObject(DW_CHILD, child.getLinkingID());
         child.setLinkedParentID(this.getLinkingID());
@@ -190,7 +188,6 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
     }
 
     public void decouple() {
-        System.out.println("Decoupling");
         hitchState = HitchState.IDLE;
         dataWatcher.updateObject(DW_CHILD, -1);
         syncHitchState(true);

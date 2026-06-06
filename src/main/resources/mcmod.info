@@ -2,7 +2,7 @@
   "modid": "foxdrives",
   "name": "FoxDrives",
   "description": "Semi-TC scaled driveable cars, trucks, and more!",
-  "version": "1.0.3",
+  "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",

@@ -52,7 +52,7 @@ import static cpw.mods.fml.common.registry.EntityRegistry.registerModEntity;
 @Mod(modid = FoxDrives.MODID, version = FoxDrives.MOD_VERSION, name = "FoxDrives")
 public class FoxDrives {
     public static final String MODID = "foxdrives";
-    public static final String MOD_VERSION = "1.0.3";
+    public static final String MOD_VERSION = "@MOD_VERSION@";
 
     //used for TMT render caching. false improves performance dramatically, true can fix rare bugs.
     public static boolean disableCache=false;
@@ -136,7 +136,7 @@ public class FoxDrives {
         hitchSyncChannel = buildNewSimpleChannel("hitch_sync");
         hitchSyncChannel.registerMessage(PacketSyncHitch.Handler.class, PacketSyncHitch.class, discriminator++, Side.CLIENT);
 
-        decoupleHitchChannel = buildNewSimpleChannel("decouple_hitch_sync");
+        decoupleHitchChannel = buildNewSimpleChannel("unhitch_sync");
         decoupleHitchChannel.registerMessage(PacketDecoupleHitch.Handler.class, PacketDecoupleHitch.class, discriminator++, Side.CLIENT);
 
         //init item stuff
