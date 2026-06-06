@@ -2,9 +2,9 @@ package bidahochi.foxdrives.client;
 
 
 import bidahochi.foxdrives.client.gui.GuiIDs;
+import bidahochi.foxdrives.client.gui.GuiTrailerInventory;
 import bidahochi.foxdrives.client.gui.lockGui.GuiLockMenu;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.*;
 import bidahochi.foxdrives.entities.EntitySeat;
 import bidahochi.foxdrives.client.gui.GuiCarInventory;
 import bidahochi.foxdrives.util.CommonProxy;
@@ -16,7 +16,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import foxmods.playerscale.DelegatingRenderPlayer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,18 +23,17 @@ import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.reflect.Method;
-
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy
 {
 
     public static final RenderCar transportRenderer = new RenderCar();
     /**the keybind for opening the inventory*/
-    public static KeyBinding KeyInventory = new KeyBinding("Open car GUI",  Keyboard.KEY_X, "Fox Drives");
-    public static KeyBinding KeyBrake = new KeyBinding("Brake",  Keyboard.KEY_B, "Fox Drives");
-    public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "Fox Drives");
-    public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "Fox Drives");
+    public static KeyBinding KeyInventory = new KeyBinding("Open vehicle GUI",  Keyboard.KEY_X, "FoxDrives");
+    public static KeyBinding KeyBrake = new KeyBinding("Brakelights",  Keyboard.KEY_C, "FoxDrives");
+    public static KeyBinding KeyLeftTurn = new KeyBinding("Left Turn Indicator",  Keyboard.KEY_LEFT, "FoxDrives");
+    public static KeyBinding KeyRightTurn = new KeyBinding("Right Turn Indicator",  Keyboard.KEY_RIGHT, "FoxDrives");
+    public static KeyBinding KeyHitch = new KeyBinding("Toggle Hitch",  Keyboard.KEY_L, "FoxDrives");
 
     @Override
     public Object getEntityRender(){return transportRenderer;}
@@ -51,18 +49,20 @@ public class ClientProxy extends CommonProxy
         switch (ID)
         {
             case GuiIDs.WRAP_MENU:
-                return entity != null ? new GuiWrap(player, (EntityCar) entity) : null;
+                return entity != null ? new GuiWrap(player, (IWrappable) entity) : null;
             case GuiIDs.LOCK_MENU:
                 if (entity != null) { // If player is riding the entity (locomotives).
-                    return new GuiLockMenu(player, (EntityCar) entity);
+                    return new GuiLockMenu(player, (IInventoryEntity) entity);
                 } else { // If player is not riding the entity (freight).
-                    return entity != null ? new GuiLockMenu(player, ((EntityCar) entity)) : null;
+                    return entity != null ? new GuiLockMenu(player, ((IInventoryEntity) entity)) : null;
                 }
             default:
-                if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest)
-                {
+                if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest) {
                     System.out.println("Open client");
-                    return new GuiCarInventory(player.inventory, (EntityCarChest) player.worldObj.getEntityByID(ID));
+                    return new GuiCarInventory(player.inventory, (IInventoryEntity) player.worldObj.getEntityByID(ID));
+                } else if (player.worldObj.getEntityByID(ID) instanceof AbstractTowingChildChest) {
+                    System.out.println("Open client");
+                    return new GuiTrailerInventory(player.inventory, (AbstractTowingChildChest) player.worldObj.getEntityByID(ID));
                 }
                 return null;
         }
@@ -70,6 +70,11 @@ public class ClientProxy extends CommonProxy
 
     @Override
     public void registerCarRenderer(Class<? extends EntityCar> clazz){
+        RenderingRegistry.registerEntityRenderingHandler(clazz, transportRenderer);
+    }
+
+    @Override
+    public void registerTrailerRenderer(Class<? extends EntityTrailer> clazz){
         RenderingRegistry.registerEntityRenderingHandler(clazz, transportRenderer);
     }
 
@@ -112,6 +117,7 @@ public class ClientProxy extends CommonProxy
 
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySeat.class, new RenderSeat());
+        //RenderingRegistry.registerEntityRenderingHandler(EntityReceiver.class, new RenderSeat());
     }
 
 }

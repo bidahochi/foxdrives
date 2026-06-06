@@ -15,7 +15,7 @@ public class EntityWorkday1980 extends EntityCarChest
         textureDescriptionMap.put(0, "Factory Blank");
         textureDescriptionMap.put(1, "Factory Silver W/ Black Stripe");
         textureDescriptionMap.put(2, "Factory Moss Green");
-        textureDescriptionMap.put(3, "Bida's Truc");
+        textureDescriptionMap.put(3, "Custom Orange & Grey");
         textureDescriptionMap.put(4, "Factory Mustard Yellow");
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }

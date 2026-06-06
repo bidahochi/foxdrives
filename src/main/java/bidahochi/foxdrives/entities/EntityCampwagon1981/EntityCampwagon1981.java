@@ -15,6 +15,9 @@ public class EntityCampwagon1981 extends EntityCarChest
         textureDescriptionMap.put(1, "Premium Trim (Generic Orange)");
         textureDescriptionMap.put(2, "Fleet Trim (Cargo Variant)");
         textureDescriptionMap.put(3, "Colonel-Western Delivery Scheme");
+        textureDescriptionMap.put(4, "Alaska West Express");
+        textureDescriptionMap.put(5, "Alaska West Express (Dirt & Grime)");
+
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }
 
@@ -33,7 +36,8 @@ public class EntityCampwagon1981 extends EntityCarChest
      */
     @Override
     public String[] getSkins() {
-        return new String[]{"textures/campwagon/campwagon_1981_cw10b", "textures/campwagon/campwagon_1981_cw10c_generic1", "textures/campwagon/campwagon_1981_cw10d_cargo", "textures/campwagon/campwagon_1981_cw10d_CWTL"};
+        return new String[]{"textures/campwagon/campwagon_1981_cw10b", "textures/campwagon/campwagon_1981_cw10c_generic1", "textures/campwagon/campwagon_1981_cw10d_cargo"
+                , "textures/campwagon/campwagon_1981_cw10d_CWTL", "textures/campwagon/campwagon_1981_cw10c_AWE", "textures/campwagon/campwagon_1981_cw10c_AWE_Dirty"};
     }
 
     @Override

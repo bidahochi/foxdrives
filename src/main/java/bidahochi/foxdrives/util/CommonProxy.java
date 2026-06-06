@@ -1,8 +1,7 @@
 package bidahochi.foxdrives.util;
 
 import bidahochi.foxdrives.common.handlers.PlayerSyncHandler;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.*;
 import bidahochi.foxdrives.common.inventory.containers.ContainerStyleOneInventory;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -38,13 +37,16 @@ public class CommonProxy implements IGuiHandler {
             riddenByEntity = (EntityPlayer) entity.riddenByEntity;
         }
 
-        if(player.worldObj.getEntityByID(ID) instanceof EntityCarChest)
-        {
+        if (player.worldObj.getEntityByID(ID) instanceof EntityCarChest) {
             System.out.println("OpenServer");
             return riddenByEntity != null ? new ContainerStyleOneInventory(riddenByEntity.inventory, (EntityCarChest) player.worldObj.getEntityByID(ID)) : null;
         }
-        else
-        {
+        else if (player.worldObj.getEntityByID(ID) instanceof AbstractTowingChildChest) {
+            System.out.println("OpenServer");
+            return new ContainerStyleOneInventory(player.inventory, (IInventoryEntity) player.worldObj.getEntityByID(ID));
+        }
+
+        else {
             return new Container()
             {
                 @Override
@@ -80,6 +82,7 @@ public class CommonProxy implements IGuiHandler {
     public Object getEntityRender(){return null;}
 
     public void registerCarRenderer(Class<? extends EntityCar> clazz){}
+    public void registerTrailerRenderer(Class<? extends EntityTrailer> clazz){}
 
     public void registerPlayerScaler(){}
 

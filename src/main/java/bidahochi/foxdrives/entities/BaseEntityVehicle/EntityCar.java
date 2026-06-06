@@ -29,14 +29,11 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static bidahochi.foxdrives.util.FoxDrivesConstants.*;
 
-public abstract class EntityCar extends Entity implements IEntityAdditionalSpawnData {
+public abstract class EntityCar extends Entity implements IEntityAdditionalSpawnData, IWrappable {
 
     @SideOnly(Side.CLIENT)
     public ModelBase modelInstance;
@@ -332,6 +329,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 	@Override
 	public void applyEntityCollision(Entity entity){
 		if(entity instanceof EntitySeat) return;
+        //if (entity instanceof EntityReceiver) return;
         if(entity instanceof EntityPlayer && entity.ridingEntity instanceof EntitySeat) return;
         super.applyEntityCollision(entity);
 	}
@@ -564,7 +562,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         if (this.getDamage() > 0.0F) {
             this.setDamage(this.getDamage() - 1.0F);
         }
-        if(posY<-64){
+        if(posY<-64) {
             this.kill();
         }
         //handle super update crap
@@ -572,10 +570,8 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         //handle movement
         this.moveEntityWithHeading();
 
-        if (!worldObj.isRemote)
-        {
+        if (!worldObj.isRemote) {
             dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
-
         }
     }
 
@@ -590,6 +586,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         dataWatcher.updateObject(DW_SKIN, compound.getInteger("skin"));
 
 
+
         JsonObject vehicleDetailsJson;
         try
         {
@@ -602,6 +599,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             ReverseMapJson(vehicleDetailsJson);
             FoxDrives.fdLog.info(e.getMessage());
         }
+
 
         dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
     }
@@ -704,9 +702,6 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
             }
             if(running == 0 || riddenByEntity == null){
                 velocity = 0;
-            }
-            else if(velocity <= 0f){
-                velocity *= 0.35f;
             }
             clampTopSpeed(velocity);
             float diff = rider == null ? 0f : rotationYaw - rider.rotationYaw;
@@ -1047,4 +1042,14 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
     {
         return StatCollector.translateToLocal(type().getItem().getUnlocalizedName()+".name");
     }
+
+    public Map<Integer, String> getTextureDescriptionMap() { return textureDescriptionMap; }
+
+    public World getWorld() { return worldObj; }
+
+    public boolean isLocked() { return locked; }
+
+    public void setLocked(boolean locked) { this.locked = locked; }
+
+    public Vec3 getPosition() { return Vec3.createVectorHelper(posX, posY, posZ); }
 }

@@ -14,6 +14,10 @@ public class Entitybyrne60s_sedan_v8 extends EntityCarChest
         textureDescriptionMap.put(0, "Roadsport Green Top");
         textureDescriptionMap.put(1, "Cubed's Car");
         textureDescriptionMap.put(2, "Police Trim");
+        textureDescriptionMap.put(3, "Evergreen");
+        textureDescriptionMap.put(4, "Post-Dusk Grey");
+        textureDescriptionMap.put(5, "Citrus Yellow");
+        textureDescriptionMap.put(6, "Minty Two-Tone");
         setGuiRenderScale(getGuiRenderScale() + 0f);
     }
 
@@ -33,7 +37,9 @@ public class Entitybyrne60s_sedan_v8 extends EntityCarChest
      */
     @Override
     public String[] getSkins() {
-        return new String[]{"textures/byrne/byrne_sedan_roadsport_blank", "textures/byrne/byrne_sedan_roadsport_cubedcar", "textures/byrne/byrne_sedan_detectivespecial_blank"};
+        return new String[]{"textures/byrne/byrne_sedan_roadsport_blank", "textures/byrne/byrne_sedan_roadsport_cubedcar", "textures/byrne/byrne_sedan_detectivespecial_blank",
+                "textures/byrne/byrne_sedan_1963_69_v8_gren","textures/byrne/byrne_sedan_1963_69_postdusk","textures/byrne/byrne_sedan_1963_69_citrus_yeller",
+                "textures/byrne/byrne_sedan_1963_69_v8_minty",};
     }
 
     @Override

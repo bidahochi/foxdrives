@@ -891,7 +891,7 @@ public class ModelGilligPhantom extends ModelConverter //Same as Filename
 		bodyModel[175].setRotationPoint(-25F, 1F, -7.5F);
 
 		bodyModel[176].addBox(0F, 0F, 0F, 0, 6, 12, 0F); // Box 180 bike rack
-		bodyModel[176].setRotationPoint(-32F, 1F, -6F);
+		bodyModel[176].setRotationPoint(-32.01F, 1F, -6F);
 
 		bodyModel[177].addShapeBox(-1F, 0F, -1F, 1, 2, 2, 0F,-0.5F, -0.35F, -0.35F, 0F, -0.35F, -0.35F, 0F, -0.35F, -0.35F, -0.5F, -0.35F, -0.35F, -0.5F, -0.35F, -0.35F, 0F, -0.35F, -0.35F, 0F, -0.35F, -0.35F, -0.5F, -0.35F, -0.35F); // Box 188 taillight
 		bodyModel[177].setRotationPoint(31.1F, 2.5F, 8F);

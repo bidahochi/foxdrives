@@ -14,9 +14,12 @@ import bidahochi.foxdrives.entities.Entitybyrne40s.Entitybyrne40s_sedan_v8;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_estate;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan;
 import bidahochi.foxdrives.entities.Entitybyrne60s.Entitybyrne60s_sedan_v8;
+import bidahochi.foxdrives.entities.Trailers.*;
 import bidahochi.foxdrives.util.*;
+import bidahochi.foxdrives.util.Packet.PacketDecoupleHitch;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import bidahochi.foxdrives.util.Packet.PacketSyncBannedItems;
+import bidahochi.foxdrives.util.Packet.PacketSyncHitch;
 import com.google.gson.JsonParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -49,11 +52,10 @@ import static cpw.mods.fml.common.registry.EntityRegistry.registerModEntity;
 @Mod(modid = FoxDrives.MODID, version = FoxDrives.MOD_VERSION, name = "FoxDrives")
 public class FoxDrives {
     public static final String MODID = "foxdrives";
-    public static final String MOD_VERSION = "0.5.2";
+    public static final String MOD_VERSION = "1.0.1";
 
     //used for TMT render caching. false improves performance dramatically, true can fix rare bugs.
     public static boolean disableCache=false;
-
 
     @Mod.Instance(MODID)
 
@@ -76,6 +78,8 @@ public class FoxDrives {
     public static SimpleNetworkWrapper interactChannel;
     public static SimpleNetworkWrapper wrapColorChannel;
     public static SimpleNetworkWrapper lockChannel;
+    public static SimpleNetworkWrapper hitchSyncChannel;
+    public static SimpleNetworkWrapper decoupleHitchChannel;
 
     public static SimpleNetworkWrapper BannedItems_CHANNEL;
     //the entityID for the first entity registered. must be 18 or higher because forge is dumb.
@@ -97,6 +101,7 @@ public class FoxDrives {
             cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyBrake);
             cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyLeftTurn);
             cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyRightTurn);
+            cpw.mods.fml.client.registry.ClientRegistry.registerKeyBinding(ClientProxy.KeyHitch);
         }
 
         /* Config handler */
@@ -127,6 +132,13 @@ public class FoxDrives {
         lockChannel.registerMessage(PacketSetTransportLockedToClient.Handler.class, PacketSetTransportLockedToClient.class, discriminator++, Side.CLIENT);
         BannedItems_CHANNEL = buildNewSimpleChannel("banneditems_sync");
         BannedItems_CHANNEL.registerMessage(PacketSyncBannedItems.Handler.class, PacketSyncBannedItems.class, discriminator++, Side.CLIENT);
+
+        hitchSyncChannel = buildNewSimpleChannel("hitch_sync");
+        hitchSyncChannel.registerMessage(PacketSyncHitch.Handler.class, PacketSyncHitch.class, discriminator++, Side.CLIENT);
+
+        decoupleHitchChannel = buildNewSimpleChannel("decouple_hitch_sync");
+        decoupleHitchChannel.registerMessage(PacketDecoupleHitch.Handler.class, PacketDecoupleHitch.class, discriminator++, Side.CLIENT);
+
         //init item stuff
         tab= new FoxTab("FoxDrives", "creativetab");
         wrap= RegisterItem(new Item(),"wrap", tab);
@@ -142,9 +154,40 @@ public class FoxDrives {
                 new float[]{ 0.3f, 0.25f, 0.25f },
                 new float[]{ -0.3f, 0.25f, 0.25f }
             )
-            .maxspeed(15, 11)
+            .maxspeed(2.8f, 1)
             .inventorySize(InventorySize.STYLE_PROFILE_3x3)
             .year("1992");
+
+        CarType.DOSEI_KIOTE_SEDAN = CarType.register("dosei_kiote_sedan", EntityDoseiKiote_Sedan.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs), new ItemStack(Blocks.gold_block),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.cobblestone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
+                        new float[]{ -0.3f, 0.05f, 0.0f },
+                        new float[]{ 0.3f, 0.05f, -0.4f },
+                        new float[]{ -0.3f, 0.05f, -0.4f }
+                )
+                .maxspeed(3.5f, 1.5f)// speed 3 is approx 100 kmh tc speed
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1986");
+        CarType.DOSEI_KIOTE_WAGON = CarType.register("dosei_kiote_wagon", EntityDoseiKiote_Wagon.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs), new ItemStack(Blocks.gold_block),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane), new ItemStack(Blocks.cobblestone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.05f, 0.0f },//LR, UD, FB
+                        new float[]{ -0.3f, 0.05f, 0.0f },
+                        new float[]{ 0.3f, 0.05f, -0.4f },
+                        new float[]{ -0.3f, 0.05f, -0.4f }
+                )
+                .maxspeed(3.4f, 1.5f)
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3)
+                .year("1986");
 
         CarType.REDMUND_1972 = CarType.register("redmund_1972", EntityRedmund1972.class)
             .recipe(
@@ -157,7 +200,7 @@ public class FoxDrives {
                     new float[]{ -0.3f, 0.25f, 0.25f }
                     )
             .acceleration(0.75f)
-            .maxspeed(13, 8)
+            .maxspeed(2.75f, 1.1f)
             .inventorySize(InventorySize.STYLE_PROFILE_3x5)
             .year("1972");
 
@@ -172,7 +215,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                         )
                 .acceleration(0.75f)
-                .maxspeed(15, 10)
+                .maxspeed(3.25f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1980");
 
@@ -187,7 +230,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(15, 10)
+                .maxspeed(3.25f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1980");
 
@@ -202,7 +245,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.25f, 0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(15, 10)
+                .maxspeed(3.1f, 1.5f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1980");
 
@@ -214,11 +257,13 @@ public class FoxDrives {
                 )
                 .passpos(
                         new float[]{ 0.27f, 0.05f, 0.05f },
-                        new float[]{ -0.27f, 0.05f, 0.05f }
+                        new float[]{ -0.27f, 0.05f, 0.05f },
+                        new float[]{ 0.3f, 0.25f, -0.5f },
+                        new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.75f)
                 .inventorySize(InventorySize.STYLE_PROFILE_0x0)
-                .maxspeed(18, 8);
+                .maxspeed(3.75f, 1.7f);
 
 
         CarType.CAMPWAGON_1981 = CarType.register("campwagon_1981", EntityCampwagon1981.class)
@@ -228,11 +273,13 @@ public class FoxDrives {
                         new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
                 )
                 .passpos(
-                        new float[]{ 0.3f, 0.25f, 0.0f },
-                        new float[]{ -0.3f, 0.25f, 1.0f }
+                        new float[]{ 0.3f, 0.25f, 0.0f },//LR, UD, FB
+                        new float[]{ -0.3f, 0.25f, 0.0f },
+                        new float[]{ 0.3f, 0.25f, -0.5f },
+                        new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.70f)
-                .maxspeed(16, 10)
+                .maxspeed(3.1f, 1.1f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1981");
 
@@ -245,10 +292,12 @@ public class FoxDrives {
                 )
                 .passpos(
                         new float[]{ 0.3f, 0.25f, 0.0f },
-                        new float[]{ -0.3f, 0.25f, 1.0f }
+                        new float[]{ -0.3f, 0.25f, 0.0f },
+                        new float[]{ 0.3f, 0.25f, -0.5f },
+                        new float[]{ -0.3f, 0.25f, -0.5f }
                 )
                 .acceleration(0.77f)
-                .maxspeed(19, 10)
+                .maxspeed(3.35f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1981");
 
@@ -270,7 +319,7 @@ public class FoxDrives {
                 new float[]{ -.3f, 0.25f, -.5f },
                 new float[]{ 0.3f, 0.25f, -.5f }
             )
-            .maxspeed(11, 7);
+            .maxspeed(2.5f, 0.8f);
 
         CarType.O405N = CarType.register("o405n", EntityO405N.class)
                 .recipe(
@@ -287,7 +336,7 @@ public class FoxDrives {
                         new float[]{ -0.35f, 0.4f, -2.2f }
 
                 )
-                .maxspeed(11, 7);
+                .maxspeed(2.15f, 0.7f);
 
         CarType.HYSTER_H80FT = CarType.register("hyster_H80FT", EntityHysterH80FT.class)
             .recipe(
@@ -295,9 +344,9 @@ public class FoxDrives {
                 new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
                 new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
             )
-            .passpos(new float[]{ 0.0f, 0.5f, 0.0f })
+            .passpos(new float[]{ 0.0f, 0.3f, 0.1f })
             .rearsteer(true)
-            .maxspeed(3, 3);
+            .maxspeed(1f, 1f);
 
         CarType.MKDS_Standard = CarType.register("mkds_standard", EntityMKDS_Standard.class)
                 .recipe(
@@ -342,7 +391,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(17, 10)
+                .maxspeed(3.2f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1963-1969");
 
@@ -359,7 +408,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(19, 10)
+                .maxspeed(3.5f, 1.3f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1963-1969");
 
@@ -376,7 +425,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0625f, -0.25f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(17, 10)
+                .maxspeed(3.15f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x5)
                 .year("1963-1970");
 
@@ -393,7 +442,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0f, -0.4f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(16, 10)
+                .maxspeed(2.8f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1948-1952");
 
@@ -410,7 +459,7 @@ public class FoxDrives {
                         new float[]{ -0.3f, 0.0f, -0.4f }
                 )
                 .acceleration(0.75f)
-                .maxspeed(18, 10)
+                .maxspeed(3.0f, 1.2f)
                 .inventorySize(InventorySize.STYLE_PROFILE_3x3)
                 .year("1948-1952");
 
@@ -423,7 +472,7 @@ public class FoxDrives {
                 .passpos(new float[]{ 0.0f, 0.1f, 0.0f })//LR, UD, FB
                 .acceleration(0.6f)
                 .inventorySize(InventorySize.STYLE_PROFILE_0x0)
-                .maxspeed(4, 2);
+                .maxspeed(1.5f, 1f);
 
         CarType.FORMULA_CAR = CarType.register("formula", EntityFormulaCar.class)
                 .recipe(
@@ -433,7 +482,108 @@ public class FoxDrives {
                 )
                 .passpos(new float[]{ 0, -0.25f, 0f })
                 .acceleration(1)
-                .maxspeed(26, 3);
+                .maxspeed(10.95f, 3);
+
+        //semi trucks
+
+        CarType.ID6400daycab = CarType.register("id6400daycab", EntityID6400daycab.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.25f, 0.45f, 0.6f },
+                        new float[]{ -0.25f, 0.45f, 0.6f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(3, 0.75f)
+                .year("1980-1997");
+
+        CarType.PC100 = CarType.register("pc100", EntityPC100.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.4f, 0.65f, 0.9f },
+                        new float[]{ -0.4f, 0.65f, 0.9f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(3.1f, 0.75f)
+                .year("1973-1995");
+
+        CarType.HTT = CarType.register("htt", EntityHTT.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.dirt),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.25f, 0.45f, 0.0f },
+                        new float[]{ -0.25f, 0.45f, 0.0f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(2.9f, 0.75f)
+                .year("1989-2002");
+
+        CarType.HTT_3ax = CarType.register("htt_3ax", EntityHTT_3ax.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.dirt),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(new float[]{ 0.25f, 0.45f, 0.0f },
+                        new float[]{ -0.25f, 0.45f, 0.0f })//LR, UD, FB
+                .acceleration(0.2f)
+                .maxspeed(3, 0.75f)
+                .year("1990-1995");
+
+
+        //trailers
+
+        TrailerType.DRYVAN53FT = TrailerType.register("53ftdryvan", Entity53ftDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x9);
+
+        TrailerType.FLATBED53FT= TrailerType.register("53ftflatbed", Entity53ftFlatbed.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x9);
+
+        TrailerType.FUELTANKER53FT= TrailerType.register("53ftfueltanker", Entity53ftFuelTanker.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                );
+
+        TrailerType.TANDEMDRYVAN35FT= TrailerType.register("35fttandem", Entity35ftTandemDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x5);
+
+        TrailerType.DRYVAN40FT= TrailerType.register("40ftdryvan", Entity40ftDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.gravel)
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x7);
+
+        TrailerType.DRYVAN28FT= TrailerType.register("28ftdryvan", Entity28ftDryvan.class)
+                .recipe(
+                        new ItemStack(Blocks.wooden_button), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.obsidian), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .inventorySize(InventorySize.STYLE_PROFILE_3x3);
+
 
         //CarType Registry Entry registration
         for(CarType type : CarType.REGISTRY.values()){
@@ -473,11 +623,50 @@ public class FoxDrives {
             registryPosition++;
         }
 
+        //TrailerType Registry Entry registration
+        for(TrailerType type : TrailerType.REGISTRY.values()){
+            registerModEntity(type.clazz, MODID + "." + type.regname + ".entity", registryPosition, FoxDrives.instance, 1600, 3, true);
+            RegisterItem(type.getItem(), type.regname, tab);
+            if(type.getRecipe() != null){
+                String firstRow="";
+                firstRow+=type.getRecipe()[0]!=null?"A":" ";
+                firstRow+=type.getRecipe()[1]!=null?"B":" ";
+                firstRow+=type.getRecipe()[2]!=null?"C":" ";
+                String secondRow="";
+                secondRow+=type.getRecipe()[3]!=null?"D":" ";
+                secondRow+=type.getRecipe()[4]!=null?"E":" ";
+                secondRow+=type.getRecipe()[5]!=null?"F":" ";
+                String thirdRow="";
+                thirdRow+=type.getRecipe()[6]!=null?"G":" ";
+                thirdRow+=type.getRecipe()[7]!=null?"H":" ";
+                thirdRow+=type.getRecipe()[8]!=null?"I":" ";
+
+                List<Object> recipe = new ArrayList<>();
+                recipe.add(firstRow);
+                recipe.add(secondRow);
+                recipe.add(thirdRow);
+
+                //loop for all the items in the array, then make an entry for the ones that exist
+                //use a char array for a simple shorthand to figure out which char to use the the matching ID.
+                char[] c = {'A','B','C','D','E','F','G','H','I'};
+                for(int i=0; i<type.getRecipe().length;i++){
+                    if(type.getRecipe()[i]!=null){
+                        recipe.add(c[i]);
+                        recipe.add(type.getRecipe()[i]);
+                    }
+                }
+                GameRegistry.addRecipe(new ItemStack(type.getItem()), recipe.toArray());
+            }
+            proxy.registerTrailerRenderer(type.clazz);
+            registryPosition++;
+        }
+
         //register player scaler
         proxy.registerPlayerScaler();
 
         //register seat entity
-        registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition, FoxDrives.instance, 1600, 1, true);
+        registerModEntity(EntitySeat.class, MODID + ".seat.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
+        //registerModEntity(EntityReceiver.class, MODID + ".hitch.entity", registryPosition++, FoxDrives.instance, 1600, 1, true);
 
         //register the event handler, mainly for tracking inputs
         if(event.getSide().isClient()){

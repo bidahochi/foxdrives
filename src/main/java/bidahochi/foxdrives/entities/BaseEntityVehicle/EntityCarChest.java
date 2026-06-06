@@ -14,7 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
-public abstract class EntityCarChest extends EntityCar implements IInventory, IInvBasic {
+public abstract class EntityCarChest extends EntityCar implements IInventory, IInvBasic, IInventoryEntity {
 
     AnimalChest inv;
 
@@ -155,4 +155,6 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
     {
         return ItemHandler.handleFreight(this, itemStack);
     }
+    public IInventory getInventory(){return inv;}
+
 }

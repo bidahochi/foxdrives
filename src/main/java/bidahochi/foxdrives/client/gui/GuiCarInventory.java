@@ -4,9 +4,9 @@ import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.genericButtons.GuiCustomButton;
 import bidahochi.foxdrives.client.gui.specialButtons.TransportLockGuiHandler;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.common.inventory.containers.ContainerStyleOneInventory;
 import bidahochi.foxdrives.common.inventory.enums.InventorySize;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -17,16 +17,16 @@ import org.lwjgl.opengl.GL11;
 
 public class GuiCarInventory extends BaseGuiContainer
 {
-    public EntityCarChest car;
+    public IInventoryEntity car;
     public static int guiTop;
     public static int guiLeft;
 
-    public GuiCarInventory(IInventory player, EntityCarChest transport)
+    public GuiCarInventory(IInventory player, IInventoryEntity transport)
     {
         super(new ContainerStyleOneInventory(player, transport), player);
         this.car = transport;
         this.allowUserInput = false;
-        setBaseGui(new ResourceLocation(FoxDrives.MODID, "textures/gui/gui_car/style1/" + getBackgroundImage(transport.type().inventorySize) + ".png"));
+        setBaseGui(new ResourceLocation(FoxDrives.MODID, "textures/gui/gui_car/style1/" + getBackgroundImage(transport.type().getInventorySize()) + ".png"));
         setBaseButtonStyle(new ResourceLocation(FoxDrives.MODID, "textures/gui/buttons/gui_buttons_style1.png"));
         xSize = 225;
         ySize = 185;
@@ -50,7 +50,7 @@ public class GuiCarInventory extends BaseGuiContainer
     }
 
     @Override
-    public EntityCar getEntityCar()
+    public IInventoryEntity getEntityCar()
     {
         return car;
     }
@@ -65,43 +65,39 @@ public class GuiCarInventory extends BaseGuiContainer
 
         // Inventory Name
         this.fontRendererObj.drawString(this.Player.hasCustomInventoryName() ? this.Player.getInventoryName() : I18n.format(this.Player.getInventoryName(), new Object[0]),8, 90, 4210752);
-
-        if (getEntityCar().getTurnSignalTick() == 1)
-        {
-            switch (getEntityCar().getTurnSignalDirection())
-            {
-                case -1:
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    this.mc.getTextureManager().bindTexture(baseButtonStyle);
-                    this.drawTexturedModalRect(8, 7,  0, 0, 7, 7);
-                    break;
-                case 1:
-                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    this.mc.getTextureManager().bindTexture(baseButtonStyle);
-                    this.drawTexturedModalRect(62, 7,  54, 0, 7, 7);
-                    break;
+        if (getEntityCar() instanceof EntityCar) {
+            if (getEntityCar().getTurnSignalTick() == 1) {
+                switch (getEntityCar().getTurnSignalDirection()) {
+                    case -1:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        this.mc.getTextureManager().bindTexture(baseButtonStyle);
+                        this.drawTexturedModalRect(8, 7, 0, 0, 7, 7);
+                        break;
+                    case 1:
+                        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                        this.mc.getTextureManager().bindTexture(baseButtonStyle);
+                        this.drawTexturedModalRect(62, 7, 54, 0, 7, 7);
+                        break;
+                }
             }
-        }
 
-        if (getEntityCar().isBeaconEnabled())
-        {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.getTextureManager().bindTexture(baseButtonStyle);
-            this.drawTexturedModalRect(26, 7,  18, 0, 7, 7);
-        }
+            if (getEntityCar().isBeaconEnabled()) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                this.mc.getTextureManager().bindTexture(baseButtonStyle);
+                this.drawTexturedModalRect(26, 7, 18, 0, 7, 7);
+            }
 
-        if (getEntityCar().isAuxLightsEnabled())
-        {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.getTextureManager().bindTexture(baseButtonStyle);
-            this.drawTexturedModalRect(35, 7,  27, 0, 7, 7);
-        }
+            if (getEntityCar().isAuxLightsEnabled()) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                this.mc.getTextureManager().bindTexture(baseButtonStyle);
+                this.drawTexturedModalRect(35, 7, 27, 0, 7, 7);
+            }
 
-        if (getEntityCar().isLightsEnabled())
-        {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.getTextureManager().bindTexture(baseButtonStyle);
-            this.drawTexturedModalRect(44, 7,  36, 0, 7, 7);
+            if (getEntityCar().isLightsEnabled()) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                this.mc.getTextureManager().bindTexture(baseButtonStyle);
+                this.drawTexturedModalRect(44, 7, 36, 0, 7, 7);
+            }
         }
     }
 
@@ -140,12 +136,13 @@ public class GuiCarInventory extends BaseGuiContainer
         int buttonColumnX = rowX + 176;
         int buttonColumnY = rowY + 90;
         short buttonSpace = 13 + 1;
+        if (getEntityCar() instanceof EntityCar) {
+            buttonList.add(new GuiCustomButton(1, buttonColumnX, buttonColumnY, 54, 13, "", baseButtonStyle, getEntityCar().getDataWatcher().getWatchableObjectByte(17) == (byte) 1 ? 0 : 54, 8));
 
-        buttonList.add(new GuiCustomButton(1, buttonColumnX, buttonColumnY, 54, 13, "", baseButtonStyle, getEntityCar().getDataWatcher().getWatchableObjectByte(17)==(byte) 1? 0 : 54, 8));
-
-        buttonList.add(new GuiCustomButton(11, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isBeaconEnabled() ? 0 : 54, 22));
-        buttonList.add(new GuiCustomButton(10, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isLightsEnabled() ? 0 : 54, 50));
-        buttonList.add(new GuiCustomButton(12, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isAuxLightsEnabled() ? 0 : 54, 36));
+            buttonList.add(new GuiCustomButton(11, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isBeaconEnabled() ? 0 : 54, 22));
+            buttonList.add(new GuiCustomButton(10, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isLightsEnabled() ? 0 : 54, 50));
+            buttonList.add(new GuiCustomButton(12, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isAuxLightsEnabled() ? 0 : 54, 36));
+        }
         GuiButton lockbutton = TransportLockGuiHandler.createLockButton(car, mc.thePlayer, baseButtonStyle, buttonColumnX, buttonColumnY, 0, buttonSpace, 60);
         if (lockbutton != null)
         {

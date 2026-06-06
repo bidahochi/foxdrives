@@ -1,7 +1,7 @@
 package bidahochi.foxdrives.util.Packet;
 
 import bidahochi.foxdrives.FoxDrives;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
+import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -97,18 +97,18 @@ public class PacketSetTransportLockedToClient implements IMessage
                 Entity transportEntity = context.getServerHandler().playerEntity.worldObj.getEntityByID(message.entityID);
                 if (!message.requestPacket)
                 {
-                    if (transportEntity instanceof EntityCar)
+                    if (transportEntity instanceof IInventoryEntity)
                     {
-                        ((EntityCar) transportEntity).setTransportLocked(message.bool);
-                        ((EntityCar) transportEntity).setTrustedList(message.trustedList);
+                        ((IInventoryEntity) transportEntity).setTransportLocked(message.bool);
+                        ((IInventoryEntity) transportEntity).setTrustedList(message.trustedList);
                         FoxDrives.lockChannel.sendToAllAround(new PacketSetTransportLockedToClient(message.bool, message.trustedList, message.entityID, false), new NetworkRegistry.TargetPoint(transportEntity.dimension, transportEntity.posX, transportEntity.posY, transportEntity.posZ, 256D));
                     }
                 }
                 else {
-                    if (transportEntity instanceof EntityCar)
+                    if (transportEntity instanceof IInventoryEntity)
                     {
                         if (context.getServerHandler().playerEntity.worldObj.getEntityByID(message.playerEntityID) != null) {
-                            FoxDrives.lockChannel.sendTo(new PacketSetTransportLockedToClient(((EntityCar) transportEntity).getTransportLocked(), ((EntityCar) transportEntity).getTrustedList(), message.entityID, false), ((EntityPlayerMP) context.getServerHandler().playerEntity.worldObj.getEntityByID(message.playerEntityID)));
+                            FoxDrives.lockChannel.sendTo(new PacketSetTransportLockedToClient(((IInventoryEntity) transportEntity).getTransportLocked(), ((IInventoryEntity) transportEntity).getTrustedList(), message.entityID, false), ((EntityPlayerMP) context.getServerHandler().playerEntity.worldObj.getEntityByID(message.playerEntityID)));
                         }
                     }
                 }
@@ -118,10 +118,10 @@ public class PacketSetTransportLockedToClient implements IMessage
                 if (!message.requestPacket)
                 {
                     Entity TrainEntity = Minecraft.getMinecraft().theWorld.getEntityByID(message.entityID);
-                    if (TrainEntity instanceof EntityCar)
+                    if (TrainEntity instanceof IInventoryEntity)
                     {
-                        ((EntityCar) TrainEntity).setTrustedList(message.trustedList);
-                        ((EntityCar) TrainEntity).setTransportLocked(message.bool);
+                        ((IInventoryEntity) TrainEntity).setTrustedList(message.trustedList);
+                        ((IInventoryEntity) TrainEntity).setTransportLocked(message.bool);
                     }
                 }
             }

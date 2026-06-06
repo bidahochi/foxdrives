@@ -4,6 +4,7 @@ import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.util.ConfigHandler;
 import bidahochi.foxdrives.common.inventory.enums.InventorySize;
 import bidahochi.foxdrives.common.inventory.enums.InventoryStyle;
+import bidahochi.foxdrives.util.ITypeHolder;
 import bidahochi.foxdrives.util.ItemCar;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.Item;
@@ -19,7 +20,7 @@ import java.util.List;
  *
  * @author Ferdinand Calo' (FEX___96)
  */
-public class CarType {
+public class CarType implements ITypeHolder {
 
 	public static LinkedHashMap<String, CarType> REGISTRY = new LinkedHashMap<>();
 	public final Class<? extends EntityCar> clazz;
@@ -48,6 +49,8 @@ public class CarType {
 
  	//
 	public static CarType TOYOTA_PICKUP_1992;
+	public static CarType DOSEI_KIOTE_SEDAN;
+	public static CarType DOSEI_KIOTE_WAGON;
 	public static CarType REDMUND_1972;
 	public static CarType WORKDAY_1980;
 	public static CarType WORKDAY_1980_Utility;
@@ -68,6 +71,10 @@ public class CarType {
 	public static CarType BYRNE40S_SEDAN;
 	public static CarType BYRNE40S_SEDAN_V8;
 	public static CarType AWOOGA;
+	public static CarType ID6400daycab;
+	public static CarType PC100;
+	public static CarType HTT_3ax;
+	public static CarType HTT;
 
 	public CarType(String id, Class<? extends EntityCar> carclass){
 		regname = id;
@@ -118,6 +125,8 @@ public class CarType {
 		max_backward_speed = back * ConfigHandler.SPEED_MULTIPLIER;
 		return this;
 	}
+
+	public InventorySize getInventorySize() { return inventorySize; }
 
 	public Item getItem(){
 		return item;

@@ -5,6 +5,7 @@ import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCarChest;
 import bidahochi.foxdrives.models.ModelGilligPhantom;
 import fdfexcraft.tmt_slim.ModelBase;
+import fdfexcraft.tmt_slim.Vec3f;
 import net.minecraft.world.World;
 
 public class EntityGilligPhantom extends EntityCarChest
@@ -37,4 +38,13 @@ public class EntityGilligPhantom extends EntityCarChest
         return CarType.GILLIG_PHANTOM;
     }
 
+    @Override
+    public Vec3f getModelScale() {
+        return new Vec3f(1.2,1.2,1.2);
+    }
+
+    /*@Override
+    public Vec3f getModelOffset() {
+        return new Vec3f(0,0,-1);
+    }*/
 }
