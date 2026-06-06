@@ -110,7 +110,6 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
          * When found, (ITowingChild) towedVehicle will be updated accordingly.
          */
         if (((this.hitchState == HitchState.SEARCHING && this.childVehicle() == null) || (this.towedVehicle == null && this.getLinkedChildID() != -1)) && detectionCooldown-- <= 0) { // only check four times a second instead of every tick.
-            System.out.println("Searching!!!");
             detectionCooldown = 5;
             AbstractTowingChild nearbyChild = findNearbyChild();
             if (nearbyChild != null) {
@@ -195,20 +194,30 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
         hitchState = HitchState.IDLE;
         dataWatcher.updateObject(DW_CHILD, -1);
         syncHitchState(true);
-        if (childVehicle().getEntity() != null) {
+        if (childVehicle() != null && childVehicle().getEntity() != null) {
             ((AbstractTowingChild) childVehicle().getEntity()).setLinkedParentID(-1);
             ((AbstractTowingChild) childVehicle().getEntity()).setParentVehicle(null);
         }
         this.setChildVehicle(null);
     }
 
-    private void syncHitchState(boolean decouple) {
+    private void syncHitchState(boolean decouple)
+    {
         dataWatcher.updateObject(DW_HITCHSTATE, hitchState.ordinal());
-        if (!this.worldObj.isRemote) {
-            if (decouple) {
+        if (!this.worldObj.isRemote)
+        {
+            if (childVehicle() == null)
+            {
+                return;
+            }
+
+            if (decouple)
+            {
                 FoxDrives.decoupleHitchChannel.sendToAllAround(new PacketDecoupleHitch(getEntityId(), HitchState.IDLE, childVehicle().getTransportEntityID()),
                         new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
-            } else {
+            }
+            else
+            {
                 FoxDrives.hitchSyncChannel.sendToAllAround(new PacketSyncHitch(getEntityId(), hitchState, childVehicle().getTransportEntityID()),
                         new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
             }
