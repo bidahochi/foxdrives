@@ -111,10 +111,8 @@ public class EventManager {
         car.setRollingVel(car.velocity);
         if(!car.worldObj.isRemote) Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Local Server", 5, 25, 0xffff00);
 
-        if (car.worldObj.isRemote == false)
-        {
-            renderSkillHUD(event, car, Minecraft.getMinecraft());
-        }
+        renderSkillHUD(event, car, Minecraft.getMinecraft());
+
     }
 
     private int windowWidth, windowHeight;
