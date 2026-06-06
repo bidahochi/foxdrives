@@ -3,6 +3,7 @@ package bidahochi.foxdrives.entities.BaseEntityVehicle;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.common.handlers.ItemHandler;
 import cpw.mods.fml.common.gameevent.InputEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.AnimalChest;
 import net.minecraft.inventory.IInvBasic;
@@ -139,7 +140,7 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
 
 
     //redirect all inventory logic to the AnimalChest
-    public int getSizeInventory(){return inv.getSizeInventory();}
+    public final int getSizeInventory(){return inv.getSizeInventory();}
     public ItemStack getStackInSlot(int p_70301_1_){return inv.getStackInSlot(p_70301_1_);}
     public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_){return inv.decrStackSize(p_70298_1_,p_70298_2_);}
     public ItemStack getStackInSlotOnClosing(int p_70304_1_){return inv.getStackInSlotOnClosing(p_70304_1_);}
@@ -155,6 +156,23 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
     {
         return ItemHandler.handleFreight(this, itemStack);
     }
-    public IInventory getInventory(){return inv;}
+
+    // implements IInventoryEntity
+
+    public boolean transportHasCustomInventoryName(){return inv.hasCustomInventoryName();}
+
+    public final boolean isTransportAlive()
+    {
+        return super.isEntityAlive();
+    }
+    
+    public final float getDistanceToTransport(Entity entity)
+    {
+        return ((float) this.getDistanceSqToEntity(entity));
+    }
+
+    public String getTransportInventoryName(){return inv.getInventoryName();}
+    public int getTransportSizeInventory(){return getSizeInventory();}
+    public IInventory getTransportInventory(){return inv;}
 
 }

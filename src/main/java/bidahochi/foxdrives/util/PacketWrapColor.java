@@ -38,8 +38,9 @@ public class PacketWrapColor implements IMessage {
         @Override
         public IMessage onMessage(PacketWrapColor message, MessageContext context) {
             Entity carEntity = context.getServerHandler().playerEntity.worldObj.getEntityByID(message.entityID);
-            if (carEntity instanceof IWrappable) {
-                carEntity.getDataWatcher().updateObject(DW_SKIN, message.wrapColor);
+            if (carEntity instanceof IWrappable)
+            {
+                ((IWrappable) carEntity).setSkin(message.wrapColor);
             }
             return null;
         }

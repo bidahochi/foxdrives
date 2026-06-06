@@ -6,6 +6,7 @@ import bidahochi.foxdrives.entities.util.HitchType;
 import bidahochi.foxdrives.models.trailers.Modeltandemdryvan35ft;
 import fdfexcraft.tmt_slim.ModelBase;
 import fdfexcraft.tmt_slim.Vec3f;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 public class Entity35ftTandemDryvan extends AbstractTowingChildChest {

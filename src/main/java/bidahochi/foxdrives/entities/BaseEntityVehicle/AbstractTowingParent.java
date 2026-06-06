@@ -119,7 +119,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
         }
 
         if (ticksExisted % 20 == 0 && this.hitchState == HitchState.COUPLED) {
-            if (worldObj.getEntityByID(childVehicle().getEntityId()) == null || worldObj.getEntityByID(childVehicle().getEntityId()).isDead) {
+            if (worldObj.getEntityByID(childVehicle().getTransportEntityID()) == null || worldObj.getEntityByID(childVehicle().getTransportEntityID()).isDead) {
                 decouple();
             }
         }
@@ -206,10 +206,10 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
         dataWatcher.updateObject(DW_HITCHSTATE, hitchState.ordinal());
         if (!this.worldObj.isRemote) {
             if (decouple) {
-                FoxDrives.decoupleHitchChannel.sendToAllAround(new PacketDecoupleHitch(getEntityId(), HitchState.IDLE, childVehicle().getEntityId()),
+                FoxDrives.decoupleHitchChannel.sendToAllAround(new PacketDecoupleHitch(getEntityId(), HitchState.IDLE, childVehicle().getTransportEntityID()),
                         new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
             } else {
-                FoxDrives.hitchSyncChannel.sendToAllAround(new PacketSyncHitch(getEntityId(), hitchState, childVehicle().getEntityId()),
+                FoxDrives.hitchSyncChannel.sendToAllAround(new PacketSyncHitch(getEntityId(), hitchState, childVehicle().getTransportEntityID()),
                         new NetworkRegistry.TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 64));
             }
         }

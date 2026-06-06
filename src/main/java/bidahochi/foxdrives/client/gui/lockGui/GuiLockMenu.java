@@ -1,7 +1,6 @@
 package bidahochi.foxdrives.client.gui.lockGui;
 
 import bidahochi.foxdrives.FoxDrives;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
 import cpw.mods.fml.relauncher.Side;
@@ -38,6 +37,6 @@ public class GuiLockMenu extends GuiLockMenuAbstract {
 
     @Override
     public void sendUpdatePacket(boolean propagate) {
-        FoxDrives.lockChannel.sendToServer(new PacketSetTransportLockedToClient(rollingStock.getTransportLocked(), currentTrustees, rollingStock.getEntityId(), propagate));
+        FoxDrives.lockChannel.sendToServer(new PacketSetTransportLockedToClient(rollingStock.getTransportLocked(), currentTrustees, rollingStock.getTransportEntityID(), propagate));
     }
 }

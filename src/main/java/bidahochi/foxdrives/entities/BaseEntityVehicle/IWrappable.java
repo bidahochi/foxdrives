@@ -11,12 +11,12 @@ public interface IWrappable {
 
     String[] getSkins();
 
-    DataWatcher getDataWatcher();
+    int getSkin();
 
-    World getWorld();
+    void setSkin(int skinID);
 
     Map<Integer, String> getTextureDescriptionMap();
 
-    int getEntityId();
+    int getTransportEntityID();
 
 }

@@ -3,12 +3,9 @@ package bidahochi.foxdrives.client.gui.specialButtons;
 import bidahochi.foxdrives.FoxDrives;
 import bidahochi.foxdrives.client.gui.GuiIDs;
 import bidahochi.foxdrives.client.gui.genericButtons.GuiCustomButton;
-import bidahochi.foxdrives.entities.BaseEntityVehicle.EntityCar;
 import bidahochi.foxdrives.entities.BaseEntityVehicle.IInventoryEntity;
 import bidahochi.foxdrives.util.Packet.PacketSetTransportLockedToClient;
-import bidahochi.foxdrives.util.PacketInteract;
 import bidahochi.foxdrives.util.TranslationUtil;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,7 +89,7 @@ public class TransportLockGuiHandler
                 new PacketSetTransportLockedToClient(
                         transport.isLocked(),
                         transport.getTrustedList(),
-                        transport.getEntityId(),
+                        transport.getTransportEntityID(),
                         false
                 )
         );
@@ -106,7 +103,7 @@ public class TransportLockGuiHandler
                 FoxDrives.instance,
                 GuiIDs.LOCK_MENU,
                 player.getEntityWorld(),
-                stock.getEntityId(),
+                stock.getTransportEntityID(),
                 -1,
                 (int) stock.getPosition().zCoord
         );

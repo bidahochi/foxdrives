@@ -2,7 +2,6 @@ package bidahochi.foxdrives.entities.BaseEntityVehicle;
 
 import bidahochi.foxdrives.entities.util.TrustedPlayer;
 import bidahochi.foxdrives.util.ITypeHolder;
-import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.Vec3;
@@ -11,21 +10,19 @@ import java.util.List;
 
 public interface IInventoryEntity {
 
-    IInventory getInventory();
+    IInventory getTransportInventory();
 
-    boolean isEntityAlive();
+    boolean isTransportAlive();
 
-    float getDistanceToEntity(Entity player);
+    float getDistanceToTransport(Entity player);
 
     ITypeHolder type();
 
-    int getSizeInventory();
+    int getTransportSizeInventory();
 
-    boolean hasCustomInventoryName();
+    boolean transportHasCustomInventoryName();
 
-    String getInventoryName();
-
-    DataWatcher getDataWatcher();
+    String getTransportInventoryName();
 
     boolean getTransportLocked();
 
@@ -51,7 +48,7 @@ public interface IInventoryEntity {
 
     List<TrustedPlayer> getTrustedList();
 
-    int getEntityId();
+    int getTransportEntityID();
 
     Vec3 getPosition();
 

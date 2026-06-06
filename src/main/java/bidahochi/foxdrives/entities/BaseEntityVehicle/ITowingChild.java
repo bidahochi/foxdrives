@@ -23,7 +23,7 @@ public interface ITowingChild {
      * Used to obtain the entity from the world.
      * @return the non-persistent ID of this entity.
      */
-    int getEntityId();
+    int getTransportEntityID();
 
     /**
      * @return this

@@ -61,7 +61,7 @@ public class GuiCarInventory extends BaseGuiContainer
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_)
     {
         // Vehicle Name
-        this.fontRendererObj.drawString(this.car.hasCustomInventoryName() ? this.car.getInventoryName() : I18n.format(this.car.getInventoryName(), new Object[0]), 75, 7, 4210752);
+        this.fontRendererObj.drawString(this.car.transportHasCustomInventoryName() ? this.car.getTransportInventoryName() : I18n.format(this.car.getTransportInventoryName(), new Object[0]), 75, 7, 4210752);
 
         // Inventory Name
         this.fontRendererObj.drawString(this.Player.hasCustomInventoryName() ? this.Player.getInventoryName() : I18n.format(this.Player.getInventoryName(), new Object[0]),8, 90, 4210752);
@@ -137,7 +137,7 @@ public class GuiCarInventory extends BaseGuiContainer
         int buttonColumnY = rowY + 90;
         short buttonSpace = 13 + 1;
         if (getEntityCar() instanceof EntityCar) {
-            buttonList.add(new GuiCustomButton(1, buttonColumnX, buttonColumnY, 54, 13, "", baseButtonStyle, getEntityCar().getDataWatcher().getWatchableObjectByte(17) == (byte) 1 ? 0 : 54, 8));
+            buttonList.add(new GuiCustomButton(1, buttonColumnX, buttonColumnY, 54, 13, "", baseButtonStyle, ((EntityCar)getEntityCar()).isRunning() ? 0 : 54, 8));
 
             buttonList.add(new GuiCustomButton(11, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isBeaconEnabled() ? 0 : 54, 22));
             buttonList.add(new GuiCustomButton(10, buttonColumnX, buttonColumnY += buttonSpace, 54, 13, "", baseButtonStyle, getEntityCar().isLightsEnabled() ? 0 : 54, 50));

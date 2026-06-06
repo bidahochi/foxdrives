@@ -150,7 +150,20 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         }
     }
 
-    public int getSkin() { return dataWatcher.getWatchableObjectInt(DW_SKIN); }
+    public int getSkin()
+    {
+        return dataWatcher.getWatchableObjectInt(DW_SKIN);
+    }
+
+    public void setSkin(int skinID)
+    {
+        dataWatcher.updateObject(DW_SKIN, skinID);
+    }
+
+    public final int getTransportEntityID()
+    {
+        return getEntityId();
+    }
 
     private boolean isHeadlightsEnabled = false;
     private boolean isBeaconEnabled = false;
@@ -376,7 +389,7 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
                     {
                         skin = 0;
                     }
-                    dataWatcher.updateObject(DW_SKIN, skin);
+                    setSkin(skin);
                     return true;
                 }
                 else if (getSkins().length > 1) {
@@ -535,7 +548,7 @@ public abstract class EntityTrailer extends Entity implements IEntityAdditionalS
         velocity=compound.getFloat("vel");
         rotationYaw=compound.getFloat("yaw");
         dataWatcher.updateObject(DW_YAW, rotationYaw);
-        dataWatcher.updateObject(DW_SKIN, compound.getInteger("skin"));
+        setSkin(compound.getInteger("skin"));
         if (this instanceof ITowingChild) {
             dataWatcher.updateObject(DW_PARENT, compound.getInteger("parentID"));
         }

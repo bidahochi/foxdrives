@@ -155,6 +155,16 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
         return dataWatcher.getWatchableObjectInt(DW_SKIN);
     }
 
+    public void setSkin(int skinID)
+    {
+        dataWatcher.updateObject(DW_SKIN, skinID);
+    }
+
+    public final int getTransportEntityID()
+    {
+        return getEntityId();
+    }
+
     private boolean isHeadlightsEnabled = false;
     private boolean isBeaconEnabled = false;
     private byte ditchLightMode = 0;

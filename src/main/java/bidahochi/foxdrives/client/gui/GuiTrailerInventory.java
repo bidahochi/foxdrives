@@ -51,7 +51,7 @@ public class GuiTrailerInventory extends BaseGuiContainer {
      */
     protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_) {
         // Vehicle Name
-        this.fontRendererObj.drawString(this.trailer.hasCustomInventoryName() ? this.trailer.getInventoryName() : I18n.format(this.trailer.getInventoryName(), new Object[0]), 75, 7, 4210752);
+        this.fontRendererObj.drawString(this.trailer.transportHasCustomInventoryName() ? this.trailer.getTransportInventoryName() : I18n.format(this.trailer.getTransportInventoryName(), new Object[0]), 75, 7, 4210752);
 
         // Inventory Name
         this.fontRendererObj.drawString(this.Player.hasCustomInventoryName() ? this.Player.getInventoryName() : I18n.format(this.Player.getInventoryName(), new Object[0]),8, 90, 4210752);

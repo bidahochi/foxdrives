@@ -13,17 +13,17 @@ import net.minecraft.item.ItemStack;
 public class ContainerBaseInventory extends Container
 {
     protected IInventory playerInventory;
-    protected IInventoryEntity entity;
+    protected IInventoryEntity entityTransport;
 
     public ContainerBaseInventory(IInventory invPlayer, final IInventoryEntity transport)
     {
-        this.entity = transport;
+        this.entityTransport = transport;
         this.playerInventory = invPlayer;
 
         // --- Car slots ---
-        if (entity instanceof EntityCar) {
-            this.addSlotToContainer(new FuelSlot(entity.getInventory(), 0, 204, 26));
-            this.addSlotToContainer(new DisabledSlot(entity.getInventory(), 1, 204, 64));
+        if (entityTransport instanceof EntityCar) {
+            this.addSlotToContainer(new FuelSlot(entityTransport.getTransportInventory(), 0, 204, 26));
+            this.addSlotToContainer(new DisabledSlot(entityTransport.getTransportInventory(), 1, 204, 64));
         }
     }
 
@@ -69,8 +69,8 @@ public class ContainerBaseInventory extends Container
 
     @Override
     public boolean canInteractWith(EntityPlayer entityPlayer) {
-        return this.playerInventory.isUseableByPlayer(entityPlayer) && this.entity.isEntityAlive()
-                && this.entity.getDistanceToEntity(entityPlayer) < 8.0F;
+        return this.playerInventory.isUseableByPlayer(entityPlayer) && this.entityTransport.isTransportAlive()
+                && this.entityTransport.getDistanceToTransport(entityPlayer) < 8.0F;
     }
 
     /**

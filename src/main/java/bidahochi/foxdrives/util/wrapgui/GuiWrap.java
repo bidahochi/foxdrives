@@ -85,12 +85,12 @@ public class GuiWrap extends GuiScreen {
         this.car = car;
         renderScale = car.getGuiRenderScale();
         totalOptions = car.getSkins().length;
-        currentPage = (car.getDataWatcher().getWatchableObjectInt(DW_SKIN)) / RESULTS_PER_PAGE;
+        currentPage = (car.getSkin()) / RESULTS_PER_PAGE;
         try {
             if (car instanceof EntityCar)
-                renderEntity = (EntityCar) car.getClass().getConstructor(World.class).newInstance(car.getWorld());
+                renderEntity = (EntityCar) car.getClass().getConstructor(World.class).newInstance(((EntityCar)car).getWorld());
             else if (car instanceof EntityTrailer)
-                renderEntity = (EntityTrailer) car.getClass().getConstructor(World.class).newInstance(car.getWorld());
+                renderEntity = (EntityTrailer) car.getClass().getConstructor(World.class).newInstance(((EntityTrailer)car).getWorld());
             else
                 renderEntity = null;
         }
@@ -194,7 +194,7 @@ public class GuiWrap extends GuiScreen {
                 loopRenderColor = i + RESULTS_PER_PAGE * currentPage;
                 renderEntity.getDataWatcher().updateObject(DW_SKIN, loopRenderColor);
                 // Set the button to active or inactive depending on whether the texture is active.
-                ((GuiButtonWrap) this.buttonList.get(i + 3)).setType(GuiButtonWrap.Type.SELECTIONBOX, (loopRenderColor == car.getDataWatcher().getWatchableObjectInt(DW_SKIN)) ? GuiButtonWrap.Texture.ACTIVE : GuiButtonWrap.Texture.INACTIVE);
+                ((GuiButtonWrap) this.buttonList.get(i + 3)).setType(GuiButtonWrap.Type.SELECTIONBOX, (loopRenderColor == car.getSkin()) ? GuiButtonWrap.Texture.ACTIVE : GuiButtonWrap.Texture.INACTIVE);
                 GL11.glColor4f(1, 1, 1, 1);
                 GL11.glPushMatrix();
                 GL11.glTranslated(offsetX + 50, offsetY + 60, 400);
@@ -225,11 +225,11 @@ public class GuiWrap extends GuiScreen {
             final int fontColor = new Color(0, 0, 0).getRGB();
             for (int i = 0; i < optionsOnCurrentPage; i++) {
                 loopRenderColor = i + RESULTS_PER_PAGE * currentPage;
-                ((GuiButtonWrap) this.buttonList.get(i + 3)).setType(GuiButtonWrap.Type.SELECTIONBOX, (loopRenderColor == car.getDataWatcher().getWatchableObjectInt(DW_SKIN)) ? GuiButtonWrap.Texture.ACTIVE : GuiButtonWrap.Texture.INACTIVE);
+                ((GuiButtonWrap) this.buttonList.get(i + 3)).setType(GuiButtonWrap.Type.SELECTIONBOX, (loopRenderColor == car.getSkin()) ? GuiButtonWrap.Texture.ACTIVE : GuiButtonWrap.Texture.INACTIVE);
                 if (car.getTextureDescriptionMap().containsKey(loopRenderColor))
                     colorName = car.getTextureDescriptionMap().get(loopRenderColor);
                 else
-                    colorName = car.getSkins()[car.getDataWatcher().getWatchableObjectInt(DW_SKIN)];
+                    colorName = car.getSkins()[car.getSkin()];
                 fontRendererObj.drawSplitString(colorName, (int) ((offsetX + 14) - (0.5 * fontRendererObj.splitStringWidth(colorName, 82))), (int) offsetY, 82, fontColor);
 
                 offsetX += 94;
@@ -314,8 +314,8 @@ public class GuiWrap extends GuiScreen {
                 case 9:
                 case 10: // Color selection button.
                     int newColor = (currentPage * RESULTS_PER_PAGE) + (clickedButton.id - 3);
-                    FoxDrives.wrapColorChannel.sendToServer(new PacketWrapColor(newColor, car.getEntityId()));
-                    car.getDataWatcher().updateObject(DW_SKIN, newColor);
+                    FoxDrives.wrapColorChannel.sendToServer(new PacketWrapColor(newColor, car.getTransportEntityID()));
+                    car.setSkin(newColor);
                     break;
                 case 14:
                     this.mc.thePlayer.closeScreen();
@@ -354,8 +354,8 @@ public class GuiWrap extends GuiScreen {
                     if (Character.getNumericValue(eventChar) <= optionsOnCurrentPage) {
                         editingPlayer.playSound("random.click", 1f, 1f);
                         int newColor = (currentPage * RESULTS_PER_PAGE) + (Character.getNumericValue(eventChar) - 1);
-                        FoxDrives.wrapColorChannel.sendToServer(new PacketWrapColor(newColor, car.getEntityId()));
-                        car.getDataWatcher().updateObject(DW_SKIN, newColor);
+                        FoxDrives.wrapColorChannel.sendToServer(new PacketWrapColor(newColor, car.getTransportEntityID()));
+                        car.setSkin(newColor);
                     }
                 }
             }
