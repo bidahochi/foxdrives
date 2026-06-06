@@ -115,7 +115,12 @@ public class FoxDrives {
 
     private SimpleNetworkWrapper buildNewSimpleChannel(String channelName)
     {
-        return NetworkRegistry.INSTANCE.newSimpleChannel("FD." + channelName);
+        String fullChannelName = "FD." + channelName;
+        if (fullChannelName.length() > 20)
+        {
+            throw new RuntimeException(fullChannelName + " IS TOO LONG");
+        }
+        return NetworkRegistry.INSTANCE.newSimpleChannel(fullChannelName);
     }
 
     @Mod.EventHandler
