@@ -528,7 +528,6 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 
     public void setRollingVel(float vel)
     {
-        this.velocity = vel;
         dataWatcher.updateObject(DW_VEL, velocity);
     }
 
@@ -582,6 +581,7 @@ public abstract class EntityCar extends Entity implements IEntityAdditionalSpawn
 
         if (!worldObj.isRemote) {
             dataWatcher.updateObject(DW_VEHICLEDATAJSON, vehicleDataJSON());
+            setRollingVel(velocity);
         }
     }
 

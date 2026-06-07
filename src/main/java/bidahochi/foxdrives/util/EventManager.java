@@ -83,36 +83,51 @@ public class EventManager {
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void onRenderOverlay(RenderGameOverlayEvent.Post event){
-        if(Minecraft.getMinecraft().thePlayer == null) return;
-        if(event.type != RenderGameOverlayEvent.ElementType.CROSSHAIRS) return;
-        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-        if(player.ridingEntity instanceof EntityCar == false) return;
-        EntityCar car = null;
-        if(MinecraftServer.getServer() != null){
-            if (MinecraftServer.getServer().worldServers != null && MinecraftServer.getServer().worldServers.length > 0
-                    && MinecraftServer.getServer().getEntityWorld() != null
-                    && MinecraftServer.getServer().getEntityWorld().getEntityByID(player.ridingEntity.getEntityId()) instanceof EntityCar) {
-                car = (EntityCar) MinecraftServer.getServer().getEntityWorld().getEntityByID(player.ridingEntity.getEntityId());
-            }
+    public void onRenderOverlay(RenderGameOverlayEvent.Post event)
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc == null || mc.thePlayer == null)
+        {
+            return;
         }
-        else{
+
+        EntityPlayer player = mc.thePlayer;
+        if (player.ridingEntity == null)
+        {
+            return;
+        }
+
+        if (!(player.ridingEntity instanceof EntityCar) && !(player.ridingEntity instanceof EntitySeat))
+        {
+            return;
+        }
+
+        EntityCar car = null;
+        if(MinecraftServer.getServer() != null && MinecraftServer.getServer().worldServers != null && MinecraftServer.getServer().worldServers.length > 0
+                && MinecraftServer.getServer().getEntityWorld() != null
+                && MinecraftServer.getServer().getEntityWorld().getEntityByID(player.ridingEntity.getEntityId()) instanceof EntityCar){
+            car = (EntityCar) MinecraftServer.getServer().getEntityWorld().getEntityByID(player.ridingEntity.getEntityId());
+        }
+        else
+        {
             car =player.ridingEntity instanceof EntityCar ? (EntityCar)player.ridingEntity : player.ridingEntity instanceof EntitySeat ? ((EntitySeat)player.ridingEntity).car : null;
         }
-        if(car == null)
+
+        if (car == null)
         {
             return;
         }
 
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Yaw: " + car.rotationYaw, 5, 5, 0xffff00);
-        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Vel: " + car.velocity, 5, 15, 0xffff00);
+        Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Vel: " + car.getVelocity(), 5, 15, 0xffff00);
         Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Owner: " + car.getTransportOwner(), 5, 35, 0xffff00);
 
-        car.setRollingVel(car.velocity);
-        if(!car.worldObj.isRemote) Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Local Server", 5, 25, 0xffff00);
+        if(!car.worldObj.isRemote)
+        {
+            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow("Local Server", 5, 25, 0xffff00);
+        }
 
         renderSkillHUD(event, car, Minecraft.getMinecraft());
-
     }
 
     private int windowWidth, windowHeight;
@@ -132,7 +147,7 @@ public class EventManager {
 
 
         float angle =
-                (MathHelper.clamp_float(Math.abs(transport.velocity) * 39.333333F, 0F, 140F) / 140F) * 180F - 90F;
+                (MathHelper.clamp_float(Math.abs(transport.getVelocity()) * 39.333333F, 0F, 140F) / 140F) * 180F - 90F;
 
 
         this.drawTexturedModalRectRotated( 8 + 46, windowHeight + 25,  0, 112, 7, 36, -89, angle);
