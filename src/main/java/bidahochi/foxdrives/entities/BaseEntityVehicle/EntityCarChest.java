@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 public abstract class EntityCarChest extends EntityCar implements IInventory, IInvBasic, IInventoryEntity {
 
@@ -32,21 +33,23 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
 
     public final int getMaxSlots()
     {
-        return 2 + type().inventorySize.SlotCount;
+        return Math.max(2, type().inventorySize.SlotCount + 2);
     }
 
     private void func_110226_cD() {
-        AnimalChest animalchest = this.inv;
+        AnimalChest oldChest = this.inv;
+
         this.inv = new AnimalChest("inv", this.getMaxSlots());
         this.inv.func_110133_a(this.getCommandSenderName());
 
-        if (animalchest != null) {
-            animalchest.func_110132_b(this);
-            int i = Math.min(animalchest.getSizeInventory(), this.inv.getSizeInventory());
+        if (oldChest != null) {
+            oldChest.func_110132_b(this);
 
-            for (int j = 0; j < i; ++j)
+            int copyCount = Math.min(oldChest.getSizeInventory(), this.inv.getSizeInventory());
+
+            for (int j = 0; j < copyCount; ++j)
             {
-                ItemStack itemstack = animalchest.getStackInSlot(j);
+                ItemStack itemstack = oldChest.getStackInSlot(j);
 
                 if (itemstack != null)
                 {
@@ -54,7 +57,7 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
                 }
             }
 
-            animalchest = null;
+            oldChest = null;
         }
 
         this.inv.func_110134_a(this);
@@ -89,7 +92,7 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
         NBTTagList nbttaglist = new NBTTagList();
 
         if(inv!=null) {
-            for (int i = 2; i < this.inv.getSizeInventory(); ++i) {
+            for (int i = 0; i < this.inv.getSizeInventory(); ++i) {
                 ItemStack itemstack = this.inv.getStackInSlot(i);
 
                 if (itemstack != null) {
@@ -107,16 +110,15 @@ public abstract class EntityCarChest extends EntityCar implements IInventory, II
     @Override
     public void readFromNBT(NBTTagCompound tag){
         super.readFromNBT(tag);
-        if(tag.hasKey("Items")) {
-            NBTTagList nbttaglist = tag.getTagList("Items", 10);
-            this.func_110226_cD();
+        if (tag.hasKey("Items")) {
+            NBTTagList nbttaglist = tag.getTagList("Items", Constants.NBT.TAG_COMPOUND);
 
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
                 NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-                int j = nbttagcompound1.getByte("Slot") & 255;
+                int slot = nbttagcompound1.getByte("Slot") & 255;
 
-                if (j >= 2 && j < getMaxSlots()) {
-                    this.inv.setInventorySlotContents(j, ItemStack.loadItemStackFromNBT(nbttagcompound1));
+                if (slot >= 0 && slot < getMaxSlots()) {
+                    this.inv.setInventorySlotContents(slot, ItemStack.loadItemStackFromNBT(nbttagcompound1));
                 }
             }
         }

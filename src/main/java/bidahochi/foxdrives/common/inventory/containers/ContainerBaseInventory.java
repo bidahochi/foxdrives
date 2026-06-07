@@ -30,41 +30,143 @@ public class ContainerBaseInventory extends Container
     /**
      * Called when a player shift-clicks on a slot. You must override this or you will crash when someone does that.
      */
-    public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int p_82846_2_) {
-        ItemStack itemstack = null;
-        Slot slot = (Slot)this.inventorySlots.get(p_82846_2_);
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
+    {
+        ItemStack copiedStack = null;
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
+        if (slotIndex < 0 || slotIndex >= this.inventorySlots.size())
+        {
+            return null;
+        }
 
-            if (p_82846_2_ < this.playerInventory.getSizeInventory()) {
-                if (!this.mergeItemStack(itemstack1, this.playerInventory.getSizeInventory(), this.inventorySlots.size(), true)) {
+        Slot sourceSlot = (Slot)this.inventorySlots.get(slotIndex);
+
+        if (sourceSlot != null && sourceSlot.getHasStack())
+        {
+            ItemStack stack = sourceSlot.getStack();
+            copiedStack = stack.copy();
+
+            boolean sourceIsPlayerInventory = isPlayerInventorySlot(sourceSlot);
+
+            /*
+             * Player inventory -> vehicle/transport inventory
+             */
+            if (sourceIsPlayerInventory)
+            {
+                if (!mergeIntoNonPlayerSlots(stack))
+                {
                     return null;
                 }
             }
-            else if (this.getSlot(1).isItemValid(itemstack1) && !this.getSlot(1).getHasStack()) {
-                if (!this.mergeItemStack(itemstack1, 1, 2, false)) {
+            /*
+             * Vehicle/transport inventory -> player inventory
+             */
+            else
+            {
+                if (!mergeIntoPlayerSlots(stack))
+                {
                     return null;
                 }
             }
-            else if (this.getSlot(0).isItemValid(itemstack1)) {
-                if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
-                    return null;
-                }
+
+            if (stack.stackSize == 0)
+            {
+                sourceSlot.putStack(null);
             }
-            else if (this.playerInventory.getSizeInventory() <= 2 || !this.mergeItemStack(itemstack1, 2, this.playerInventory.getSizeInventory(), false)) {
+            else
+            {
+                sourceSlot.onSlotChanged();
+            }
+
+            if (stack.stackSize == copiedStack.stackSize)
+            {
                 return null;
             }
 
-            if (itemstack1.stackSize == 0) {
-                slot.putStack((ItemStack)null);
-            } else {
-                slot.onSlotChanged();
+            sourceSlot.onPickupFromSlot(player, stack);
+        }
+
+        return copiedStack;
+    }
+
+    private boolean isPlayerInventorySlot(Slot slot)
+    {
+        return slot != null && slot.inventory == this.playerInventory;
+    }
+
+    private boolean mergeIntoPlayerSlots(ItemStack stack)
+    {
+        boolean movedAny = false;
+
+        for (int i = this.inventorySlots.size() - 1; i >= 0; i--)
+        {
+            Slot targetSlot = (Slot)this.inventorySlots.get(i);
+
+            if (!isPlayerInventorySlot(targetSlot))
+            {
+                continue;
+            }
+
+            int before = stack.stackSize;
+
+            if (this.mergeItemStack(stack, i, i + 1, false))
+            {
+                if (stack.stackSize != before)
+                {
+                    movedAny = true;
+                }
+
+                if (stack.stackSize == 0)
+                {
+                    break;
+                }
             }
         }
 
-        return itemstack;
+        return movedAny;
+    }
+
+    private boolean mergeIntoNonPlayerSlots(ItemStack stack)
+    {
+        boolean movedAny = false;
+
+        for (int i = 0; i < this.inventorySlots.size(); i++)
+        {
+            Slot targetSlot = (Slot)this.inventorySlots.get(i);
+
+            if (targetSlot == null)
+            {
+                continue;
+            }
+
+            if (isPlayerInventorySlot(targetSlot))
+            {
+                continue;
+            }
+
+            if (!targetSlot.isItemValid(stack))
+            {
+                continue;
+            }
+
+            int before = stack.stackSize;
+
+            if (this.mergeItemStack(stack, i, i + 1, false))
+            {
+                if (stack.stackSize != before)
+                {
+                    movedAny = true;
+                }
+
+                if (stack.stackSize == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        return movedAny;
     }
 
     @Override
