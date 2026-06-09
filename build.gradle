@@ -31,7 +31,7 @@ buildscript {
 apply plugin: 'forge'
 apply plugin: 'idea'
 
-version = "1.0.5"
+version = "1.0.6"
 group= "bidahochi.foxdrives"
 archivesBaseName = "FoxDrives"
 
