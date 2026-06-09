@@ -30,6 +30,8 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
     private int detectionCooldown = 0;
 
+    private long searchStartTime = -1;
+
     private static int parentUniqueIDs = -1;
 
     public HitchState hitchState = HitchState.IDLE;
@@ -77,7 +79,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
         if (!this.worldObj.isRemote) {
             if(key == 6) {
                 if (hitchState == HitchState.COUPLED) {
-                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Detatching trailer"));
+                    ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Detaching trailer"));
                     decouple();
                 }
                 else if (hitchState == HitchState.SEARCHING) {
@@ -86,6 +88,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
                 } else {
                     ((EntityPlayer) worldObj.getEntityByID(player)).addChatComponentMessage(new ChatComponentText("Hitching mode enabled"));
                     hitchState = HitchState.SEARCHING;
+                    searchStartTime = System.currentTimeMillis();
                 }
             }
             else super.networkInteract(player, key);
@@ -113,6 +116,11 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
             AbstractTowingChild nearbyChild = findNearbyChild();
             if (nearbyChild != null) {
                 onChildDetected(nearbyChild);
+            }
+            else if (System.currentTimeMillis() - searchStartTime > 60000) { //a minute of searching
+                ((EntityPlayer) this.riddenByEntity).addChatComponentMessage(new ChatComponentText("Hitching mode timed out."));
+                hitchState = HitchState.IDLE;
+                searchStartTime = -1;
             }
         }
 
