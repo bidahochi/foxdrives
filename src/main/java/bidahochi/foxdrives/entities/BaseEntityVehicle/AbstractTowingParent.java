@@ -30,7 +30,7 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
 
     private int detectionCooldown = 0;
 
-    private long searchStartTime = -1;
+    private long searchStartTime = Long.MAX_VALUE;
 
     private static int parentUniqueIDs = -1;
 
@@ -118,9 +118,11 @@ public abstract class AbstractTowingParent extends EntityCarChest implements ITo
                 onChildDetected(nearbyChild);
             }
             else if (System.currentTimeMillis() - searchStartTime > 60000) { //a minute of searching
-                ((EntityPlayer) this.riddenByEntity).addChatComponentMessage(new ChatComponentText("Hitching mode timed out."));
+                if (this.riddenByEntity != null && this.riddenByEntity instanceof EntityPlayer) {
+                    ((EntityPlayer) this.riddenByEntity).addChatComponentMessage(new ChatComponentText("Hitching mode timed out."));
+                }
                 hitchState = HitchState.IDLE;
-                searchStartTime = -1;
+                searchStartTime = Long.MAX_VALUE;
             }
         }
 
