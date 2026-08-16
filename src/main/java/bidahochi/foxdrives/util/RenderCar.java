@@ -254,7 +254,10 @@ public class RenderCar extends Render {
         GL11.glRotatef(car.getRollingDirection(),0,0,1);
         GL11.glScalef(car.getModelScale().xCoord,car.getModelScale().yCoord,car.getModelScale().zCoord);
 
-        int skyLight = car.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(car.posX), MathHelper.floor_double(car.posY), MathHelper.floor_double(car.posZ), 0);
+        // Sample lighting from inside the vehicle's bounding box instead of at its feet.
+        // A vehicle standing on a lower slab has a fractional posY whose floored block
+        // coordinate is the slab itself, making the entire model appear unlit.
+        int skyLight = car.getBrightnessForRender(ticks);
         if (!renderModeGUI) {
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skyLight % 65536,
@@ -563,7 +566,7 @@ public class RenderCar extends Render {
         GL11.glRotatef(trailer.getRollingDirection(),0,0,1);
         GL11.glScalef(trailer.getModelScale().xCoord,trailer.getModelScale().yCoord,trailer.getModelScale().zCoord);
 
-        int skyLight = trailer.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(trailer.posX), MathHelper.floor_double(trailer.posY), MathHelper.floor_double(trailer.posZ), 0);
+        int skyLight = trailer.getBrightnessForRender(ticks);
         if (!renderModeGUI) {
             GL11.glEnable(GL11.GL_LIGHTING);
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skyLight % 65536,
