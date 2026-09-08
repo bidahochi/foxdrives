@@ -4,6 +4,8 @@ import bidahochi.foxdrives.client.ClientProxy;
 import bidahochi.foxdrives.common.handlers.ItemHandler;
 import bidahochi.foxdrives.common.inventory.enums.InventorySize;
 import bidahochi.foxdrives.entities.*;
+import bidahochi.foxdrives.entities.ColtD250.EntityD250;
+import bidahochi.foxdrives.entities.ColtD250.EntityD250_Utility;
 import bidahochi.foxdrives.entities.EntityCampwagon1981.EntityCampwagon1981;
 import bidahochi.foxdrives.entities.EntityCampwagon1981.EntityCampwagon1981_v8;
 import bidahochi.foxdrives.entities.EntityWorkday1980.EntityWorkday1980;
@@ -539,6 +541,50 @@ public class FoxDrives {
                 .maxspeed(3, 0.25f)
                 .year("1990-1995");
 
+        CarType.D250 = CarType.register("d250", EntityD250.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.25f, 0.25f },
+                        new float[]{ -0.3f, 0.25f, 0.25f }
+                )
+                .acceleration(0.5f)
+                .maxspeed(3.25f, 0.25f)//1.5
+                .inventorySize(InventorySize.STYLE_PROFILE_3x5)
+                .year("1989-1997");
+
+        CarType.D250_utility = CarType.register("d250_utility", EntityD250_Utility.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.25f, 0.25f },
+                        new float[]{ -0.3f, 0.25f, 0.25f }
+                )
+                .acceleration(0.5f)
+                .maxspeed(3.25f, 0.25f)//1.5
+                .inventorySize(InventorySize.STYLE_PROFILE_3x5)
+                .year("1989-1997");
+
+        CarType.D350 = CarType.register("d350", EntityD350.class)
+                .recipe(
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone),
+                        new ItemStack(Blocks.iron_door), new ItemStack(Blocks.oak_stairs),new ItemStack(Blocks.iron_door),
+                        new ItemStack(Blocks.stone), new ItemStack(Blocks.glass_pane),new ItemStack(Blocks.stone)
+                )
+                .passpos(
+                        new float[]{ 0.3f, 0.25f, 0.18f },
+                        new float[]{ -0.3f, 0.25f, 0.18f }
+                )
+                .acceleration(0.35f)
+                .maxspeed(3.1f, 0.25f)//1.5
+                .inventorySize(InventorySize.STYLE_PROFILE_3x7)
+                .year("1989-1997");
 
         //trailers
 
